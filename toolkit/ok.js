@@ -7,6 +7,19 @@
 
 var ok = ok || {};
 
+ok.extendObject = function (aSubClass, aSuperClass) {
+	var p;
+
+	aSubClass.prototype = new aSuperClass(aSuperClass);
+
+	aSubClass.prototype.constructor = aSubClass;
+
+	//copy 'static' members of aSuperClass to aSubClass
+	for (p in aSuperClass) {
+		aSubClass[p] = aSuperClass[p];
+	}
+};
+
 ok.findCssRules = function (aRegExp) {
 	var i, j, rules;
 	var matchedRules = [];
