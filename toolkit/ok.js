@@ -5,9 +5,9 @@
 
 "use strict";
 
-if (!('ok' in self)) self.ok = {};
+var ok = ok || {};
 
-self.ok.findCssRules = function (aRegExp) {
+ok.findCssRules = function (aRegExp) {
 	var i, j, rules;
 	var matchedRules = [];
 
