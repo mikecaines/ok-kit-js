@@ -68,6 +68,14 @@ ok.isVector = function (aObj) {
 	return i > 0;
 };
 
+ok.randomInt = function (aMin, aMax) {
+	return Math.floor(Math.random() * (aMax - aMin + 1)) + aMin;
+};
+
+ok.randomFloat = function (aMin, aMax) {
+	return Math.random() * (aMax - aMin) + aMin;
+};
+
 ok.searchCssRules = function (aRegExp) {
 	var i, j, rules;
 	var matchedRules = [];
