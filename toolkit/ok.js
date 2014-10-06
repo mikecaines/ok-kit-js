@@ -10,7 +10,7 @@ var ok = ok || {};
 ok.extendObject = function (aSubClass, aSuperClass) {
 	var p;
 
-	aSubClass.prototype = new aSuperClass(aSuperClass);
+	aSubClass.prototype = Object.create(aSuperClass.prototype);
 
 	aSubClass.prototype.constructor = aSubClass;
 
