@@ -20,6 +20,54 @@ ok.extendObject = function (aSubClass, aSuperClass) {
 	}
 };
 
+ok.objectMerge = function (aObject1, aObject2) {
+	var v1, v2, merged, k, arr;
+
+	v1 = ok.isVector(aObject1);
+	v2 = ok.isVector(aObject2);
+
+	if ((v1 && !v2) || (!v1 && v2)) {
+		throw "Cannot merge vector and non-vector.";
+	}
+
+	merged = v1 ? [] : {};
+
+	arr = v2 ? aObject2 : aObject1;
+	for (k in arr) {
+		merged[k] = arr[k];
+	}
+
+	for (k in aObject2) {
+		if (
+			(k in merged)
+			&& merged[k] != null
+			&& (merged[k] instanceof Object)
+			&& aObject2[k] != null
+			&& (aObject2[k] instanceof Object)
+		) {
+			merged[k] = ok.objectMerge(merged[k], aObject2[k]);
+		}
+
+		else {
+			merged[k] = aObject2[k];
+		}
+	}
+
+	return merged;
+};
+
+ok.isVector = function (aObj) {
+	var i, k;
+
+	i = 0;
+	for (k in aObj) {
+		if (k != i) return false;
+		i++;
+	}
+
+	return i > 0;
+};
+
 ok.searchCssRules = function (aRegExp) {
 	var i, j, rules;
 	var matchedRules = [];
