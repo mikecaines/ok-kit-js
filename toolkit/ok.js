@@ -76,6 +76,11 @@ ok.randomFloat = function (aMin, aMax) {
 	return Math.random() * (aMax - aMin) + aMin;
 };
 
+ok.roundFloat = function (aFloat, aDecimals) {
+	var offset = Math.pow(10, aDecimals);
+	return Math.round(aFloat * offset) / offset;
+};
+
 ok.searchCssRules = function (aRegExp) {
 	var i, j, rules;
 	var matchedRules = [];
