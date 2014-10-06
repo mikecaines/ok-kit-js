@@ -20,7 +20,7 @@ ok.extendObject = function (aSubClass, aSuperClass) {
 	}
 };
 
-ok.findCssRules = function (aRegExp) {
+ok.searchCssRules = function (aRegExp) {
 	var i, j, rules;
 	var matchedRules = [];
 
