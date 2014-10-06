@@ -16,7 +16,7 @@ ok.DOM_NODE_DOCUMENT_FRAGMENT = 11;
  * @class ok.DomContext
  */
 ok.DomContext = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.DomContext)) this.construct.apply(this, arguments);
+
 };
 
 ok.DomContext.prototype.makeImplementation = function (aContext) {
@@ -39,17 +39,13 @@ ok.DomContext.prototype.createImplementation = function () {
 	return this.makeImplementation(this);
 };
 
-ok.DomContext.prototype.construct = function () {
-
-};
-
 
 /**
  * @class ok.MinimalDomContext
  * @extends ok.DomContext
  */
 ok.MinimalDomContext = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.MinimalDomContext)) this.construct.apply(this, arguments);
+	ok.DomContext.call(this);
 };
 ok.extendObject(ok.MinimalDomContext, ok.DomContext);
 
@@ -59,7 +55,7 @@ ok.extendObject(ok.MinimalDomContext, ok.DomContext);
  * @extends ok.DomContext
  */
 ok.NativeDomContext = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.NativeDomContext)) this.construct.apply(this, arguments);
+	ok.DomContext.call(this);
 };
 ok.extendObject(ok.NativeDomContext, ok.DomContext);
 
@@ -71,27 +67,19 @@ ok.NativeDomContext.prototype.makeDocument = function (aImplementation) {
 /**
  * @class ok.DomImplementation
  */
-ok.DomImplementation = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.DomImplementation)) this.construct.apply(this, arguments);
+ok.DomImplementation = function (aContext) {
+	this.context = aContext;
 };
 
 ok.DomImplementation.prototype.createDocument = function () {
 	return this.context.makeDocument(this);
 };
 
-ok.DomImplementation.prototype.construct = function (aContext) {
-	this.context = aContext;
-};
-
 
 /**
  * @class ok.DomNode
  */
-ok.DomNode = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.DomNode)) this.construct.apply(this, arguments);
-};
-
-ok.DomNode.prototype.construct = function (aOwnerDocument, aNodeType, aNodeName) {
+ok.DomNode = function (aOwnerDocument, aNodeType, aNodeName) {
 	this.ownerDocument = aOwnerDocument;
 	this.nodeType = aNodeType;
 	this.nodeName = aNodeName;
@@ -102,8 +90,11 @@ ok.DomNode.prototype.construct = function (aOwnerDocument, aNodeType, aNodeName)
  * @class ok.DomDocumentFragment
  * @extends ok.DomNode
  */
-ok.DomDocumentFragment = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.DomDocumentFragment)) this.construct.apply(this, arguments);
+ok.DomDocumentFragment = function (aOwnerDocument) {
+	ok.DomNode.call(this, aOwnerDocument, ok.DOM_NODE_DOCUMENT_FRAGMENT, '#document-fragment');
+
+	this.ownerDocument = aOwnerDocument;
+	this.children = [];
 };
 ok.extendObject(ok.DomDocumentFragment, ok.DomNode);
 
@@ -112,19 +103,14 @@ ok.DomDocumentFragment.prototype.appendChild = function (aElement) {
 	aElement.parentNode = this;
 };
 
-ok.DomDocumentFragment.prototype.construct = function (aOwnerDocument) {
-	ok.DomNode.prototype.construct.call(this, aOwnerDocument, ok.DOM_NODE_DOCUMENT_FRAGMENT, '#document-fragment');
-
-	this.ownerDocument = aOwnerDocument;
-	this.children = [];
-};
-
 
 /**
  * @class ok.DomDocument
  */
-ok.DomDocument = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.DomDocument)) this.construct.apply(this, arguments);
+ok.DomDocument = function (aDomImplementation) {
+	ok.DomNode.call(this, this, ok.DOM_NODE_DOCUMENT, '#document');
+
+	this.implementation = aDomImplementation;
 };
 ok.extendObject(ok.DomDocument, ok.DomNode);
 
@@ -136,18 +122,17 @@ ok.DomDocument.prototype.createDocumentFragment = function () {
 	return this.implementation.context.makeDocumentFragment(this);
 };
 
-ok.DomDocument.prototype.construct = function (aDomImplementation) {
-	ok.DomNode.prototype.construct.call(this, this, ok.DOM_NODE_DOCUMENT, '#document');
-
-	this.implementation = aDomImplementation;
-};
-
 
 /**
  * @class ok.DomElement
  */
-ok.DomElement = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.DomNode)) this.construct.apply(this, arguments);
+ok.DomElement = function (aOwnerDocument, aName) {
+	ok.DomNode.call(this, aOwnerDocument, ok.DOM_NODE_ELEMENT, aName.toUpperCase());
+
+	this.children = [];
+	this.attributes = [];
+	this.textContent = '';
+	this.parentNode = null;
 };
 ok.extendObject(ok.DomElement, ok.DomNode);
 
@@ -168,21 +153,12 @@ ok.DomElement.prototype.appendChild = function (aElement) {
 	aElement.parentNode = this;
 };
 
-ok.DomElement.prototype.construct = function (aOwnerDocument, aName) {
-	ok.DomNode.prototype.construct.call(this, aOwnerDocument, ok.DOM_NODE_ELEMENT, aName.toUpperCase());
-
-	this.children = [];
-	this.attributes = [];
-	this.textContent = '';
-	this.parentNode = null;
-};
-
 
 /**
  * @class ok.HtmlDomSerializer
  */
 ok.HtmlDomSerializer = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.HtmlDomSerializer)) this.construct.apply(this, arguments);
+
 };
 
 ok.HtmlDomSerializer.prototype._escape = function (aText) {
@@ -237,16 +213,12 @@ ok.HtmlDomSerializer.prototype.serializeToString = function (aNode) {
 	return this._serializeElement(aNode);
 };
 
-ok.HtmlDomSerializer.prototype.construct = function () {
-
-};
-
 
 /**
  * @class ok.NodeDomCopier
  */
 ok.NodeDomCopier = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.NodeDomCopier)) this.construct.apply(this, arguments);
+
 };
 
 /** @private */
@@ -288,16 +260,12 @@ ok.NodeDomCopier.prototype.copyNodeToNode = function (aNode, aDocument, aDeep) {
 	return this._copyNode(aNode, aDocument, aDeep != undefined ? aDeep : true);
 };
 
-ok.NodeDomCopier.prototype.construct = function () {
-
-};
-
 
 /**
  * @class ok.JsonDomCopier
  */
 ok.JsonDomCopier = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.JsonDomCopier)) this.construct.apply(this, arguments);
+
 };
 
 /**
@@ -385,16 +353,12 @@ ok.JsonDomCopier.prototype.copyJsonToNode = function (aJson, aDocument, aDeep) {
 	return this._copyJson(aJson, aDocument, aDeep != undefined ? aDeep : true);
 };
 
-ok.JsonDomCopier.prototype.construct = function () {
-
-};
-
 
 /**
  * @class ok.OneWayStaticDomDiffer
  */
 ok.OneWayStaticDomDiffer = function () {
-	if (!(arguments.length == 1 && arguments[0] === ok.OneWayStaticDomDiffer)) this.construct.apply(this, arguments);
+
 };
 
 ok.OneWayStaticDomDiffer.DIFF_ATTRIBUTE = 1;
@@ -496,8 +460,4 @@ ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContext
 
 ok.OneWayStaticDomDiffer.prototype.compareNodes = function (aNode1, aNode2) {
 	return this._compare(aNode1, aNode2, null, aNode1);
-};
-
-ok.OneWayStaticDomDiffer.prototype.construct = function () {
-
 };
