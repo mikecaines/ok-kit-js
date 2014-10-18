@@ -88,6 +88,7 @@ ok.searchCssRules = function (aRegExp) {
 	for (i = 0; i < document.styleSheets.length; i++) {
 		rules = null;
 
+		//we use try here because the same-origin policy can result in errors on access
 		try {rules = document.styleSheets[i].cssRules;}
 		catch (ex) {}
 
