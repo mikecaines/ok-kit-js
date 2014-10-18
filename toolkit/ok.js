@@ -86,12 +86,16 @@ ok.searchCssRules = function (aRegExp) {
 	var matchedRules = [];
 
 	for (i = 0; i < document.styleSheets.length; i++) {
-		try {rules = document.styleSheets[i].cssRules;}
-		catch (ex) {rules = [];}
+		rules = null;
 
-		for (j = 0; j < rules.length; j++) {
-			if (rules[j].cssText.match(aRegExp)) {
-				matchedRules.push(rules[j]);
+		try {rules = document.styleSheets[i].cssRules;}
+		catch (ex) {}
+
+		if (rules) {
+			for (j = 0; j < rules.length; j++) {
+				if (rules[j].cssText.match(aRegExp)) {
+					matchedRules.push(rules[j]);
+				}
 			}
 		}
 	}
