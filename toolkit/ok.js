@@ -118,3 +118,7 @@ ok.extendObject = function (aSubClass, aSuperClass) {
 		aSubClass[p] = aSuperClass[p];
 	}
 };
+
+ok.cloneObject = function (aObject) {
+	return JSON.parse(JSON.stringify(aObject));
+};
