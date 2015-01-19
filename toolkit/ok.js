@@ -108,6 +108,30 @@ ok.roundFloat = function (aFloat, aDecimals) {
 	return Math.round(aFloat * offset) / offset;
 };
 
+ok.offsetTop = function (aElement) {
+	var offset = 0;
+	var el = aElement;
+
+	do {
+		offset += el.offsetTop;
+	}
+	while ((el = el.offsetParent));
+
+	return offset;
+};
+
+ok.offsetLeft = function (aElement) {
+	var offset = 0;
+	var el = aElement;
+
+	do {
+		offset += el.offsetLeft;
+	}
+	while ((el = el.offsetParent));
+
+	return offset;
+};
+
 ok.searchCssRules = function (aRegExp) {
 	function searchRules(aCssRules, aRegExp) {
 		var j;
