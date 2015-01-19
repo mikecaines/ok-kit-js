@@ -106,6 +106,34 @@ ok.searchCssRules = function (aRegExp) {
 	return matchedRules;
 };
 
+ok.getAncestorByClassName = function (aElement, aClassName) {
+	var ancestor = null;
+	var el = aElement;
+
+	while ((el = el.parentElement)) {
+		if (el.classList.contains(aClassName)) {
+			ancestor = el;
+			break;
+		}
+	}
+
+	return ancestor;
+};
+
+ok.getAncestorByTagName = function (aElement, aTagName) {
+	var ancestor = null;
+	var el = aElement;
+
+	while ((el = el.parentElement)) {
+		if (el.tagName == aTagName) {
+			ancestor = el;
+			break;
+		}
+	}
+
+	return ancestor;
+};
+
 ok.extendObject = function (aSubClass, aSuperClass) {
 	var p;
 
