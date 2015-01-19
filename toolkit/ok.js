@@ -86,6 +86,10 @@ ok.strDashToCamel = function (aString) {
 	return str;
 };
 
+ok.pregQuote = function (aText) {
+	return (''+aText).replace(/([.*+?^${}()|\[\]\/\\])/g, "\\$1");
+};
+
 ok.randomInt = function (aMin, aMax) {
 	return Math.floor(Math.random() * (aMax - aMin + 1)) + aMin;
 };
