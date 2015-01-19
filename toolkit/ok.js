@@ -7,19 +7,6 @@
 
 var ok = ok || {};
 
-ok.extendObject = function (aSubClass, aSuperClass) {
-	var p;
-
-	aSubClass.prototype = Object.create(aSuperClass.prototype);
-
-	aSubClass.prototype.constructor = aSubClass;
-
-	//copy 'static' members of aSuperClass to aSubClass
-	for (p in aSuperClass) {
-		aSubClass[p] = aSuperClass[p];
-	}
-};
-
 ok.objectMerge = function (aObject1, aObject2) {
 	var v1, v2, merged, k, arr;
 
@@ -117,4 +104,17 @@ ok.searchCssRules = function (aRegExp) {
 	}
 
 	return matchedRules;
+};
+
+ok.extendObject = function (aSubClass, aSuperClass) {
+	var p;
+
+	aSubClass.prototype = Object.create(aSuperClass.prototype);
+
+	aSubClass.prototype.constructor = aSubClass;
+
+	//copy 'static' members of aSuperClass to aSubClass
+	for (p in aSuperClass) {
+		aSubClass[p] = aSuperClass[p];
+	}
 };
