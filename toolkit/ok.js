@@ -55,6 +55,37 @@ ok.isVector = function (aObj) {
 	return i > 0;
 };
 
+ok.strCamelToDash = function (aString) {
+	var str;
+
+	str = (aString+'').match(/((?:[A-Z]?[a-z]+)|(?:[0-9]+))/g);
+	str = str.join('-');
+	str = str.toLowerCase();
+
+	return str;
+};
+
+ok.strDashToCamel = function (aString) {
+	var str = '';
+	var matches, c, i;
+
+	matches = (aString+'').match(/([^\-]+)/gi);
+
+	if (matches) {
+		for (i = 0; i < matches.length; i++) {
+			c = matches[i].substr(0, 1);
+
+			if (str != '') {
+				c = c.toUpperCase();
+			}
+
+			str += c + matches[i].substr(1);
+		}
+	}
+
+	return str;
+};
+
 ok.randomInt = function (aMin, aMax) {
 	return Math.floor(Math.random() * (aMax - aMin + 1)) + aMin;
 };
