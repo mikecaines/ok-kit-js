@@ -82,7 +82,26 @@ ok.roundFloat = function (aFloat, aDecimals) {
 };
 
 ok.searchCssRules = function (aRegExp) {
-	var i, j, rules;
+	function searchRules(aCssRules, aRegExp) {
+		var j;
+		var matchedRules = [];
+
+		for (j = 0; j < aCssRules.length; j++) {
+			if (aCssRules[j].cssRules) {
+				matchedRules = matchedRules.concat(searchRules(aCssRules[j].cssRules, aRegExp));
+			}
+
+			else {
+				if (aCssRules[j].cssText.match(aRegExp)) {
+					matchedRules.push(aCssRules[j]);
+				}
+			}
+		}
+
+		return matchedRules;
+	}
+
+	var i, rules;
 	var matchedRules = [];
 
 	for (i = 0; i < document.styleSheets.length; i++) {
@@ -93,11 +112,7 @@ ok.searchCssRules = function (aRegExp) {
 		catch (ex) {}
 
 		if (rules) {
-			for (j = 0; j < rules.length; j++) {
-				if (rules[j].cssText.match(aRegExp)) {
-					matchedRules.push(rules[j]);
-				}
-			}
+			matchedRules = searchRules(rules, aRegExp);
 		}
 	}
 
