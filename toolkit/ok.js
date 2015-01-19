@@ -86,6 +86,11 @@ ok.strDashToCamel = function (aString) {
 	return str;
 };
 
+ok.strUpperCaseFirst = function (aString) {
+	var str = aString+'';
+	return str.substr(0, 1).toUpperCase() + str.substr(1);
+};
+
 ok.pregQuote = function (aText) {
 	return (''+aText).replace(/([.*+?^${}()|\[\]\/\\])/g, "\\$1");
 };
