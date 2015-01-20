@@ -7,6 +7,52 @@
 
 var ok = ok || {};
 
+ok.objectGet = function (aObject, aPath, aSeparator) {
+	var separator = aSeparator || '.';
+	var steps = (aPath+'').split(separator);
+	var node, i;
+
+	node = aObject;
+	for (i = 0; i < steps.length; i++) {
+		if (node != null && typeof node == 'object' && steps[i] in node) {
+			if (i == steps.length - 1) {
+				return node[steps[i]];
+			}
+
+			else {
+				node = node[steps[i]];
+			}
+		}
+
+		else {
+			break;
+		}
+	}
+
+	return null;
+};
+
+ok.objectSet = function (aObject, aPath, aValue, aSeparator) {
+	var separator = aSeparator || '.';
+	var steps = (aPath+'').split(separator);
+	var node, i;
+
+	if (!(aObject != null && typeof aObject == 'object')) {
+		throw "aObject must be an Object.";
+	}
+
+	node = aObject;
+	for (i = 0; i < steps.length - 1; i++) {
+		if (!(node[steps[i]] != null && typeof node[steps[i]] == 'object' && steps[i] in node)) {
+			node[steps[i]] = {};
+		}
+
+		node = node[steps[i]];
+	}
+
+	node[steps[i]] = aValue;
+};
+
 ok.objectMerge = function (aObject1, aObject2) {
 	var v1, v2, merged, k, arr;
 
