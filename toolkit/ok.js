@@ -260,3 +260,86 @@ ok.extendObject = function (aSubClass, aSuperClass) {
 ok.cloneObject = function (aObject) {
 	return JSON.parse(JSON.stringify(aObject));
 };
+
+
+
+
+/** @class ok.HashMap */
+ok.HashMap = function (aData) {
+	this._ohm_data = (aData != null && aData.constructor === Object) ? aData : {};
+};
+
+ok.HashMap.prototype.getData = function () {
+	return this._ohm_data;
+};
+
+ok.HashMap.prototype.get = function (aPath) {
+	return ok.objectGet(this._ohm_data, aPath);
+};
+
+ok.HashMap.prototype.getAsString = function (aPath) {
+	var value = this.get(aPath);
+	if (value == null) value = '';
+	else value = value.toString();
+	return value;
+};
+
+ok.HashMap.prototype.getAsObject = function (aPath) {
+	var value = this.get(aPath);
+	var isNull = value == null;
+	var obj, k;
+
+	if (!isNull) {
+		if (value.constructor === Object) {
+			obj = value;
+		}
+
+		else {
+			obj = {};
+
+			for (k in value) {
+				obj[k] = value[k];
+			}
+		}
+	}
+
+	else {
+		obj = {};
+	}
+
+	return obj;
+};
+
+ok.HashMap.prototype.getAsArray = function (aPath) {
+	var value = this.get(aPath);
+	var isNull = value == null;
+	var arr, k;
+
+	if (!isNull) {
+		if (value.constructor === Array) {
+			arr = value;
+		}
+
+		else {
+			arr = [];
+
+			for (k in value) {
+				arr.push(value[k]);
+			}
+		}
+	}
+
+	else {
+		arr = [];
+	}
+
+	return arr;
+};
+
+ok.HashMap.prototype.getAsBool = function (aPath) {
+	return this.get(aPath) == true;
+};
+
+ok.HashMap.prototype.set = function (aPath, aValue) {
+	ok.objectSet(this._ohm_data, aPath, aValue);
+};
