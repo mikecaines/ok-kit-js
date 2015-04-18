@@ -244,18 +244,42 @@ ok.getAncestorByTagName = function (aElement, aTagName) {
 	return ancestor;
 };
 
-ok.extendObject = function (aSubClass, aSuperClass) {
-	var p;
+/**
+ * Provides inheritance.
+ * @param {Function} aSuperClass
+ * @param {Function=} aSubClass Optional subclass constructor.
+ * @returns {Function} A reference to the subclass constructor.
+ */
+ok.extendObject = function (aSuperClass, aSubClass) {
+	var p, subClass;
 
-	aSubClass.prototype = Object.create(aSuperClass.prototype);
+	if (aSubClass) {
+		subClass = aSubClass;
+	}
 
-	aSubClass.prototype.constructor = aSubClass;
+	else {
+		ok.extendObject._oeo_counter++;
+
+		subClass = new Function(
+			"this._oeo_superClass" + ok.extendObject._oeo_counter + ".apply(this, arguments);"
+		);
+	}
 
 	//copy 'static' members of aSuperClass to aSubClass
 	for (p in aSuperClass) {
-		aSubClass[p] = aSuperClass[p];
+		subClass[p] = aSuperClass[p];
 	}
+
+	subClass.prototype = Object.create(aSuperClass.prototype);
+	subClass.prototype.constructor = subClass;
+
+	if (!aSubClass) {
+		subClass.prototype['_oeo_superClass' + ok.extendObject._oeo_counter] = aSuperClass;
+	}
+
+	return subClass;
 };
+ok.extendObject._oeo_counter = -1;
 
 ok.cloneObject = function (aObject) {
 	return JSON.parse(JSON.stringify(aObject));

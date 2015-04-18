@@ -47,7 +47,7 @@ ok.DomContext.prototype.createImplementation = function () {
 ok.MinimalDomContext = function () {
 	ok.DomContext.call(this);
 };
-ok.extendObject(ok.MinimalDomContext, ok.DomContext);
+ok.extendObject(ok.DomContext, ok.MinimalDomContext);
 
 
 /**
@@ -57,7 +57,7 @@ ok.extendObject(ok.MinimalDomContext, ok.DomContext);
 ok.NativeDomContext = function () {
 	ok.DomContext.call(this);
 };
-ok.extendObject(ok.NativeDomContext, ok.DomContext);
+ok.extendObject(ok.DomContext, ok.NativeDomContext);
 
 ok.NativeDomContext.prototype.makeDocument = function (aImplementation) {
 	return window.document;
@@ -96,7 +96,7 @@ ok.DomDocumentFragment = function (aOwnerDocument) {
 	this.ownerDocument = aOwnerDocument;
 	this.children = [];
 };
-ok.extendObject(ok.DomDocumentFragment, ok.DomNode);
+ok.extendObject(ok.DomNode, ok.DomDocumentFragment);
 
 ok.DomDocumentFragment.prototype.appendChild = function (aElement) {
 	this.children.push(aElement);
@@ -112,7 +112,7 @@ ok.DomDocument = function (aDomImplementation) {
 
 	this.implementation = aDomImplementation;
 };
-ok.extendObject(ok.DomDocument, ok.DomNode);
+ok.extendObject(ok.DomNode, ok.DomDocument);
 
 ok.DomDocument.prototype.createElement = function (aName) {
 	return this.implementation.context.makeElement(this, aName);
@@ -134,7 +134,7 @@ ok.DomElement = function (aOwnerDocument, aName) {
 	this.textContent = '';
 	this.parentNode = null;
 };
-ok.extendObject(ok.DomElement, ok.DomNode);
+ok.extendObject(ok.DomNode, ok.DomElement);
 
 ok.DomElement.prototype.appendChild = function (aElement) {
 	this.children.push(aElement);
