@@ -5,7 +5,13 @@
 
 "use strict";
 
-var ok = ok || {};
+/**
+ * @namespace ok
+ */
+if (!self.ok) self.ok = {};
+
+
+
 
 ok.objectGet = function (aObject, aPath, aSeparator) {
 	var separator = aSeparator || '.';
