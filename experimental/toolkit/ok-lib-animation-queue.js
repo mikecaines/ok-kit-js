@@ -22,6 +22,11 @@ ok.removeAnimation = function (aElement, aAnimationName) {
 	;
 };
 
+ok.hasAnimation = function (aElement, aAnimationName) {
+	return aElement.style.animation
+		.search(new RegExp('(^|(,\\s*))[^,]*' + aAnimationName + '[^,]*((\\s*,)|$)', 'g'), '') > -1;
+};
+
 ok.queueOnAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
 	aElement['_okqaa_' + aAnimationName] = {
 		callback: aCallback,
