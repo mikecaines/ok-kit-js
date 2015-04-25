@@ -243,6 +243,11 @@ ok.findCssRule = function (aRegExp, aRuleList) {
 	return rules.length > 0 ? rules[0] : null;
 };
 
+ok.getCssKeyframe = function (aAnimationName, aKeyframeName) {
+	var animation = ok.findCssRule(new RegExp('(^|\\s)@keyframes ' + ok.escapeRegExp(aAnimationName) + '\\s*\\{'));
+	return animation ? ok.findCssRule(new RegExp('(^|\\s)' + aKeyframeName + '(\\s|$)'), animation.cssRules) : null;
+};
+
 ok.getAncestorByClassName = function (aElement, aClassName) {
 	var ancestor = null;
 	var el = aElement;
@@ -269,6 +274,10 @@ ok.getAncestorByTagName = function (aElement, aTagName) {
 	}
 
 	return ancestor;
+};
+
+ok.escapeRegExp = function (aString){
+	return aString.replace(/([.*+?^${}()|\[\]\/\\])/g, '\\$1');
 };
 
 /**
