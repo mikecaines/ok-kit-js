@@ -17,7 +17,7 @@ ok.removeAnimation = function (aElement, aAnimationName) {
 		aElement.style.animation
 		.replace(new RegExp('(^|(,\\s*))[^,]*' + aAnimationName + '[^,]*((\\s*,)|$)', 'g'), '')
 		.replace(/^\s*,/, '')
-		.replace(/,\s*/, '')
+		.replace(/,\s*$/, '')
 		.trim()
 	;
 };
