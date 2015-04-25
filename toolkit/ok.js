@@ -183,8 +183,13 @@ ok.offsetLeft = function (aElement) {
 
 	return offset;
 };
-
-ok.searchCssRules = function (aRegExp) {
+/**
+ *
+ * @param {RegExp} aRegExp
+ * @param {CSSRuleList=} aRuleList
+ * @returns {Array}
+ */
+ok.searchCssRules = function (aRegExp, aRuleList) {
 	function searchRules(aCssRules, aRegExp) {
 		var j;
 		var matchedRules = [];
@@ -194,7 +199,7 @@ ok.searchCssRules = function (aRegExp) {
 				matchedRules = matchedRules.concat(searchRules(aCssRules[j].cssRules, aRegExp));
 			}
 
-			else {
+			if (aCssRules[j].cssText) {
 				if (aCssRules[j].cssText.match(aRegExp)) {
 					matchedRules.push(aCssRules[j]);
 				}
@@ -207,15 +212,21 @@ ok.searchCssRules = function (aRegExp) {
 	var i, rules;
 	var matchedRules = [];
 
-	for (i = 0; i < document.styleSheets.length; i++) {
-		rules = null;
+	if (aRuleList) {
+		matchedRules = searchRules(aRuleList, aRegExp);
+	}
 
-		//we use try here because the same-origin policy can result in errors on access
-		try {rules = document.styleSheets[i].cssRules;}
-		catch (ex) {}
+	else {
+		for (i = 0; i < document.styleSheets.length; i++) {
+			rules = null;
 
-		if (rules) {
-			matchedRules = searchRules(rules, aRegExp);
+			//we use try here because the same-origin policy can result in errors on access
+			try {rules = document.styleSheets[i].cssRules;}
+			catch (ex) {}
+
+			if (rules) {
+				matchedRules = searchRules(rules, aRegExp);
+			}
 		}
 	}
 
