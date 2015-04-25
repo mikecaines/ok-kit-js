@@ -183,13 +183,13 @@ ok.offsetLeft = function (aElement) {
 
 	return offset;
 };
+
 /**
- *
  * @param {RegExp} aRegExp
- * @param {CSSRuleList=} aRuleList
+ * @param {CSSRule[]=} aRuleList
  * @returns {Array}
  */
-ok.searchCssRules = function (aRegExp, aRuleList) {
+ok.findCssRules = function (aRegExp, aRuleList) {
 	function searchRules(aCssRules, aRegExp) {
 		var j;
 		var matchedRules = [];
@@ -231,6 +231,16 @@ ok.searchCssRules = function (aRegExp, aRuleList) {
 	}
 
 	return matchedRules;
+};
+
+/**
+ * @param {RegExp} aRegExp
+ * @param {CssRule=} aRuleList
+ * @returns {*}
+ */
+ok.findCssRule = function (aRegExp, aRuleList) {
+	var rules = ok.findCssRules(aRegExp, aRuleList);
+	return rules.length > 0 ? rules[0] : null;
 };
 
 ok.getAncestorByClassName = function (aElement, aClassName) {
