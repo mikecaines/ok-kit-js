@@ -18,8 +18,18 @@ ok.removeAnimation = function (aElement, aAnimationName) {
 		.replace(new RegExp('(^|(,\\s*))[^,]*' + aAnimationName + '[^,]*((\\s*,)|$)', 'g'), '')
 		.replace(/^\s*,/, '')
 		.replace(/,\s*$/, '')
-		.trim()
-	;
+		.trim();
+};
+
+ok.addAnimation = function (aElement, aAnimationName, aAnimationOther) {
+	var value;
+
+	if (!ok.hasAnimation(aElement, aAnimationName)) {
+		value = aAnimationName + ' ' + aAnimationOther;
+		if (aElement.style.animation != '') value = ',' + value;
+
+		aElement.style.animation += value;
+	}
 };
 
 ok.hasAnimation = function (aElement, aAnimationName) {
