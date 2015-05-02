@@ -56,7 +56,7 @@ ok.handleAnimationEndQueue = function (aEvt) {
 			delete aEvt.currentTarget[k];
 			k = null;
 
-			queue.callback({
+			setTimeout(queue.callback, 0, {
 				currentTarget: aEvt.currentTarget,
 				animationName: aEvt.animationName,
 				data: queue.data
