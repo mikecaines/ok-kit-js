@@ -243,6 +243,11 @@ ok.findCssRule = function (aRegExp, aRuleList) {
 	return rules.length > 0 ? rules[0] : null;
 };
 
+/**
+ * @param aAnimationName
+ * @param aKeyframeName
+ * @returns {CSSRule}
+ */
 ok.getCssKeyframe = function (aAnimationName, aKeyframeName) {
 	var animation = ok.findCssRule(new RegExp('(^|\\s)@keyframes ' + ok.escapeRegExp(aAnimationName) + '\\s*\\{'));
 	return animation ? ok.findCssRule(new RegExp('(^|\\s)' + aKeyframeName + '(\\s|$)'), animation.cssRules) : null;
