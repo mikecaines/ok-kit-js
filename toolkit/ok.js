@@ -95,6 +95,26 @@ ok.objectMerge = function (aObject1, aObject2) {
 	return merged;
 };
 
+ok.object2dIndexOf = function (aObject, aPath, aValue, aStrict) {
+	var strict = aStrict != null ? aStrict : false;
+	var k, value;
+
+	for (k in aObject) {
+		value = ok.objectGet(aObject[k], aPath);
+
+		if ((strict == false && value == aValue) || (strict == true && value === aValue)) {
+			return k;
+		}
+	}
+
+	return null;
+};
+
+ok.object2dFind = function (aObject, aPath, aValue, aStrict) {
+	var k = ok.object2dIndexOf(aObject, aPath, aValue, aStrict);
+	return (k !== null) ? aObject[k] : null;
+};
+
 ok.isVector = function (aObj) {
 	var i, k;
 
