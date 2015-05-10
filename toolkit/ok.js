@@ -229,7 +229,7 @@ ok.findCssRules = function (aRegExp, aRuleList) {
 		return matchedRules;
 	}
 
-	var i, rules;
+	var i, rules, tempRules, j;
 	var matchedRules = [];
 
 	if (aRuleList) {
@@ -245,7 +245,10 @@ ok.findCssRules = function (aRegExp, aRuleList) {
 			catch (ex) {}
 
 			if (rules) {
-				matchedRules = searchRules(rules, aRegExp);
+				tempRules = searchRules(rules, aRegExp);
+				for (j = 0; j < tempRules.length; j++) {
+					matchedRules.push(tempRules[j]);
+				}
 			}
 		}
 	}
