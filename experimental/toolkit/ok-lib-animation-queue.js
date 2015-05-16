@@ -68,3 +68,7 @@ ok.handleAnimationEndQueue = function (aEvt) {
 ok.handleAnimationRemoval = function (aEvt) {
 	ok.removeAnimation(aEvt.currentTarget, aEvt.animationName);
 };
+
+ok.animationDeferCall = function (aCallback) {
+	requestAnimationFrame(aCallback);
+};

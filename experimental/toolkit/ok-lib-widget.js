@@ -20,4 +20,3 @@ ok.Widget = function (aElement) {
 ok.Widget.prototype.getElement = function () {
 	return this._ow_element;
 };
-
