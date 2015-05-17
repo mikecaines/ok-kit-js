@@ -175,6 +175,10 @@ ok.randomFloat = function (aMin, aMax) {
 	return Math.random() * (aMax - aMin) + aMin;
 };
 
+ok.randomAdditiveInverse = function () {
+	return ok.randomInt(0, 1) == 0 ? 1 : -1;
+};
+
 ok.roundFloat = function (aFloat, aDecimals) {
 	var offset = Math.pow(10, aDecimals);
 	return Math.round(aFloat * offset) / offset;
