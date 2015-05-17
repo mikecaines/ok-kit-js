@@ -13,7 +13,13 @@ if (!self.ok) self.ok = {};
 
 
 
-ok.Widget = function (aElement) {
+/**
+ * @class ok.Widget
+ * @param {HTMLElement} aElement
+ * @param {Object=} aOptions
+ * @constructor
+ */
+ok.Widget = function (aElement, aOptions) {
 	this._ow_element = aElement;
 };
 
