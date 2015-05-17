@@ -37,18 +37,30 @@ ok.hasAnimation = function (aElement, aAnimationName) {
 		.search(new RegExp('(^|(,\\s*))[^,]*' + aAnimationName + '[^,]*((\\s*,)|$)', 'g'), '') > -1;
 };
 
-ok.queueOnAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
-	aElement['_okqaa_' + aAnimationName] = {
+ok.queueOnAnimationStart = function (aElement, aAnimationName, aCallback, aData) {
+	aElement['_okqas_' + aAnimationName] = {
 		callback: aCallback,
 		data: aData
 	};
 };
 
-ok.handleAnimationEndQueue = function (aEvt) {
+ok.queueOnAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
+	aElement['_okqae_' + aAnimationName] = {
+		callback: aCallback,
+		data: aData
+	};
+};
+
+ok.handleAnimationQueue = function (aEvt) {
+	var eventType = aEvt.type.substr(-3);
 	var queue, k;
 
 	if (aEvt.target === aEvt.currentTarget) {
-		k = '_okqaa_' + aEvt.animationName;
+		if (eventType == 'end') k = '_okqae_';
+		else if (eventType == 'art') k = '_okqas_';
+		else return;
+
+		k += aEvt.animationName;
 
 		if (k in aEvt.currentTarget) {
 			queue = aEvt.currentTarget[k];
