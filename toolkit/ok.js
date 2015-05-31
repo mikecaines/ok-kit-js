@@ -224,7 +224,7 @@ ok.findCssRules = function (aRegExp, aRuleList) {
 			}
 
 			if (aCssRules[j].cssText) {
-				if (aCssRules[j].cssText.match(aRegExp)) {
+				if (aCssRules[j].cssText.search(aRegExp) > -1) {
 					matchedRules.push(aCssRules[j]);
 				}
 			}
