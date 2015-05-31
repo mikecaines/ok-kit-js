@@ -5,11 +5,6 @@
 
 "use strict";
 
-/**
- * @namespace ok
- */
-if (!self.ok) self.ok = {};
-
 
 
 
