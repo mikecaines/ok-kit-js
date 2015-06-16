@@ -6,14 +6,14 @@
 "use strict";
 
 /**
- * @namespace ok
+ * @namespace Ok
  */
-if (!self.ok) self.ok = {};
+if (!self.Ok) self.Ok = {};
 
 
 
 
-ok.objectGet = function (aObject, aPath, aSeparator) {
+Ok.objectGet = function (aObject, aPath, aSeparator) {
 	var separator = aSeparator || '.';
 	var steps = (aPath+'').split(separator);
 	var node, i;
@@ -38,7 +38,7 @@ ok.objectGet = function (aObject, aPath, aSeparator) {
 	return null;
 };
 
-ok.objectSet = function (aObject, aPath, aValue, aSeparator) {
+Ok.objectSet = function (aObject, aPath, aValue, aSeparator) {
 	var separator = aSeparator || '.';
 	var steps = (aPath+'').split(separator);
 	var node, i;
@@ -59,11 +59,11 @@ ok.objectSet = function (aObject, aPath, aValue, aSeparator) {
 	node[steps[i]] = aValue;
 };
 
-ok.objectMerge = function (aObject1, aObject2) {
+Ok.objectMerge = function (aObject1, aObject2) {
 	var v1, v2, merged, k, arr;
 
-	v1 = ok.isVector(aObject1);
-	v2 = ok.isVector(aObject2);
+	v1 = Ok.isVector(aObject1);
+	v2 = Ok.isVector(aObject2);
 
 	if ((v1 && !v2) || (!v1 && v2)) {
 		throw "Cannot merge vector and non-vector.";
@@ -84,7 +84,7 @@ ok.objectMerge = function (aObject1, aObject2) {
 			&& aObject2[k] != null
 			&& (aObject2[k] instanceof Object)
 		) {
-			merged[k] = ok.objectMerge(merged[k], aObject2[k]);
+			merged[k] = Ok.objectMerge(merged[k], aObject2[k]);
 		}
 
 		else {
@@ -95,12 +95,12 @@ ok.objectMerge = function (aObject1, aObject2) {
 	return merged;
 };
 
-ok.object2dIndexOf = function (aObject, aPath, aValue, aStrict) {
+Ok.object2dIndexOf = function (aObject, aPath, aValue, aStrict) {
 	var strict = aStrict != null ? aStrict : false;
 	var k, value;
 
 	for (k in aObject) {
-		value = ok.objectGet(aObject[k], aPath);
+		value = Ok.objectGet(aObject[k], aPath);
 
 		if ((strict == false && value == aValue) || (strict == true && value === aValue)) {
 			return k;
@@ -110,12 +110,12 @@ ok.object2dIndexOf = function (aObject, aPath, aValue, aStrict) {
 	return null;
 };
 
-ok.object2dFind = function (aObject, aPath, aValue, aStrict) {
-	var k = ok.object2dIndexOf(aObject, aPath, aValue, aStrict);
+Ok.object2dFind = function (aObject, aPath, aValue, aStrict) {
+	var k = Ok.object2dIndexOf(aObject, aPath, aValue, aStrict);
 	return (k !== null) ? aObject[k] : null;
 };
 
-ok.isVector = function (aObj) {
+Ok.isVector = function (aObj) {
 	var i, k;
 
 	i = 0;
@@ -127,7 +127,7 @@ ok.isVector = function (aObj) {
 	return i > 0;
 };
 
-ok.strCamelToDash = function (aString) {
+Ok.strCamelToDash = function (aString) {
 	var str;
 
 	str = (aString+'').match(/((?:[A-Z]?[a-z]+)|(?:[0-9]+))/g);
@@ -137,7 +137,7 @@ ok.strCamelToDash = function (aString) {
 	return str;
 };
 
-ok.strDashToCamel = function (aString) {
+Ok.strDashToCamel = function (aString) {
 	var str = '';
 	var matches, c, i;
 
@@ -158,33 +158,33 @@ ok.strDashToCamel = function (aString) {
 	return str;
 };
 
-ok.strUpperCaseFirst = function (aString) {
+Ok.strUpperCaseFirst = function (aString) {
 	var str = aString+'';
 	return str.substr(0, 1).toUpperCase() + str.substr(1);
 };
 
-ok.pregQuote = function (aText) {
+Ok.pregQuote = function (aText) {
 	return (''+aText).replace(/([.*+?^${}()|\[\]\/\\])/g, "\\$1");
 };
 
-ok.randomInt = function (aMin, aMax) {
+Ok.randomInt = function (aMin, aMax) {
 	return Math.floor(Math.random() * (aMax - aMin + 1)) + aMin;
 };
 
-ok.randomFloat = function (aMin, aMax) {
+Ok.randomFloat = function (aMin, aMax) {
 	return Math.random() * (aMax - aMin) + aMin;
 };
 
-ok.randomAdditiveInverse = function () {
-	return ok.randomInt(0, 1) == 0 ? 1 : -1;
+Ok.randomAdditiveInverse = function () {
+	return Ok.randomInt(0, 1) == 0 ? 1 : -1;
 };
 
-ok.roundFloat = function (aFloat, aDecimals) {
+Ok.roundFloat = function (aFloat, aDecimals) {
 	var offset = Math.pow(10, aDecimals);
 	return Math.round(aFloat * offset) / offset;
 };
 
-ok.offsetTop = function (aElement) {
+Ok.offsetTop = function (aElement) {
 	var offset = 0;
 	var el = aElement;
 
@@ -196,7 +196,7 @@ ok.offsetTop = function (aElement) {
 	return offset;
 };
 
-ok.offsetLeft = function (aElement) {
+Ok.offsetLeft = function (aElement) {
 	var offset = 0;
 	var el = aElement;
 
@@ -213,7 +213,7 @@ ok.offsetLeft = function (aElement) {
  * @param {CSSRule[]=} aRuleList
  * @returns {Array}
  */
-ok.findCssRules = function (aRegExp, aRuleList) {
+Ok.findCssRules = function (aRegExp, aRuleList) {
 	function searchRules(aCssRules, aRegExp) {
 		var j;
 		var matchedRules = [];
@@ -265,12 +265,12 @@ ok.findCssRules = function (aRegExp, aRuleList) {
  * @param {CssRule=} aRuleList
  * @returns {*}
  */
-ok.findCssRule = function (aRegExp, aRuleList) {
-	var rules = ok.findCssRules(aRegExp, aRuleList);
+Ok.findCssRule = function (aRegExp, aRuleList) {
+	var rules = Ok.findCssRules(aRegExp, aRuleList);
 	return rules.length > 0 ? rules[0] : null;
 };
 
-ok.getAncestorByClassName = function (aElement, aClassName) {
+Ok.getAncestorByClassName = function (aElement, aClassName) {
 	var ancestor = null;
 	var el = aElement;
 
@@ -284,7 +284,7 @@ ok.getAncestorByClassName = function (aElement, aClassName) {
 	return ancestor;
 };
 
-ok.getAncestorByTagName = function (aElement, aTagName) {
+Ok.getAncestorByTagName = function (aElement, aTagName) {
 	var ancestor = null;
 	var el = aElement;
 
@@ -298,7 +298,7 @@ ok.getAncestorByTagName = function (aElement, aTagName) {
 	return ancestor;
 };
 
-ok.escapeRegExp = function (aString){
+Ok.escapeRegExp = function (aString){
 	return aString.replace(/([.*+?^${}()|\[\]\/\\])/g, '\\$1');
 };
 
@@ -308,7 +308,7 @@ ok.escapeRegExp = function (aString){
  * @param {Function=} aSubClass Optional subclass constructor.
  * @returns {Function} A reference to the subclass constructor.
  */
-ok.extendObject = function (aSuperClass, aSubClass) {
+Ok.extendObject = function (aSuperClass, aSubClass) {
 	var p, subClass;
 
 	if (aSubClass) {
@@ -316,10 +316,10 @@ ok.extendObject = function (aSuperClass, aSubClass) {
 	}
 
 	else {
-		ok.extendObject._oeo_counter++;
+		Ok.extendObject._oeo_counter++;
 
 		subClass = new Function(
-			"this._oeo_superClass" + ok.extendObject._oeo_counter + ".apply(this, arguments);"
+			"this._oeo_superClass" + Ok.extendObject._oeo_counter + ".apply(this, arguments);"
 		);
 	}
 
@@ -332,41 +332,41 @@ ok.extendObject = function (aSuperClass, aSubClass) {
 	subClass.prototype.constructor = subClass;
 
 	if (!aSubClass) {
-		subClass.prototype['_oeo_superClass' + ok.extendObject._oeo_counter] = aSuperClass;
+		subClass.prototype['_oeo_superClass' + Ok.extendObject._oeo_counter] = aSuperClass;
 	}
 
 	return subClass;
 };
-ok.extendObject._oeo_counter = -1;
+Ok.extendObject._oeo_counter = -1;
 
-ok.cloneObject = function (aObject) {
+Ok.cloneObject = function (aObject) {
 	return JSON.parse(JSON.stringify(aObject));
 };
 
 
 
 
-/** @class ok.HashMap */
-ok.HashMap = function (aData) {
+/** @class Ok.HashMap */
+Ok.HashMap = function (aData) {
 	this._ohm_data = (aData != null && aData.constructor === Object) ? aData : {};
 };
 
-ok.HashMap.prototype.getData = function () {
+Ok.HashMap.prototype.getData = function () {
 	return this._ohm_data;
 };
 
-ok.HashMap.prototype.get = function (aPath) {
-	return ok.objectGet(this._ohm_data, aPath);
+Ok.HashMap.prototype.get = function (aPath) {
+	return Ok.objectGet(this._ohm_data, aPath);
 };
 
-ok.HashMap.prototype.getAsString = function (aPath) {
+Ok.HashMap.prototype.getAsString = function (aPath) {
 	var value = this.get(aPath);
 	if (value == null) value = '';
 	else value = value.toString();
 	return value;
 };
 
-ok.HashMap.prototype.getAsObject = function (aPath) {
+Ok.HashMap.prototype.getAsObject = function (aPath) {
 	var value = this.get(aPath);
 	var isNull = value == null;
 	var obj, k;
@@ -392,7 +392,7 @@ ok.HashMap.prototype.getAsObject = function (aPath) {
 	return obj;
 };
 
-ok.HashMap.prototype.getAsArray = function (aPath) {
+Ok.HashMap.prototype.getAsArray = function (aPath) {
 	var value = this.get(aPath);
 	var isNull = value == null;
 	var arr, k;
@@ -418,10 +418,10 @@ ok.HashMap.prototype.getAsArray = function (aPath) {
 	return arr;
 };
 
-ok.HashMap.prototype.getAsBool = function (aPath) {
+Ok.HashMap.prototype.getAsBool = function (aPath) {
 	return this.get(aPath) == true;
 };
 
-ok.HashMap.prototype.set = function (aPath, aValue) {
-	ok.objectSet(this._ohm_data, aPath, aValue);
+Ok.HashMap.prototype.set = function (aPath, aValue) {
+	Ok.objectSet(this._ohm_data, aPath, aValue);
 };

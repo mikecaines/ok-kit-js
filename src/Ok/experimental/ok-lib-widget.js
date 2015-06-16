@@ -9,15 +9,15 @@
 
 
 /**
- * @class ok.Widget
+ * @class Ok.Widget
  * @param {HTMLElement} aElement
  * @param {Object=} aOptions
  * @constructor
  */
-ok.Widget = function (aElement, aOptions) {
+Ok.Widget = function (aElement, aOptions) {
 	this._ow_element = aElement;
 };
 
-ok.Widget.prototype.getElement = function () {
+Ok.Widget.prototype.getElement = function () {
 	return this._ow_element;
 };

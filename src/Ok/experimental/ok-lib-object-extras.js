@@ -15,7 +15,7 @@
  * @param aPropertyName
  * @returns {*}
  */
-ok.getSuperPropertyDescriptor = function (aObject, aPropertyName) {
+Ok.getSuperPropertyDescriptor = function (aObject, aPropertyName) {
 	var pd = null;
 	var obj = Object.getPrototypeOf(aObject);
 

@@ -13,51 +13,51 @@
  * @param aKeyframeName
  * @returns {CSSRule}
  */
-ok.getCssKeyframe = function (aAnimationName, aKeyframeName) {
-	var animation = ok.findCssRule(new RegExp('(^|\\s)@' + ok.escapeRegExp(ok.compat.cssKeyframes) + '\\s+' + ok.escapeRegExp(aAnimationName) + '\\s*\\{'));
-	return animation ? ok.findCssRule(new RegExp('(^|\\s)' + aKeyframeName + '(\\s|$)'), animation.cssRules) : null;
+Ok.getCssKeyframe = function (aAnimationName, aKeyframeName) {
+	var animation = Ok.findCssRule(new RegExp('(^|\\s)@' + Ok.escapeRegExp(Ok.compat.cssKeyframes) + '\\s+' + Ok.escapeRegExp(aAnimationName) + '\\s*\\{'));
+	return animation ? Ok.findCssRule(new RegExp('(^|\\s)' + aKeyframeName + '(\\s|$)'), animation.cssRules) : null;
 };
 
-ok.removeAnimation = function (aElement, aAnimationName) {
-	aElement.style[ok.compat.domAnimation] =
-		aElement.style[ok.compat.domAnimation]
+Ok.removeAnimation = function (aElement, aAnimationName) {
+	aElement.style[Ok.compat.domAnimation] =
+		aElement.style[Ok.compat.domAnimation]
 		.replace(new RegExp('(^|(,\\s*))[^,]*' + aAnimationName + '[^,]*((\\s*,)|$)', 'g'), '')
 		.replace(/^\s*,/, '')
 		.replace(/,\s*$/, '')
 		.trim();
 };
 
-ok.addAnimation = function (aElement, aAnimationName, aAnimationOther) {
+Ok.addAnimation = function (aElement, aAnimationName, aAnimationOther) {
 	var value;
 
-	if (!ok.hasAnimation(aElement, aAnimationName)) {
+	if (!Ok.hasAnimation(aElement, aAnimationName)) {
 		value = aAnimationName + ' ' + aAnimationOther;
-		if (aElement.style[ok.compat.domAnimation] != '') value = ',' + value;
+		if (aElement.style[Ok.compat.domAnimation] != '') value = ',' + value;
 
-		aElement.style[ok.compat.domAnimation] += value;
+		aElement.style[Ok.compat.domAnimation] += value;
 	}
 };
 
-ok.hasAnimation = function (aElement, aAnimationName) {
-	return aElement.style[ok.compat.domAnimation]
+Ok.hasAnimation = function (aElement, aAnimationName) {
+	return aElement.style[Ok.compat.domAnimation]
 		.search(new RegExp('(^|(,\\s*))[^,]*' + aAnimationName + '[^,]*((\\s*,)|$)', 'g'), '') > -1;
 };
 
-ok.queueOnAnimationStart = function (aElement, aAnimationName, aCallback, aData) {
+Ok.queueOnAnimationStart = function (aElement, aAnimationName, aCallback, aData) {
 	aElement['_okqas_' + aAnimationName] = {
 		callback: aCallback,
 		data: aData
 	};
 };
 
-ok.queueOnAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
+Ok.queueOnAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
 	aElement['_okqae_' + aAnimationName] = {
 		callback: aCallback,
 		data: aData
 	};
 };
 
-ok.handleAnimationQueue = function (aEvt) {
+Ok.handleAnimationQueue = function (aEvt) {
 	var eventType = aEvt.type.substr(-2);
 	var queue, k;
 
@@ -83,10 +83,10 @@ ok.handleAnimationQueue = function (aEvt) {
 	}
 };
 
-ok.handleAnimationRemoval = function (aEvt) {
-	ok.removeAnimation(aEvt.currentTarget, aEvt.animationName);
+Ok.handleAnimationRemoval = function (aEvt) {
+	Ok.removeAnimation(aEvt.currentTarget, aEvt.animationName);
 };
 
-ok.animationDeferCall = function (aCallback) {
+Ok.animationDeferCall = function (aCallback) {
 	requestAnimationFrame(aCallback);
 };

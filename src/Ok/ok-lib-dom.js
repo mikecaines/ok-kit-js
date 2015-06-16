@@ -5,81 +5,84 @@
 
 "use strict";
 
-var ok = ok || {};
+/**
+ * @namespace Ok
+ */
+if (!self.Ok) self.Ok = {};
 
-ok.DOM_NODE_ELEMENT = 1;
-ok.DOM_NODE_DOCUMENT = 9;
-ok.DOM_NODE_DOCUMENT_FRAGMENT = 11;
+Ok.DOM_NODE_ELEMENT = 1;
+Ok.DOM_NODE_DOCUMENT = 9;
+Ok.DOM_NODE_DOCUMENT_FRAGMENT = 11;
 
 
 /**
- * @class ok.DomContext
+ * @class Ok.DomContext
  */
-ok.DomContext = function () {
+Ok.DomContext = function () {
 
 };
 
-ok.DomContext.prototype.makeImplementation = function (aContext) {
-	return new ok.DomImplementation(aContext);
+Ok.DomContext.prototype.makeImplementation = function (aContext) {
+	return new Ok.DomImplementation(aContext);
 };
 
-ok.DomContext.prototype.makeDocument = function (aImplementation) {
-	return new ok.DomDocument(aImplementation);
+Ok.DomContext.prototype.makeDocument = function (aImplementation) {
+	return new Ok.DomDocument(aImplementation);
 };
 
-ok.DomContext.prototype.makeElement = function (aDocument, aNodeName) {
-	return new ok.DomElement(aDocument, aNodeName);
+Ok.DomContext.prototype.makeElement = function (aDocument, aNodeName) {
+	return new Ok.DomElement(aDocument, aNodeName);
 };
 
-ok.DomContext.prototype.makeDocumentFragment = function (aDocument) {
-	return new ok.DomDocumentFragment(aDocument);
+Ok.DomContext.prototype.makeDocumentFragment = function (aDocument) {
+	return new Ok.DomDocumentFragment(aDocument);
 };
 
-ok.DomContext.prototype.createImplementation = function () {
+Ok.DomContext.prototype.createImplementation = function () {
 	return this.makeImplementation(this);
 };
 
 
 /**
- * @class ok.MinimalDomContext
- * @extends ok.DomContext
+ * @class Ok.MinimalDomContext
+ * @extends Ok.DomContext
  */
-ok.MinimalDomContext = function () {
-	ok.DomContext.call(this);
+Ok.MinimalDomContext = function () {
+	Ok.DomContext.call(this);
 };
-ok.extendObject(ok.DomContext, ok.MinimalDomContext);
+Ok.extendObject(Ok.DomContext, Ok.MinimalDomContext);
 
 
 /**
- * @class ok.NativeDomContext
- * @extends ok.DomContext
+ * @class Ok.NativeDomContext
+ * @extends Ok.DomContext
  */
-ok.NativeDomContext = function () {
-	ok.DomContext.call(this);
+Ok.NativeDomContext = function () {
+	Ok.DomContext.call(this);
 };
-ok.extendObject(ok.DomContext, ok.NativeDomContext);
+Ok.extendObject(Ok.DomContext, Ok.NativeDomContext);
 
-ok.NativeDomContext.prototype.makeDocument = function (aImplementation) {
+Ok.NativeDomContext.prototype.makeDocument = function (aImplementation) {
 	return window.document;
 };
 
 
 /**
- * @class ok.DomImplementation
+ * @class Ok.DomImplementation
  */
-ok.DomImplementation = function (aContext) {
+Ok.DomImplementation = function (aContext) {
 	this.context = aContext;
 };
 
-ok.DomImplementation.prototype.createDocument = function () {
+Ok.DomImplementation.prototype.createDocument = function () {
 	return this.context.makeDocument(this);
 };
 
 
 /**
- * @class ok.DomNode
+ * @class Ok.DomNode
  */
-ok.DomNode = function (aOwnerDocument, aNodeType, aNodeName) {
+Ok.DomNode = function (aOwnerDocument, aNodeType, aNodeName) {
 	this.ownerDocument = aOwnerDocument;
 	this.nodeType = aNodeType;
 	this.nodeName = aNodeName;
@@ -87,81 +90,81 @@ ok.DomNode = function (aOwnerDocument, aNodeType, aNodeName) {
 
 
 /**
- * @class ok.DomDocumentFragment
- * @extends ok.DomNode
+ * @class Ok.DomDocumentFragment
+ * @extends Ok.DomNode
  */
-ok.DomDocumentFragment = function (aOwnerDocument) {
-	ok.DomNode.call(this, aOwnerDocument, ok.DOM_NODE_DOCUMENT_FRAGMENT, '#document-fragment');
+Ok.DomDocumentFragment = function (aOwnerDocument) {
+	Ok.DomNode.call(this, aOwnerDocument, Ok.DOM_NODE_DOCUMENT_FRAGMENT, '#document-fragment');
 
 	this.ownerDocument = aOwnerDocument;
 	this.children = [];
 };
-ok.extendObject(ok.DomNode, ok.DomDocumentFragment);
+Ok.extendObject(Ok.DomNode, Ok.DomDocumentFragment);
 
-ok.DomDocumentFragment.prototype.appendChild = function (aElement) {
+Ok.DomDocumentFragment.prototype.appendChild = function (aElement) {
 	this.children.push(aElement);
 	aElement.parentNode = this;
 };
 
 
 /**
- * @class ok.DomDocument
+ * @class Ok.DomDocument
  */
-ok.DomDocument = function (aDomImplementation) {
-	ok.DomNode.call(this, this, ok.DOM_NODE_DOCUMENT, '#document');
+Ok.DomDocument = function (aDomImplementation) {
+	Ok.DomNode.call(this, this, Ok.DOM_NODE_DOCUMENT, '#document');
 
 	this.implementation = aDomImplementation;
 };
-ok.extendObject(ok.DomNode, ok.DomDocument);
+Ok.extendObject(Ok.DomNode, Ok.DomDocument);
 
-ok.DomDocument.prototype.createElement = function (aName) {
+Ok.DomDocument.prototype.createElement = function (aName) {
 	return this.implementation.context.makeElement(this, aName);
 };
 
-ok.DomDocument.prototype.createDocumentFragment = function () {
+Ok.DomDocument.prototype.createDocumentFragment = function () {
 	return this.implementation.context.makeDocumentFragment(this);
 };
 
 
 /**
- * @class ok.DomElement
+ * @class Ok.DomElement
  */
-ok.DomElement = function (aOwnerDocument, aName) {
-	ok.DomNode.call(this, aOwnerDocument, ok.DOM_NODE_ELEMENT, aName.toUpperCase());
+Ok.DomElement = function (aOwnerDocument, aName) {
+	Ok.DomNode.call(this, aOwnerDocument, Ok.DOM_NODE_ELEMENT, aName.toUpperCase());
 
 	this.children = [];
 	this.attributes = [];
 	this.textContent = '';
 	this.parentNode = null;
 };
-ok.extendObject(ok.DomNode, ok.DomElement);
+Ok.extendObject(Ok.DomNode, Ok.DomElement);
 
-ok.DomElement.prototype.appendChild = function (aElement) {
+Ok.DomElement.prototype.appendChild = function (aElement) {
 	this.children.push(aElement);
 	aElement.parentNode = this;
 };
 
-ok.DomElement.prototype.setAttribute = function (aName, aValue) {
+Ok.DomElement.prototype.setAttribute = function (aName, aValue) {
 	this.attributes.push({
 		name: ''+ aName,
 		value: ''+ aValue
 	});
 };
 
-ok.DomElement.prototype.appendChild = function (aElement) {
+Ok.DomElement.prototype.appendChild = function (aElement) {
 	this.children.push(aElement);
 	aElement.parentNode = this;
 };
 
 
 /**
- * @class ok.HtmlDomSerializer
+ * @class Ok.HtmlDomSerializer
  */
-ok.HtmlDomSerializer = function () {
+Ok.HtmlDomSerializer = function () {
 
 };
 
-ok.HtmlDomSerializer.prototype._escape = function (aText) {
+Ok.HtmlDomSerializer.prototype._escape = function (aText) {
 	var i, len, html, code;
 
 	html = '';
@@ -175,7 +178,7 @@ ok.HtmlDomSerializer.prototype._escape = function (aText) {
 	return html;
 };
 
-ok.HtmlDomSerializer.prototype._serializeElement = function (aElement) {
+Ok.HtmlDomSerializer.prototype._serializeElement = function (aElement) {
 	var elementText, i;
 	var children, attributes, attribute, len, nodeName;
 
@@ -209,23 +212,23 @@ ok.HtmlDomSerializer.prototype._serializeElement = function (aElement) {
 	return elementText;
 };
 
-ok.HtmlDomSerializer.prototype.serializeToString = function (aNode) {
+Ok.HtmlDomSerializer.prototype.serializeToString = function (aNode) {
 	return this._serializeElement(aNode);
 };
 
 
 /**
- * @class ok.NodeDomCopier
+ * @class Ok.NodeDomCopier
  */
-ok.NodeDomCopier = function () {
+Ok.NodeDomCopier = function () {
 
 };
 
 /** @private */
-ok.NodeDomCopier.prototype._copyNode = function (aNode, aDocument, aDeep) {
+Ok.NodeDomCopier.prototype._copyNode = function (aNode, aDocument, aDeep) {
 	var el, i, len, attributes, attribute, children;
 
-	if (aNode.nodeType == ok.DOM_NODE_DOCUMENT_FRAGMENT) {
+	if (aNode.nodeType == Ok.DOM_NODE_DOCUMENT_FRAGMENT) {
 		el = aDocument.createDocumentFragment();
 	}
 
@@ -256,22 +259,22 @@ ok.NodeDomCopier.prototype._copyNode = function (aNode, aDocument, aDeep) {
 	return el;
 };
 
-ok.NodeDomCopier.prototype.copyNodeToNode = function (aNode, aDocument, aDeep) {
+Ok.NodeDomCopier.prototype.copyNodeToNode = function (aNode, aDocument, aDeep) {
 	return this._copyNode(aNode, aDocument, aDeep != undefined ? aDeep : true);
 };
 
 
 /**
- * @class ok.JsonDomCopier
+ * @class Ok.JsonDomCopier
  */
-ok.JsonDomCopier = function () {
+Ok.JsonDomCopier = function () {
 
 };
 
 /**
  * @private
  */
-ok.JsonDomCopier.prototype._copyNode = function (aNode, aDeep) {
+Ok.JsonDomCopier.prototype._copyNode = function (aNode, aDeep) {
 	var el, i, len, attributes, attribute, children, child;
 
 	el = {
@@ -311,10 +314,10 @@ ok.JsonDomCopier.prototype._copyNode = function (aNode, aDeep) {
 /**
  * @private
  */
-ok.JsonDomCopier.prototype._copyJson = function (aJson, aDocument, aDeep) {
+Ok.JsonDomCopier.prototype._copyJson = function (aJson, aDocument, aDeep) {
 	var el, i, len, attributes, attribute, children;
 
-	if (aJson.nodeType == ok.DOM_NODE_DOCUMENT_FRAGMENT) {
+	if (aJson.nodeType == Ok.DOM_NODE_DOCUMENT_FRAGMENT) {
 		el = aDocument.createDocumentFragment();
 	}
 
@@ -345,29 +348,29 @@ ok.JsonDomCopier.prototype._copyJson = function (aJson, aDocument, aDeep) {
 	return el;
 };
 
-ok.JsonDomCopier.prototype.copyNodeToJson = function (aNode, aDeep) {
+Ok.JsonDomCopier.prototype.copyNodeToJson = function (aNode, aDeep) {
 	return this._copyNode(aNode, aDeep != undefined ? aDeep : true);
 };
 
-ok.JsonDomCopier.prototype.copyJsonToNode = function (aJson, aDocument, aDeep) {
+Ok.JsonDomCopier.prototype.copyJsonToNode = function (aJson, aDocument, aDeep) {
 	return this._copyJson(aJson, aDocument, aDeep != undefined ? aDeep : true);
 };
 
 
 /**
- * @class ok.OneWayStaticDomDiffer
+ * @class Ok.OneWayStaticDomDiffer
  */
-ok.OneWayStaticDomDiffer = function () {
+Ok.OneWayStaticDomDiffer = function () {
 
 };
 
-ok.OneWayStaticDomDiffer.DIFF_ATTRIBUTE = 1;
-ok.OneWayStaticDomDiffer.DIFF_TEXT = 2;
+Ok.OneWayStaticDomDiffer.DIFF_ATTRIBUTE = 1;
+Ok.OneWayStaticDomDiffer.DIFF_TEXT = 2;
 
 /**
  * @private
  */
-ok.OneWayStaticDomDiffer.prototype._getLookup = function (aAttrs) {
+Ok.OneWayStaticDomDiffer.prototype._getLookup = function (aAttrs) {
 	var lookup, i;
 
 	lookup = {};
@@ -382,14 +385,14 @@ ok.OneWayStaticDomDiffer.prototype._getLookup = function (aAttrs) {
 /**
  * @private
  */
-ok.OneWayStaticDomDiffer.prototype._getSelector = function (aContextNode, aTopNode) {
+Ok.OneWayStaticDomDiffer.prototype._getSelector = function (aContextNode, aTopNode) {
 	var node, attrs, selector, part;
 
 	selector = '';
 
 	node = aContextNode;
 	do {
-		attrs = ok.OneWayStaticDomDiffer.prototype._getLookup(node.attributes);
+		attrs = Ok.OneWayStaticDomDiffer.prototype._getLookup(node.attributes);
 
 		part = node.nodeName;
 		if ('class' in attrs) {
@@ -410,12 +413,12 @@ ok.OneWayStaticDomDiffer.prototype._getSelector = function (aContextNode, aTopNo
 /**
  * @private
  */
-ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContextNode, aTopNode) {
+Ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContextNode, aTopNode) {
 	var diffs, childDiffs, i, len, attrs1, attrs2, attr2, children2, children1;
 
 	diffs = [];
 
-	if (aNode1.nodeType == ok.DOM_NODE_ELEMENT) {
+	if (aNode1.nodeType == Ok.DOM_NODE_ELEMENT) {
 		attrs1 = this._getLookup(aNode1.attributes);
 
 		attrs2 = aNode2.attributes;
@@ -425,7 +428,7 @@ ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContext
 
 			if (!(attr2.name in attrs1 && attr2.value == attrs1[attr2.name])) {
 				diffs.push({
-					type: ok.OneWayStaticDomDiffer.DIFF_ATTRIBUTE,
+					type: Ok.OneWayStaticDomDiffer.DIFF_ATTRIBUTE,
 					name: attr2.name,
 					value: attr2.value,
 					context: aContextNode ? this._getSelector(aContextNode, aTopNode) : null
@@ -448,7 +451,7 @@ ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContext
 	else {
 		if (aNode2.textContent != aNode1.textContent) {
 			diffs.push({
-				type: ok.OneWayStaticDomDiffer.DIFF_TEXT,
+				type: Ok.OneWayStaticDomDiffer.DIFF_TEXT,
 				value: aNode2.textContent,
 				context: aContextNode ? this._getSelector(aContextNode, aTopNode) : null
 			});
@@ -458,6 +461,6 @@ ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContext
 	return diffs;
 };
 
-ok.OneWayStaticDomDiffer.prototype.compareNodes = function (aNode1, aNode2) {
+Ok.OneWayStaticDomDiffer.prototype.compareNodes = function (aNode1, aNode2) {
 	return this._compare(aNode1, aNode2, null, aNode1);
 };
