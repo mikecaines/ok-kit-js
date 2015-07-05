@@ -16,32 +16,32 @@ if (!Ok.compat) {
 
 		var prefixes = {
 			animation: {
+				start: 'animationstart',
 				end: 'animationend',
-				key: 'keyframes',
-				suf: ''
+				key: 'keyframes'
 			},
 
 			WebkitAnimation: {
+				start: 'webkitAnimationStart',
 				end: 'webkitAnimationEnd',
-				key: '-webkit-keyframes',
-				suf: '-webkit'
+				key: '-webkit-keyframes'
 			}
 		};
 
 		if (domAnimation in prefixes) {
 			Ok.compat.domAnimation = domAnimation;
 			Ok.compat.domAnimationName = domAnimation + 'Name';
+			Ok.compat.eventAnimationstart = prefixes[domAnimation].start;
 			Ok.compat.eventAnimationend = prefixes[domAnimation].end;
 			Ok.compat.cssKeyframes = prefixes[domAnimation].key;
-			Ok.compat.cssFileSuffix = prefixes[domAnimation].suf;
 		}
 
 		else {
 			Ok.compat.domAnimation = false;
 			Ok.compat.domAnimationName = false;
+			Ok.compat.eventAnimationstart = false;
 			Ok.compat.eventAnimationend = false;
 			Ok.compat.cssKeyframes = false;
-			Ok.compat.cssFileSuffix = '';
 		}
 	})();
 }
