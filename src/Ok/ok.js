@@ -299,7 +299,7 @@ Ok.getAncestorByTagName = function (aElement, aTagName) {
 };
 
 Ok.escapeRegExp = function (aString){
-	return aString.replace(/([.*+?^${}()|\[\]\/\\])/g, '\\$1');
+	return (aString+'').replace(/([.*+?^${}()|\[\]\/\\])/g, '\\$1');
 };
 
 /**
