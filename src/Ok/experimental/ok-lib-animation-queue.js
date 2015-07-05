@@ -18,23 +18,98 @@ Ok.getCssKeyframe = function (aAnimationName, aKeyframeName) {
 	return animation ? Ok.findCssRule(new RegExp('(^|\\s)' + aKeyframeName + '(\\s|$)'), animation.cssRules) : null;
 };
 
-Ok.removeAnimation = function (aElement, aAnimationName) {
-	aElement.style[Ok.compat.domAnimation] =
-		aElement.style[Ok.compat.domAnimation]
-		.replace(new RegExp('(^|(,\\s*))[^,]*' + aAnimationName + '[^,]*((\\s*,)|$)', 'g'), '')
-		.replace(/^\s*,/, '')
-		.replace(/,\s*$/, '')
-		.trim();
+Ok.serializeAnimation = function (aObject) {
+	var str = '';
+
+	if (aObject.name) str += ' ' + aObject.name;
+	if (aObject.duration) str += ' ' + aObject.duration;
+	if (aObject.timingFunction) str += ' ' + aObject.timingFunction;
+	if (aObject.delay) str += ' ' + aObject.delay;
+	if (aObject.iterationCount) str += ' ' + aObject.iterationCount;
+	if (aObject.direction) str += ' ' + aObject.direction;
+	if (aObject.fillMode) str += ' ' + aObject.fillMode;
+	if (aObject.playState) str += ' ' + aObject.playState;
+
+	return str;
 };
 
-Ok.addAnimation = function (aElement, aAnimationName, aAnimationOther) {
-	var value;
+Ok.parseAnimation = function (aStr) {
+	if (aStr == null || aStr.trim() == '') {
+		return null;
+	}
 
-	if (!Ok.hasAnimation(aElement, aAnimationName)) {
-		value = aAnimationName + ' ' + aAnimationOther;
-		if (aElement.style[Ok.compat.domAnimation] != '') value = ',' + value;
+	var matches = (aStr+'').split(/\s/);
 
-		aElement.style[Ok.compat.domAnimation] += value;
+	return {
+		name: matches[0] || '',
+		duration: matches[1] || '',
+		timingFunction: matches[2] || '',
+		delay: matches[3] || '',
+		iterationCount: matches[4] || '',
+		direction: matches[5] || '',
+		fillMode: matches[6] || '',
+		playState: matches[7] || ''
+	}
+};
+
+Ok.setAnimation = function (aElement, aAnimation) {
+	var animation = aAnimation && aAnimation.length ? Ok.parseAnimation(aAnimation) : aAnimation;
+
+	if (Ok.compat.eventAnimationstart) {
+		if (animation) {
+			if (Ok.hasAnimation(aElement, animation.name)) {
+				aElement.style[Ok.compat.domAnimation] = '';
+
+				Ok.deferAnimationCall(function () {
+					//FUTURE: use new Function() for perf
+					aElement.style[Ok.compat.domAnimation] = aAnimation.length ? aAnimation : Ok.serializeAnimation(aAnimation);
+				});
+			}
+
+			else {
+				aElement.style[Ok.compat.domAnimation] = aAnimation.length ? aAnimation : Ok.serializeAnimation(aAnimation);
+			}
+		}
+
+		else {
+			aElement.style[Ok.compat.domAnimation] = '';
+		}
+	}
+
+	else {
+		if (animation) {
+			if (aElement._Ok_oas && aElement._Ok_oas.a == animation.name) {
+				if (aElement._Ok_oas.c) {
+					aElement._Ok_oas.c({
+						currentTarget: aElement,
+						animationName: aElement._Ok_oas.a,
+						data: aElement._Ok_oas.d
+					});
+				}
+
+				aElement._Ok_oas.r({
+					currentTarget: aElement,
+					animationName: aElement._Ok_oas.a,
+					elapsedTime: 0
+				});
+			}
+
+			if (aElement._Ok_oae && aElement._Ok_oae.a == animation.name) {
+				if (aElement._Ok_oae.c) {
+					aElement._Ok_oae.c({
+						currentTarget: aElement,
+						animationName: aElement._Ok_oae.a,
+						data: aElement._Ok_oae.d
+					});
+				}
+
+				aElement._Ok_oae.r({
+					currentTarget: aElement,
+					animationName: aElement._Ok_oae.a,
+					elapsedTime: 0
+				});
+			}
+		}
 	}
 };
 
@@ -43,50 +118,102 @@ Ok.hasAnimation = function (aElement, aAnimationName) {
 		.search(new RegExp('(^|(,\\s*))[^,]*' + aAnimationName + '[^,]*((\\s*,)|$)', 'g'), '') > -1;
 };
 
-Ok.queueOnAnimationStart = function (aElement, aAnimationName, aCallback, aData) {
-	aElement['_okqas_' + aAnimationName] = {
-		callback: aCallback,
-		data: aData
-	};
+Ok.deferAnimationCall = function (aCallback) {
+	requestAnimationFrame(aCallback);
 };
 
-Ok.queueOnAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
-	aElement['_okqae_' + aAnimationName] = {
-		callback: aCallback,
-		data: aData
-	};
+Ok.onAnimationStart = function (aElement, aAnimationName, aCallback, aData) {
+	return new Promise(function (resolve) {
+		aElement._Ok_oas = {
+			c: aCallback,
+			d: aData,
+			r: resolve,
+			a: aAnimationName
+		};
+
+
+		if (Ok.compat.eventAnimationstart) {
+			aElement.addEventListener(Ok.compat.eventAnimationstart, Ok.onAnimationStart._handleCssAnimationStart);
+		}
+
+		else {
+			Ok.onAnimationStart._handleCssAnimationStart.call(aElement, {
+				currentTarget: aElement,
+				animationName: aAnimationName
+			});
+		}
+	});
 };
+Ok.onAnimationStart._handleCssAnimationStart = function (aEvt) {
+	var item;
 
-Ok.handleAnimationQueue = function (aEvt) {
-	var eventType = aEvt.type.substr(-2);
-	var queue, k;
+	if (aEvt.currentTarget === aEvt.target) {
+		if (aEvt.currentTarget._Ok_oas.a == aEvt.animationName) {
+			item = aEvt.currentTarget._Ok_oas;
+			delete aEvt.currentTarget._Ok_oas;
+			aEvt.currentTarget.removeEventListener(Ok.compat.eventAnimationstart, Ok.onAnimationStart._handleCssAnimationStart);
 
-	if (aEvt.target === aEvt.currentTarget) {
-		if (eventType == 'nd') k = '_okqae_';
-		else if (eventType == 'rt') k = '_okqas_';
-		else return;
+			if (item.c) {
+				item.c({
+					currentTarget: aEvt.currentTarget,
+					animationName: aEvt.animationName,
+					data: item.d
+				});
+			}
 
-		k += aEvt.animationName;
-
-		if (k in aEvt.currentTarget) {
-			queue = aEvt.currentTarget[k];
-
-			delete aEvt.currentTarget[k];
-			k = null;
-
-			setTimeout(queue.callback, 0, {
+			item.r({
 				currentTarget: aEvt.currentTarget,
 				animationName: aEvt.animationName,
-				data: queue.data
+				elapsedTime: aEvt.elapsedTime || 0
 			});
 		}
 	}
 };
 
-Ok.handleAnimationRemoval = function (aEvt) {
-	Ok.removeAnimation(aEvt.currentTarget, aEvt.animationName);
-};
+Ok.onAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
+	return new Promise(function (resolve) {
+		aElement._Ok_oae = {
+			c: aCallback,
+			d: aData,
+			r: resolve,
+			a: aAnimationName
+		};
 
-Ok.animationDeferCall = function (aCallback) {
-	requestAnimationFrame(aCallback);
+
+		if (Ok.compat.eventAnimationend) {
+			aElement.addEventListener(Ok.compat.eventAnimationend, Ok.onAnimationEnd._handleCssAnimationEnd);
+		}
+
+		else {
+			Ok.onAnimationEnd._handleCssAnimationEnd.call(aElement, {
+				currentTarget: aElement,
+				animationName: aAnimationName
+			});
+		}
+	});
+};
+Ok.onAnimationEnd._handleCssAnimationEnd = function (aEvt) {
+	var item;
+
+	if (aEvt.currentTarget === aEvt.target) {
+		if (aEvt.currentTarget._Ok_oae.a == aEvt.animationName) {
+			item = aEvt.currentTarget._Ok_oae;
+			delete aEvt.currentTarget._Ok_oae;
+			aEvt.currentTarget.removeEventListener(Ok.compat.eventAnimationend, Ok.onAnimationEnd._handleCssAnimationEnd);
+
+			if (item.c) {
+				item.c({
+					currentTarget: aEvt.currentTarget,
+					animationName: aEvt.animationName,
+					data: item.d
+				});
+			}
+
+			item.r({
+				currentTarget: aEvt.currentTarget,
+				animationName: aEvt.animationName,
+				elapsedTime: aEvt.elapsedTime || 0
+			});
+		}
+	}
 };
