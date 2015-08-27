@@ -13,6 +13,12 @@ if (!self.Ok) self.Ok = {};
 
 
 
+Ok.defineNamespace = function (aNamespace) {
+	if (!Ok.objectGet(self, aNamespace)) {
+		Ok.objectSet(self, aNamespace, {});
+	}
+};
+
 Ok.objectGet = function (aObject, aPath, aSeparator) {
 	var separator = aSeparator || '.';
 	var steps = (aPath+'').split(separator);
