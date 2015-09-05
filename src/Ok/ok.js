@@ -327,17 +327,29 @@ Ok.escapeRegExp = function (aString){
 /**
  * Provides inheritance.
  * @param {Function} aSuperClass
- * @param {Function=} aSubClass Optional subclass constructor.
+ * @param {Function|Object=} aSubClass Optional subclass constructor.
  * @returns {Function} A reference to the subclass constructor.
  */
 Ok.extendObject = function (aSuperClass, aSubClass) {
-	var p, subClass;
+	var p, subClass, subMembers, hasSubConstructor;
 
 	if (aSubClass) {
-		subClass = aSubClass;
+		if ((typeof aSubClass) == 'function') {
+			subClass = aSubClass;
+			hasSubConstructor = true;
+		}
+
+		else {
+			if (aSubClass.hasOwnProperty('constructor')) {
+				subClass = aSubClass.constructor;
+			}
+
+			subMembers = aSubClass;
+			delete subMembers.constructor;
+		}
 	}
 
-	else {
+	if (!subClass) {
 		Ok.extendObject._oeo_counter++;
 
 		subClass = new Function(
@@ -345,15 +357,23 @@ Ok.extendObject = function (aSuperClass, aSubClass) {
 		);
 	}
 
-	//copy 'static' members of aSuperClass to aSubClass
+	//copy 'static' methods of aSuperClass to aSubClass
 	for (p in aSuperClass) {
-		subClass[p] = aSuperClass[p];
+		if ((typeof aSuperClass[p]) == 'function') {
+			subClass[p] = aSuperClass[p];
+		}
 	}
 
 	subClass.prototype = Object.create(aSuperClass.prototype);
 	subClass.prototype.constructor = subClass;
 
-	if (!aSubClass) {
+	if (subMembers) {
+		for (p in subMembers) {
+			subClass.prototype[p] = subMembers[p];
+		}
+	}
+
+	if (!hasSubConstructor) {
 		subClass.prototype['_oeo_superClass' + Ok.extendObject._oeo_counter] = aSuperClass;
 	}
 
