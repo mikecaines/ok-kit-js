@@ -101,6 +101,22 @@ Ok.objectMerge = function (aObject1, aObject2) {
 	return merged;
 };
 
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+ * @type {Function}
+ */
+Ok.objectAssign = Object.assign || function (aObject1, aObjectN) {
+	var i, k;
+
+	for (i = 1; i < arguments.length; i++) {
+		for (k in arguments[i]) {
+			aObject1[k] = arguments[i][k];
+		}
+	}
+
+	return aObject1;
+};
+
 Ok.object2dIndexOf = function (aObject, aPath, aValue, aStrict) {
 	var strict = aStrict != null ? aStrict : false;
 	var k, value;
