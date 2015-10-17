@@ -1,3 +1,7 @@
 {
-  "name": "mikecaines/ok-kit-js"
+  "name": "mikecaines/ok-kit-js",
+
+  "support": {
+    "source": "https://github.com/mikecaines/ok-kit-js.git"
+  }
 }
