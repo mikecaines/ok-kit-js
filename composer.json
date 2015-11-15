@@ -1,7 +1,7 @@
 {
-  "name": "mikecaines/ok-kit-js",
+	"name": "solarfield/ok-kit-js",
 
-  "support": {
-    "source": "https://github.com/mikecaines/ok-kit-js.git"
-  }
+	"support": {
+		"source": "https://github.com/solarfield/ok-kit-js.git"
+	}
 }

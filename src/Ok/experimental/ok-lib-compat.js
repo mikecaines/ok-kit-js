@@ -1,5 +1,5 @@
 /**
- * {@link http://github.com/mikecaines/ok-kit-js}
+ * {@link http://github.com/solarfield/ok-kit-js}
  * {@licence https://gnu.org/licenses/lgpl.html}
  */
 
