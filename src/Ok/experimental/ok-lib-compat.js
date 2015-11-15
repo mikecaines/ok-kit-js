@@ -12,7 +12,7 @@ if (!Ok.compat) {
 	Ok.compat = {};
 
 	(function () {
-		var domAnimation = Modernizr.prefixed('animation');
+		var domAnimation = window.Modernizr && Modernizr.prefixed && Modernizr.prefixed('animation');
 
 		var prefixes = {
 			animation: {
