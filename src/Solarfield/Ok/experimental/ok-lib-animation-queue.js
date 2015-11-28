@@ -13,12 +13,12 @@
  * @param aKeyframeName
  * @returns {CSSRule}
  */
-Ok.getCssKeyframe = function (aAnimationName, aKeyframeName) {
-	var animation = Ok.findCssRule(new RegExp('(^|\\s)@' + Ok.escapeRegExp(Ok.compat.cssKeyframes) + '\\s+' + Ok.escapeRegExp(aAnimationName) + '\\s*\\{'));
-	return animation ? Ok.findCssRule(new RegExp('(^|\\s)' + aKeyframeName + '(\\s|$)'), animation.cssRules) : null;
+Solarfield.Ok.getCssKeyframe = function (aAnimationName, aKeyframeName) {
+	var animation = Solarfield.Ok.findCssRule(new RegExp('(^|\\s)@' + Solarfield.Ok.escapeRegExp(Solarfield.Ok.compat.cssKeyframes) + '\\s+' + Solarfield.Ok.escapeRegExp(aAnimationName) + '\\s*\\{'));
+	return animation ? Solarfield.Ok.findCssRule(new RegExp('(^|\\s)' + aKeyframeName + '(\\s|$)'), animation.cssRules) : null;
 };
 
-Ok.serializeAnimation = function (aObject) {
+Solarfield.Ok.serializeAnimation = function (aObject) {
 	var str = '';
 
 	if (aObject.name) str += ' ' + aObject.name;
@@ -33,7 +33,7 @@ Ok.serializeAnimation = function (aObject) {
 	return str;
 };
 
-Ok.parseAnimation = function (aStr) {
+Solarfield.Ok.parseAnimation = function (aStr) {
 	if (aStr == null || aStr.trim() == '') {
 		return null;
 	}
@@ -52,27 +52,27 @@ Ok.parseAnimation = function (aStr) {
 	}
 };
 
-Ok.setAnimation = function (aElement, aAnimation) {
-	var animation = aAnimation && aAnimation.length ? Ok.parseAnimation(aAnimation) : aAnimation;
+Solarfield.Ok.setAnimation = function (aElement, aAnimation) {
+	var animation = aAnimation && aAnimation.length ? Solarfield.Ok.parseAnimation(aAnimation) : aAnimation;
 
-	if (Ok.compat.eventAnimationstart) {
+	if (Solarfield.Ok.compat.eventAnimationstart) {
 		if (animation) {
-			if (Ok.hasAnimation(aElement, animation.name)) {
-				aElement.style[Ok.compat.domAnimation] = '';
+			if (Solarfield.Ok.hasAnimation(aElement, animation.name)) {
+				aElement.style[Solarfield.Ok.compat.domAnimation] = '';
 
-				Ok.deferAnimationCall(function () {
+				Solarfield.Ok.deferAnimationCall(function () {
 					//FUTURE: use new Function() for perf
-					aElement.style[Ok.compat.domAnimation] = aAnimation.length ? aAnimation : Ok.serializeAnimation(aAnimation);
+					aElement.style[Solarfield.Ok.compat.domAnimation] = aAnimation.length ? aAnimation : Solarfield.Ok.serializeAnimation(aAnimation);
 				});
 			}
 
 			else {
-				aElement.style[Ok.compat.domAnimation] = aAnimation.length ? aAnimation : Ok.serializeAnimation(aAnimation);
+				aElement.style[Solarfield.Ok.compat.domAnimation] = aAnimation.length ? aAnimation : Solarfield.Ok.serializeAnimation(aAnimation);
 			}
 		}
 
 		else {
-			aElement.style[Ok.compat.domAnimation] = '';
+			aElement.style[Solarfield.Ok.compat.domAnimation] = '';
 		}
 	}
 
@@ -113,16 +113,16 @@ Ok.setAnimation = function (aElement, aAnimation) {
 	}
 };
 
-Ok.hasAnimation = function (aElement, aAnimationName) {
-	return aElement.style[Ok.compat.domAnimation]
+Solarfield.Ok.hasAnimation = function (aElement, aAnimationName) {
+	return aElement.style[Solarfield.Ok.compat.domAnimation]
 		.search(new RegExp('(^|(,\\s*))[^,]*' + aAnimationName + '[^,]*((\\s*,)|$)', 'g'), '') > -1;
 };
 
-Ok.deferAnimationCall = function (aCallback) {
+Solarfield.Ok.deferAnimationCall = function (aCallback) {
 	requestAnimationFrame(aCallback);
 };
 
-Ok.onAnimationStart = function (aElement, aAnimationName, aCallback, aData) {
+Solarfield.Ok.onAnimationStart = function (aElement, aAnimationName, aCallback, aData) {
 	return new Promise(function (resolve) {
 		aElement._Ok_oas = {
 			c: aCallback,
@@ -132,26 +132,26 @@ Ok.onAnimationStart = function (aElement, aAnimationName, aCallback, aData) {
 		};
 
 
-		if (Ok.compat.eventAnimationstart) {
-			aElement.addEventListener(Ok.compat.eventAnimationstart, Ok.onAnimationStart._handleCssAnimationStart);
+		if (Solarfield.Ok.compat.eventAnimationstart) {
+			aElement.addEventListener(Solarfield.Ok.compat.eventAnimationstart, Solarfield.Ok.onAnimationStart._handleCssAnimationStart);
 		}
 
 		else {
-			Ok.onAnimationStart._handleCssAnimationStart.call(aElement, {
+			Solarfield.Ok.onAnimationStart._handleCssAnimationStart.call(aElement, {
 				currentTarget: aElement,
 				animationName: aAnimationName
 			});
 		}
 	});
 };
-Ok.onAnimationStart._handleCssAnimationStart = function (aEvt) {
+Solarfield.Ok.onAnimationStart._handleCssAnimationStart = function (aEvt) {
 	var item;
 
 	if (aEvt.currentTarget === aEvt.target) {
 		if (aEvt.currentTarget._Ok_oas.a == aEvt.animationName) {
 			item = aEvt.currentTarget._Ok_oas;
 			delete aEvt.currentTarget._Ok_oas;
-			aEvt.currentTarget.removeEventListener(Ok.compat.eventAnimationstart, Ok.onAnimationStart._handleCssAnimationStart);
+			aEvt.currentTarget.removeEventListener(Solarfield.Ok.compat.eventAnimationstart, Solarfield.Ok.onAnimationStart._handleCssAnimationStart);
 
 			if (item.c) {
 				item.c({
@@ -170,7 +170,7 @@ Ok.onAnimationStart._handleCssAnimationStart = function (aEvt) {
 	}
 };
 
-Ok.onAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
+Solarfield.Ok.onAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
 	return new Promise(function (resolve) {
 		aElement._Ok_oae = {
 			c: aCallback,
@@ -180,26 +180,26 @@ Ok.onAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
 		};
 
 
-		if (Ok.compat.eventAnimationend) {
-			aElement.addEventListener(Ok.compat.eventAnimationend, Ok.onAnimationEnd._handleCssAnimationEnd);
+		if (Solarfield.Ok.compat.eventAnimationend) {
+			aElement.addEventListener(Solarfield.Ok.compat.eventAnimationend, Solarfield.Ok.onAnimationEnd._handleCssAnimationEnd);
 		}
 
 		else {
-			Ok.onAnimationEnd._handleCssAnimationEnd.call(aElement, {
+			Solarfield.Ok.onAnimationEnd._handleCssAnimationEnd.call(aElement, {
 				currentTarget: aElement,
 				animationName: aAnimationName
 			});
 		}
 	});
 };
-Ok.onAnimationEnd._handleCssAnimationEnd = function (aEvt) {
+Solarfield.Ok.onAnimationEnd._handleCssAnimationEnd = function (aEvt) {
 	var item;
 
 	if (aEvt.currentTarget === aEvt.target) {
 		if (aEvt.currentTarget._Ok_oae.a == aEvt.animationName) {
 			item = aEvt.currentTarget._Ok_oae;
 			delete aEvt.currentTarget._Ok_oae;
-			aEvt.currentTarget.removeEventListener(Ok.compat.eventAnimationend, Ok.onAnimationEnd._handleCssAnimationEnd);
+			aEvt.currentTarget.removeEventListener(Solarfield.Ok.compat.eventAnimationend, Solarfield.Ok.onAnimationEnd._handleCssAnimationEnd);
 
 			if (item.c) {
 				item.c({

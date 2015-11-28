@@ -6,83 +6,84 @@
 "use strict";
 
 /**
- * @namespace Ok
+ * @namespace Solarfield.Ok
  */
-if (!self.Ok) self.Ok = {};
+if (!self.Solarfield) self.Solarfield = {};
+if (!Solarfield.Ok) Solarfield.Ok = {};
 
-Ok.DOM_NODE_ELEMENT = 1;
-Ok.DOM_NODE_DOCUMENT = 9;
-Ok.DOM_NODE_DOCUMENT_FRAGMENT = 11;
+Solarfield.Ok.DOM_NODE_ELEMENT = 1;
+Solarfield.Ok.DOM_NODE_DOCUMENT = 9;
+Solarfield.Ok.DOM_NODE_DOCUMENT_FRAGMENT = 11;
 
 
 /**
- * @class Ok.DomContext
+ * @class Solarfield.Ok.DomContext
  */
-Ok.DomContext = function () {
+Solarfield.Ok.DomContext = function () {
 
 };
 
-Ok.DomContext.prototype.makeImplementation = function (aContext) {
-	return new Ok.DomImplementation(aContext);
+Solarfield.Ok.DomContext.prototype.makeImplementation = function (aContext) {
+	return new Solarfield.Ok.DomImplementation(aContext);
 };
 
-Ok.DomContext.prototype.makeDocument = function (aImplementation) {
-	return new Ok.DomDocument(aImplementation);
+Solarfield.Ok.DomContext.prototype.makeDocument = function (aImplementation) {
+	return new Solarfield.Ok.DomDocument(aImplementation);
 };
 
-Ok.DomContext.prototype.makeElement = function (aDocument, aNodeName) {
-	return new Ok.DomElement(aDocument, aNodeName);
+Solarfield.Ok.DomContext.prototype.makeElement = function (aDocument, aNodeName) {
+	return new Solarfield.Ok.DomElement(aDocument, aNodeName);
 };
 
-Ok.DomContext.prototype.makeDocumentFragment = function (aDocument) {
-	return new Ok.DomDocumentFragment(aDocument);
+Solarfield.Ok.DomContext.prototype.makeDocumentFragment = function (aDocument) {
+	return new Solarfield.Ok.DomDocumentFragment(aDocument);
 };
 
-Ok.DomContext.prototype.createImplementation = function () {
+Solarfield.Ok.DomContext.prototype.createImplementation = function () {
 	return this.makeImplementation(this);
 };
 
 
 /**
- * @class Ok.MinimalDomContext
- * @extends Ok.DomContext
+ * @class Solarfield.Ok.MinimalDomContext
+ * @extends Solarfield.Ok.DomContext
  */
-Ok.MinimalDomContext = function () {
-	Ok.DomContext.call(this);
+Solarfield.Ok.MinimalDomContext = function () {
+	Solarfield.Ok.DomContext.call(this);
 };
-Ok.extendObject(Ok.DomContext, Ok.MinimalDomContext);
+Solarfield.Ok.extendObject(Solarfield.Ok.DomContext, Solarfield.Ok.MinimalDomContext);
 
 
 /**
- * @class Ok.NativeDomContext
- * @extends Ok.DomContext
+ * @class Solarfield.Ok.NativeDomContext
+ * @extends Solarfield.Ok.DomContext
  */
-Ok.NativeDomContext = function () {
-	Ok.DomContext.call(this);
+Solarfield.Ok.NativeDomContext = function () {
+	Solarfield.Ok.DomContext.call(this);
 };
-Ok.extendObject(Ok.DomContext, Ok.NativeDomContext);
+Solarfield.Ok.extendObject(Solarfield.Ok.DomContext, Solarfield.Ok.NativeDomContext);
 
-Ok.NativeDomContext.prototype.makeDocument = function (aImplementation) {
+Solarfield.Ok.NativeDomContext.prototype.makeDocument = function (aImplementation) {
 	return window.document;
 };
 
 
 /**
- * @class Ok.DomImplementation
+ * @class Solarfield.Ok.DomImplementation
  */
-Ok.DomImplementation = function (aContext) {
+Solarfield.Ok.DomImplementation = function (aContext) {
 	this.context = aContext;
 };
 
-Ok.DomImplementation.prototype.createDocument = function () {
+Solarfield.Ok.DomImplementation.prototype.createDocument = function () {
 	return this.context.makeDocument(this);
 };
 
 
 /**
- * @class Ok.DomNode
+ * @class Solarfield.Ok.DomNode
  */
-Ok.DomNode = function (aOwnerDocument, aNodeType, aNodeName) {
+Solarfield.Ok.DomNode = function (aOwnerDocument, aNodeType, aNodeName) {
 	this.ownerDocument = aOwnerDocument;
 	this.nodeType = aNodeType;
 	this.nodeName = aNodeName;
@@ -90,81 +91,81 @@ Ok.DomNode = function (aOwnerDocument, aNodeType, aNodeName) {
 
 
 /**
- * @class Ok.DomDocumentFragment
- * @extends Ok.DomNode
+ * @class Solarfield.Ok.DomDocumentFragment
+ * @extends Solarfield.Ok.DomNode
  */
-Ok.DomDocumentFragment = function (aOwnerDocument) {
-	Ok.DomNode.call(this, aOwnerDocument, Ok.DOM_NODE_DOCUMENT_FRAGMENT, '#document-fragment');
+Solarfield.Ok.DomDocumentFragment = function (aOwnerDocument) {
+	Solarfield.Ok.DomNode.call(this, aOwnerDocument, Solarfield.Ok.DOM_NODE_DOCUMENT_FRAGMENT, '#document-fragment');
 
 	this.ownerDocument = aOwnerDocument;
 	this.children = [];
 };
-Ok.extendObject(Ok.DomNode, Ok.DomDocumentFragment);
+Solarfield.Ok.extendObject(Solarfield.Ok.DomNode, Solarfield.Ok.DomDocumentFragment);
 
-Ok.DomDocumentFragment.prototype.appendChild = function (aElement) {
+Solarfield.Ok.DomDocumentFragment.prototype.appendChild = function (aElement) {
 	this.children.push(aElement);
 	aElement.parentNode = this;
 };
 
 
 /**
- * @class Ok.DomDocument
+ * @class Solarfield.Ok.DomDocument
  */
-Ok.DomDocument = function (aDomImplementation) {
-	Ok.DomNode.call(this, this, Ok.DOM_NODE_DOCUMENT, '#document');
+Solarfield.Ok.DomDocument = function (aDomImplementation) {
+	Solarfield.Ok.DomNode.call(this, this, Solarfield.Ok.DOM_NODE_DOCUMENT, '#document');
 
 	this.implementation = aDomImplementation;
 };
-Ok.extendObject(Ok.DomNode, Ok.DomDocument);
+Solarfield.Ok.extendObject(Solarfield.Ok.DomNode, Solarfield.Ok.DomDocument);
 
-Ok.DomDocument.prototype.createElement = function (aName) {
+Solarfield.Ok.DomDocument.prototype.createElement = function (aName) {
 	return this.implementation.context.makeElement(this, aName);
 };
 
-Ok.DomDocument.prototype.createDocumentFragment = function () {
+Solarfield.Ok.DomDocument.prototype.createDocumentFragment = function () {
 	return this.implementation.context.makeDocumentFragment(this);
 };
 
 
 /**
- * @class Ok.DomElement
+ * @class Solarfield.Ok.DomElement
  */
-Ok.DomElement = function (aOwnerDocument, aName) {
-	Ok.DomNode.call(this, aOwnerDocument, Ok.DOM_NODE_ELEMENT, aName.toUpperCase());
+Solarfield.Ok.DomElement = function (aOwnerDocument, aName) {
+	Solarfield.Ok.DomNode.call(this, aOwnerDocument, Solarfield.Ok.DOM_NODE_ELEMENT, aName.toUpperCase());
 
 	this.children = [];
 	this.attributes = [];
 	this.textContent = '';
 	this.parentNode = null;
 };
-Ok.extendObject(Ok.DomNode, Ok.DomElement);
+Solarfield.Ok.extendObject(Solarfield.Ok.DomNode, Solarfield.Ok.DomElement);
 
-Ok.DomElement.prototype.appendChild = function (aElement) {
+Solarfield.Ok.DomElement.prototype.appendChild = function (aElement) {
 	this.children.push(aElement);
 	aElement.parentNode = this;
 };
 
-Ok.DomElement.prototype.setAttribute = function (aName, aValue) {
+Solarfield.Ok.DomElement.prototype.setAttribute = function (aName, aValue) {
 	this.attributes.push({
 		name: ''+ aName,
 		value: ''+ aValue
 	});
 };
 
-Ok.DomElement.prototype.appendChild = function (aElement) {
+Solarfield.Ok.DomElement.prototype.appendChild = function (aElement) {
 	this.children.push(aElement);
 	aElement.parentNode = this;
 };
 
 
 /**
- * @class Ok.HtmlDomSerializer
+ * @class Solarfield.Ok.HtmlDomSerializer
  */
-Ok.HtmlDomSerializer = function () {
+Solarfield.Ok.HtmlDomSerializer = function () {
 
 };
 
-Ok.HtmlDomSerializer.prototype._escape = function (aText) {
+Solarfield.Ok.HtmlDomSerializer.prototype._escape = function (aText) {
 	var i, len, html, code;
 
 	html = '';
@@ -178,7 +179,7 @@ Ok.HtmlDomSerializer.prototype._escape = function (aText) {
 	return html;
 };
 
-Ok.HtmlDomSerializer.prototype._serializeElement = function (aElement) {
+Solarfield.Ok.HtmlDomSerializer.prototype._serializeElement = function (aElement) {
 	var elementText, i;
 	var children, attributes, attribute, len, nodeName;
 
@@ -212,23 +213,23 @@ Ok.HtmlDomSerializer.prototype._serializeElement = function (aElement) {
 	return elementText;
 };
 
-Ok.HtmlDomSerializer.prototype.serializeToString = function (aNode) {
+Solarfield.Ok.HtmlDomSerializer.prototype.serializeToString = function (aNode) {
 	return this._serializeElement(aNode);
 };
 
 
 /**
- * @class Ok.NodeDomCopier
+ * @class Solarfield.Ok.NodeDomCopier
  */
-Ok.NodeDomCopier = function () {
+Solarfield.Ok.NodeDomCopier = function () {
 
 };
 
 /** @private */
-Ok.NodeDomCopier.prototype._copyNode = function (aNode, aDocument, aDeep) {
+Solarfield.Ok.NodeDomCopier.prototype._copyNode = function (aNode, aDocument, aDeep) {
 	var el, i, len, attributes, attribute, children;
 
-	if (aNode.nodeType == Ok.DOM_NODE_DOCUMENT_FRAGMENT) {
+	if (aNode.nodeType == Solarfield.Ok.DOM_NODE_DOCUMENT_FRAGMENT) {
 		el = aDocument.createDocumentFragment();
 	}
 
@@ -259,22 +260,22 @@ Ok.NodeDomCopier.prototype._copyNode = function (aNode, aDocument, aDeep) {
 	return el;
 };
 
-Ok.NodeDomCopier.prototype.copyNodeToNode = function (aNode, aDocument, aDeep) {
+Solarfield.Ok.NodeDomCopier.prototype.copyNodeToNode = function (aNode, aDocument, aDeep) {
 	return this._copyNode(aNode, aDocument, aDeep != undefined ? aDeep : true);
 };
 
 
 /**
- * @class Ok.JsonDomCopier
+ * @class Solarfield.Ok.JsonDomCopier
  */
-Ok.JsonDomCopier = function () {
+Solarfield.Ok.JsonDomCopier = function () {
 
 };
 
 /**
  * @private
  */
-Ok.JsonDomCopier.prototype._copyNode = function (aNode, aDeep) {
+Solarfield.Ok.JsonDomCopier.prototype._copyNode = function (aNode, aDeep) {
 	var el, i, len, attributes, attribute, children, child;
 
 	el = {
@@ -314,10 +315,10 @@ Ok.JsonDomCopier.prototype._copyNode = function (aNode, aDeep) {
 /**
  * @private
  */
-Ok.JsonDomCopier.prototype._copyJson = function (aJson, aDocument, aDeep) {
+Solarfield.Ok.JsonDomCopier.prototype._copyJson = function (aJson, aDocument, aDeep) {
 	var el, i, len, attributes, attribute, children;
 
-	if (aJson.nodeType == Ok.DOM_NODE_DOCUMENT_FRAGMENT) {
+	if (aJson.nodeType == Solarfield.Ok.DOM_NODE_DOCUMENT_FRAGMENT) {
 		el = aDocument.createDocumentFragment();
 	}
 
@@ -348,29 +349,29 @@ Ok.JsonDomCopier.prototype._copyJson = function (aJson, aDocument, aDeep) {
 	return el;
 };
 
-Ok.JsonDomCopier.prototype.copyNodeToJson = function (aNode, aDeep) {
+Solarfield.Ok.JsonDomCopier.prototype.copyNodeToJson = function (aNode, aDeep) {
 	return this._copyNode(aNode, aDeep != undefined ? aDeep : true);
 };
 
-Ok.JsonDomCopier.prototype.copyJsonToNode = function (aJson, aDocument, aDeep) {
+Solarfield.Ok.JsonDomCopier.prototype.copyJsonToNode = function (aJson, aDocument, aDeep) {
 	return this._copyJson(aJson, aDocument, aDeep != undefined ? aDeep : true);
 };
 
 
 /**
- * @class Ok.OneWayStaticDomDiffer
+ * @class Solarfield.Ok.OneWayStaticDomDiffer
  */
-Ok.OneWayStaticDomDiffer = function () {
+Solarfield.Ok.OneWayStaticDomDiffer = function () {
 
 };
 
-Ok.OneWayStaticDomDiffer.DIFF_ATTRIBUTE = 1;
-Ok.OneWayStaticDomDiffer.DIFF_TEXT = 2;
+Solarfield.Ok.OneWayStaticDomDiffer.DIFF_ATTRIBUTE = 1;
+Solarfield.Ok.OneWayStaticDomDiffer.DIFF_TEXT = 2;
 
 /**
  * @private
  */
-Ok.OneWayStaticDomDiffer.prototype._getLookup = function (aAttrs) {
+Solarfield.Ok.OneWayStaticDomDiffer.prototype._getLookup = function (aAttrs) {
 	var lookup, i;
 
 	lookup = {};
@@ -385,14 +386,14 @@ Ok.OneWayStaticDomDiffer.prototype._getLookup = function (aAttrs) {
 /**
  * @private
  */
-Ok.OneWayStaticDomDiffer.prototype._getSelector = function (aContextNode, aTopNode) {
+Solarfield.Ok.OneWayStaticDomDiffer.prototype._getSelector = function (aContextNode, aTopNode) {
 	var node, attrs, selector, part;
 
 	selector = '';
 
 	node = aContextNode;
 	do {
-		attrs = Ok.OneWayStaticDomDiffer.prototype._getLookup(node.attributes);
+		attrs = Solarfield.Ok.OneWayStaticDomDiffer.prototype._getLookup(node.attributes);
 
 		part = node.nodeName;
 		if ('class' in attrs) {
@@ -413,12 +414,12 @@ Ok.OneWayStaticDomDiffer.prototype._getSelector = function (aContextNode, aTopNo
 /**
  * @private
  */
-Ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContextNode, aTopNode) {
+Solarfield.Ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContextNode, aTopNode) {
 	var diffs, childDiffs, i, len, attrs1, attrs2, attr2, children2, children1;
 
 	diffs = [];
 
-	if (aNode1.nodeType == Ok.DOM_NODE_ELEMENT) {
+	if (aNode1.nodeType == Solarfield.Ok.DOM_NODE_ELEMENT) {
 		attrs1 = this._getLookup(aNode1.attributes);
 
 		attrs2 = aNode2.attributes;
@@ -428,7 +429,7 @@ Ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContext
 
 			if (!(attr2.name in attrs1 && attr2.value == attrs1[attr2.name])) {
 				diffs.push({
-					type: Ok.OneWayStaticDomDiffer.DIFF_ATTRIBUTE,
+					type: Solarfield.Ok.OneWayStaticDomDiffer.DIFF_ATTRIBUTE,
 					name: attr2.name,
 					value: attr2.value,
 					context: aContextNode ? this._getSelector(aContextNode, aTopNode) : null
@@ -451,7 +452,7 @@ Ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContext
 	else {
 		if (aNode2.textContent != aNode1.textContent) {
 			diffs.push({
-				type: Ok.OneWayStaticDomDiffer.DIFF_TEXT,
+				type: Solarfield.Ok.OneWayStaticDomDiffer.DIFF_TEXT,
 				value: aNode2.textContent,
 				context: aContextNode ? this._getSelector(aContextNode, aTopNode) : null
 			});
@@ -461,6 +462,6 @@ Ok.OneWayStaticDomDiffer.prototype._compare = function (aNode1, aNode2, aContext
 	return diffs;
 };
 
-Ok.OneWayStaticDomDiffer.prototype.compareNodes = function (aNode1, aNode2) {
+Solarfield.Ok.OneWayStaticDomDiffer.prototype.compareNodes = function (aNode1, aNode2) {
 	return this._compare(aNode1, aNode2, null, aNode1);
 };

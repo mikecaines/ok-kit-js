@@ -15,7 +15,7 @@
  * @param aPropertyName
  * @returns {*}
  */
-Ok.getSuperPropertyDescriptor = function (aObject, aPropertyName) {
+Solarfield.Ok.getSuperPropertyDescriptor = function (aObject, aPropertyName) {
 	var pd = null;
 	var obj = Object.getPrototypeOf(aObject);
 

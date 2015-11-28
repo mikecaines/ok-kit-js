@@ -6,20 +6,21 @@
 "use strict";
 
 /**
- * @namespace Ok
+ * @namespace Solarfield.Ok
  */
-if (!self.Ok) self.Ok = {};
+if (!self.Solarfield) self.Solarfield = {};
+if (!Solarfield.Ok) Solarfield.Ok = {};
 
 
 
 
-Ok.defineNamespace = function (aNamespace) {
-	if (!Ok.objectGet(self, aNamespace)) {
-		Ok.objectSet(self, aNamespace, {});
+Solarfield.Ok.defineNamespace = function (aNamespace) {
+	if (!Solarfield.Ok.objectGet(self, aNamespace)) {
+		Solarfield.Ok.objectSet(self, aNamespace, {});
 	}
 };
 
-Ok.objectGet = function (aObject, aPath, aSeparator) {
+Solarfield.Ok.objectGet = function (aObject, aPath, aSeparator) {
 	var separator = aSeparator || '.';
 	var steps = (aPath+'').split(separator);
 	var node, i;
@@ -44,7 +45,7 @@ Ok.objectGet = function (aObject, aPath, aSeparator) {
 	return null;
 };
 
-Ok.objectSet = function (aObject, aPath, aValue, aSeparator) {
+Solarfield.Ok.objectSet = function (aObject, aPath, aValue, aSeparator) {
 	var separator = aSeparator || '.';
 	var steps = (aPath+'').split(separator);
 	var node, i;
@@ -65,11 +66,11 @@ Ok.objectSet = function (aObject, aPath, aValue, aSeparator) {
 	node[steps[i]] = aValue;
 };
 
-Ok.objectMerge = function (aObject1, aObject2) {
+Solarfield.Ok.objectMerge = function (aObject1, aObject2) {
 	var v1, v2, merged, k, arr;
 
-	v1 = Ok.isVector(aObject1);
-	v2 = Ok.isVector(aObject2);
+	v1 = Solarfield.Ok.isVector(aObject1);
+	v2 = Solarfield.Ok.isVector(aObject2);
 
 	if ((v1 && !v2) || (!v1 && v2)) {
 		throw "Cannot merge vector and non-vector.";
@@ -90,7 +91,7 @@ Ok.objectMerge = function (aObject1, aObject2) {
 			&& aObject2[k] != null
 			&& (aObject2[k] instanceof Object)
 		) {
-			merged[k] = Ok.objectMerge(merged[k], aObject2[k]);
+			merged[k] = Solarfield.Ok.objectMerge(merged[k], aObject2[k]);
 		}
 
 		else {
@@ -105,7 +106,7 @@ Ok.objectMerge = function (aObject1, aObject2) {
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
  * @type {Function}
  */
-Ok.objectAssign = Object.assign || function (aObject1, aObjectN) {
+Solarfield.Ok.objectAssign = Object.assign || function (aObject1, aObjectN) {
 	var i, k;
 
 	for (i = 1; i < arguments.length; i++) {
@@ -117,12 +118,12 @@ Ok.objectAssign = Object.assign || function (aObject1, aObjectN) {
 	return aObject1;
 };
 
-Ok.object2dIndexOf = function (aObject, aPath, aValue, aStrict) {
+Solarfield.Ok.object2dIndexOf = function (aObject, aPath, aValue, aStrict) {
 	var strict = aStrict != null ? aStrict : false;
 	var k, value;
 
 	for (k in aObject) {
-		value = Ok.objectGet(aObject[k], aPath);
+		value = Solarfield.Ok.objectGet(aObject[k], aPath);
 
 		if ((strict == false && value == aValue) || (strict == true && value === aValue)) {
 			return k;
@@ -132,12 +133,12 @@ Ok.object2dIndexOf = function (aObject, aPath, aValue, aStrict) {
 	return null;
 };
 
-Ok.object2dFind = function (aObject, aPath, aValue, aStrict) {
-	var k = Ok.object2dIndexOf(aObject, aPath, aValue, aStrict);
+Solarfield.Ok.object2dFind = function (aObject, aPath, aValue, aStrict) {
+	var k = Solarfield.Ok.object2dIndexOf(aObject, aPath, aValue, aStrict);
 	return (k !== null) ? aObject[k] : null;
 };
 
-Ok.isVector = function (aObj) {
+Solarfield.Ok.isVector = function (aObj) {
 	var i, k;
 
 	i = 0;
@@ -149,7 +150,7 @@ Ok.isVector = function (aObj) {
 	return i > 0;
 };
 
-Ok.strCamelToDash = function (aString) {
+Solarfield.Ok.strCamelToDash = function (aString) {
 	var str;
 
 	str = (aString+'').match(/((?:[A-Z]?[a-z]+)|(?:[0-9]+))/g);
@@ -159,7 +160,7 @@ Ok.strCamelToDash = function (aString) {
 	return str;
 };
 
-Ok.strDashToCamel = function (aString) {
+Solarfield.Ok.strDashToCamel = function (aString) {
 	var str = '';
 	var matches, c, i;
 
@@ -180,33 +181,33 @@ Ok.strDashToCamel = function (aString) {
 	return str;
 };
 
-Ok.strUpperCaseFirst = function (aString) {
+Solarfield.Ok.strUpperCaseFirst = function (aString) {
 	var str = aString+'';
 	return str.substr(0, 1).toUpperCase() + str.substr(1);
 };
 
-Ok.pregQuote = function (aText) {
+Solarfield.Ok.pregQuote = function (aText) {
 	return (''+aText).replace(/([.*+?^${}()|\[\]\/\\])/g, "\\$1");
 };
 
-Ok.randomInt = function (aMin, aMax) {
+Solarfield.Ok.randomInt = function (aMin, aMax) {
 	return Math.floor(Math.random() * (aMax - aMin + 1)) + aMin;
 };
 
-Ok.randomFloat = function (aMin, aMax) {
+Solarfield.Ok.randomFloat = function (aMin, aMax) {
 	return Math.random() * (aMax - aMin) + aMin;
 };
 
-Ok.randomAdditiveInverse = function () {
-	return Ok.randomInt(0, 1) == 0 ? 1 : -1;
+Solarfield.Ok.randomAdditiveInverse = function () {
+	return Solarfield.Ok.randomInt(0, 1) == 0 ? 1 : -1;
 };
 
-Ok.roundFloat = function (aFloat, aDecimals) {
+Solarfield.Ok.roundFloat = function (aFloat, aDecimals) {
 	var offset = Math.pow(10, aDecimals);
 	return Math.round(aFloat * offset) / offset;
 };
 
-Ok.offsetTop = function (aElement) {
+Solarfield.Ok.offsetTop = function (aElement) {
 	var offset = 0;
 	var el = aElement;
 
@@ -218,7 +219,7 @@ Ok.offsetTop = function (aElement) {
 	return offset;
 };
 
-Ok.offsetLeft = function (aElement) {
+Solarfield.Ok.offsetLeft = function (aElement) {
 	var offset = 0;
 	var el = aElement;
 
@@ -235,7 +236,7 @@ Ok.offsetLeft = function (aElement) {
  * @param {CSSRule[]=} aRuleList
  * @returns {Array}
  */
-Ok.findCssRules = function (aRegExp, aRuleList) {
+Solarfield.Ok.findCssRules = function (aRegExp, aRuleList) {
 	function searchRules(aCssRules, aRegExp) {
 		var j;
 		var matchedRules = [];
@@ -287,12 +288,12 @@ Ok.findCssRules = function (aRegExp, aRuleList) {
  * @param {CssRule=} aRuleList
  * @returns {*}
  */
-Ok.findCssRule = function (aRegExp, aRuleList) {
-	var rules = Ok.findCssRules(aRegExp, aRuleList);
+Solarfield.Ok.findCssRule = function (aRegExp, aRuleList) {
+	var rules = Solarfield.Ok.findCssRules(aRegExp, aRuleList);
 	return rules.length > 0 ? rules[0] : null;
 };
 
-Ok.getAncestorByClassName = function (aElement, aClassName) {
+Solarfield.Ok.getAncestorByClassName = function (aElement, aClassName) {
 	var ancestor = null;
 	var el = aElement;
 
@@ -306,7 +307,7 @@ Ok.getAncestorByClassName = function (aElement, aClassName) {
 	return ancestor;
 };
 
-Ok.getAncestorByTagName = function (aElement, aTagName) {
+Solarfield.Ok.getAncestorByTagName = function (aElement, aTagName) {
 	var ancestor = null;
 	var el = aElement;
 
@@ -320,7 +321,7 @@ Ok.getAncestorByTagName = function (aElement, aTagName) {
 	return ancestor;
 };
 
-Ok.escapeRegExp = function (aString){
+Solarfield.Ok.escapeRegExp = function (aString){
 	return (aString+'').replace(/([.*+?^${}()|\[\]\/\\])/g, '\\$1');
 };
 
@@ -330,7 +331,7 @@ Ok.escapeRegExp = function (aString){
  * @param {Function|Object=} aSubClass Optional subclass constructor.
  * @returns {Function} A reference to the subclass constructor.
  */
-Ok.extendObject = function (aSuperClass, aSubClass) {
+Solarfield.Ok.extendObject = function (aSuperClass, aSubClass) {
 	var p, subClass, subMembers, hasSubConstructor;
 
 	if (aSubClass) {
@@ -350,10 +351,10 @@ Ok.extendObject = function (aSuperClass, aSubClass) {
 	}
 
 	if (!subClass) {
-		Ok.extendObject._oeo_counter++;
+		Solarfield.Ok.extendObject._oeo_counter++;
 
 		subClass = new Function(
-			"this._oeo_superClass" + Ok.extendObject._oeo_counter + ".apply(this, arguments);"
+			"this._oeo_superClass" + Solarfield.Ok.extendObject._oeo_counter + ".apply(this, arguments);"
 		);
 	}
 
@@ -374,41 +375,41 @@ Ok.extendObject = function (aSuperClass, aSubClass) {
 	}
 
 	if (!hasSubConstructor) {
-		subClass.prototype['_oeo_superClass' + Ok.extendObject._oeo_counter] = aSuperClass;
+		subClass.prototype['_oeo_superClass' + Solarfield.Ok.extendObject._oeo_counter] = aSuperClass;
 	}
 
 	return subClass;
 };
-Ok.extendObject._oeo_counter = -1;
+Solarfield.Ok.extendObject._oeo_counter = -1;
 
-Ok.cloneObject = function (aObject) {
+Solarfield.Ok.cloneObject = function (aObject) {
 	return JSON.parse(JSON.stringify(aObject));
 };
 
 
 
 
-/** @class Ok.HashMap */
-Ok.HashMap = function (aData) {
+/** @class Solarfield.Ok.HashMap */
+Solarfield.Ok.HashMap = function (aData) {
 	this._ohm_data = (aData != null && aData.constructor === Object) ? aData : {};
 };
 
-Ok.HashMap.prototype.getData = function () {
+Solarfield.Ok.HashMap.prototype.getData = function () {
 	return this._ohm_data;
 };
 
-Ok.HashMap.prototype.get = function (aPath) {
-	return Ok.objectGet(this._ohm_data, aPath);
+Solarfield.Ok.HashMap.prototype.get = function (aPath) {
+	return Solarfield.Ok.objectGet(this._ohm_data, aPath);
 };
 
-Ok.HashMap.prototype.getAsString = function (aPath) {
+Solarfield.Ok.HashMap.prototype.getAsString = function (aPath) {
 	var value = this.get(aPath);
 	if (value == null) value = '';
 	else value = value.toString();
 	return value;
 };
 
-Ok.HashMap.prototype.getAsObject = function (aPath) {
+Solarfield.Ok.HashMap.prototype.getAsObject = function (aPath) {
 	var value = this.get(aPath);
 	var isNull = value == null;
 	var obj, k;
@@ -434,7 +435,7 @@ Ok.HashMap.prototype.getAsObject = function (aPath) {
 	return obj;
 };
 
-Ok.HashMap.prototype.getAsArray = function (aPath) {
+Solarfield.Ok.HashMap.prototype.getAsArray = function (aPath) {
 	var value = this.get(aPath);
 	var isNull = value == null;
 	var arr, k;
@@ -460,10 +461,10 @@ Ok.HashMap.prototype.getAsArray = function (aPath) {
 	return arr;
 };
 
-Ok.HashMap.prototype.getAsBool = function (aPath) {
+Solarfield.Ok.HashMap.prototype.getAsBool = function (aPath) {
 	return this.get(aPath) == true;
 };
 
-Ok.HashMap.prototype.set = function (aPath, aValue) {
-	Ok.objectSet(this._ohm_data, aPath, aValue);
+Solarfield.Ok.HashMap.prototype.set = function (aPath, aValue) {
+	Solarfield.Ok.objectSet(this._ohm_data, aPath, aValue);
 };
