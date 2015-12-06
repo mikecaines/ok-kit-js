@@ -367,6 +367,7 @@ Solarfield.Ok.extendObject = function (aSuperClass, aSubClass) {
 
 	subClass.prototype = Object.create(aSuperClass.prototype);
 	subClass.prototype.constructor = subClass;
+	subClass.super = aSuperClass;
 
 	if (subMembers) {
 		for (p in subMembers) {
