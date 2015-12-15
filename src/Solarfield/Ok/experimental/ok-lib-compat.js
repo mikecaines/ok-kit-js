@@ -3,13 +3,27 @@
  * {@licence https://gnu.org/licenses/lgpl.html}
  */
 
-"use strict";
+(function (factory) {
+  if (typeof define === "function" && define.amd) {
+    define(
+	    'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-compat',
+	    [
+		    'solarfield/ok-kit-js/src/Solarfield/Ok/ok'
+	    ],
+	    factory
+    );
+  }
 
+	else {
+		factory(
+			Ok
+		);
+  }
+})
+(function (Ok) {
+	"use strict";
 
-
-
-if (!Solarfield.Ok.compat) {
-	Solarfield.Ok.compat = {};
+	Ok.compat = {};
 
 	(function () {
 		var domAnimation = window.Modernizr && Modernizr.prefixed && Modernizr.prefixed('animation');
@@ -29,19 +43,22 @@ if (!Solarfield.Ok.compat) {
 		};
 
 		if (domAnimation in prefixes) {
-			Solarfield.Ok.compat.domAnimation = domAnimation;
-			Solarfield.Ok.compat.domAnimationName = domAnimation + 'Name';
-			Solarfield.Ok.compat.eventAnimationstart = prefixes[domAnimation].start;
-			Solarfield.Ok.compat.eventAnimationend = prefixes[domAnimation].end;
-			Solarfield.Ok.compat.cssKeyframes = prefixes[domAnimation].key;
+			Ok.compat.domAnimation = domAnimation;
+			Ok.compat.domAnimationName = domAnimation + 'Name';
+			Ok.compat.eventAnimationstart = prefixes[domAnimation].start;
+			Ok.compat.eventAnimationend = prefixes[domAnimation].end;
+			Ok.compat.cssKeyframes = prefixes[domAnimation].key;
 		}
 
 		else {
-			Solarfield.Ok.compat.domAnimation = false;
-			Solarfield.Ok.compat.domAnimationName = false;
-			Solarfield.Ok.compat.eventAnimationstart = false;
-			Solarfield.Ok.compat.eventAnimationend = false;
-			Solarfield.Ok.compat.cssKeyframes = false;
+			Ok.compat.domAnimation = false;
+			Ok.compat.domAnimationName = false;
+			Ok.compat.eventAnimationstart = false;
+			Ok.compat.eventAnimationend = false;
+			Ok.compat.cssKeyframes = false;
 		}
 	})();
-}
+
+	Ok.defineNamespace('Solarfield.Ok');
+	return Solarfield.Ok = Ok;
+});
