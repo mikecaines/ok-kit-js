@@ -4,21 +4,21 @@
  */
 
 (function (factory) {
-  if (typeof define === "function" && define.amd) {
-    define(
-	    'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-compat',
-	    [
-		    'solarfield/ok-kit-js/src/Solarfield/Ok/ok'
-	    ],
-	    factory
-    );
-  }
+	if (typeof define === "function" && define.amd) {
+		define(
+			'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-compat',
+			[
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ok'
+			],
+			factory
+		);
+	}
 
 	else {
 		factory(
 			Ok
 		);
-  }
+	}
 })
 (function (Ok) {
 	"use strict";

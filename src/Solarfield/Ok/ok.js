@@ -4,17 +4,17 @@
  */
 
 (function (factory) {
-  if (typeof define === "function" && define.amd) {
-    define(
-	    'solarfield/ok-kit-js/src/Solarfield/Ok/ok',
-	    [],
-	    factory
-    );
-  }
+	if (typeof define === "function" && define.amd) {
+		define(
+			'solarfield/ok-kit-js/src/Solarfield/Ok/ok',
+			[],
+			factory
+		);
+	}
 
 	else {
 		factory();
-  }
+	}
 })
 (function () {
 	"use strict";

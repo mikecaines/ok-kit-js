@@ -4,22 +4,22 @@
  */
 
 (function (factory) {
-  if (typeof define === "function" && define.amd) {
-    define(
-	    'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-animation-queue',
-	    [
-		    'solarfield/ok-kit-js/src/Solarfield/Ok/ok',
-		    'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-compat'
-	    ],
-	    factory
-    );
-  }
+	if (typeof define === "function" && define.amd) {
+		define(
+			'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-animation-queue',
+			[
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ok',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-compat'
+			],
+			factory
+		);
+	}
 
 	else {
 		factory(
 			Solarfield.Ok
 		);
-  }
+	}
 })
 (function (Ok) {
 	"use strict";
