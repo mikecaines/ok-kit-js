@@ -27,16 +27,19 @@
 		}
 	};
 
-	Ok.objectGet = function (aObject, aPath, aSeparator) {
+	Ok.objectScout = function (aObject, aPath, aSeparator) {
 		var separator = aSeparator || '.';
 		var steps = (aPath+'').split(separator);
-		var node, i;
+		var node, i, result;
+
+		result = [false, null];
 
 		node = aObject;
 		for (i = 0; i < steps.length; i++) {
 			if (node != null && typeof node == 'object' && steps[i] in node) {
 				if (i == steps.length - 1) {
-					return node[steps[i]];
+					result = [true, node[steps[i]]];
+					break;
 				}
 
 				else {
@@ -49,7 +52,15 @@
 			}
 		}
 
-		return null;
+		return result;
+	};
+
+	Ok.objectHas = function (aObject, aPath, aSeparator) {
+		return Ok.objectScout(aObject, aPath, aSeparator)[0];
+	};
+
+	Ok.objectGet = function (aObject, aPath, aSeparator) {
+		return Ok.objectScout(aObject, aPath, aSeparator)[1];
 	};
 
 	Ok.objectSet = function (aObject, aPath, aValue, aSeparator) {
