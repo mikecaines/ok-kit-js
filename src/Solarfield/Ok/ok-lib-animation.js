@@ -6,10 +6,9 @@
 (function (factory) {
 	if (typeof define === "function" && define.amd) {
 		define(
-			'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-animation-queue',
+			'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-animation',
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ok',
-				'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-compat'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ok'
 			],
 			factory
 		);
@@ -23,6 +22,43 @@
 })
 (function (Ok) {
 	"use strict";
+
+	//do some tests
+	(function () {
+		if (!Ok.compat) Ok.compat = {};
+
+		var domAnimation = window.Modernizr && Modernizr.prefixed && Modernizr.prefixed('animation');
+
+		var prefixes = {
+			animation: {
+				start: 'animationstart',
+				end: 'animationend',
+				key: 'keyframes'
+			},
+
+			WebkitAnimation: {
+				start: 'webkitAnimationStart',
+				end: 'webkitAnimationEnd',
+				key: '-webkit-keyframes'
+			}
+		};
+
+		if (domAnimation in prefixes) {
+			Ok.compat.domAnimation = domAnimation;
+			Ok.compat.domAnimationName = domAnimation + 'Name';
+			Ok.compat.eventAnimationstart = prefixes[domAnimation].start;
+			Ok.compat.eventAnimationend = prefixes[domAnimation].end;
+			Ok.compat.cssKeyframes = prefixes[domAnimation].key;
+		}
+
+		else {
+			Ok.compat.domAnimation = false;
+			Ok.compat.domAnimationName = false;
+			Ok.compat.eventAnimationstart = false;
+			Ok.compat.eventAnimationend = false;
+			Ok.compat.cssKeyframes = false;
+		}
+	})();
 
 	/**
 	 * @param aAnimationName
