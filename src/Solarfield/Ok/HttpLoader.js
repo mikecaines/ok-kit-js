@@ -57,7 +57,7 @@
 				responseType: ''
 			}, aOptions);
 
-			return new Promise(resolve => {
+			return new Promise(function (resolve) {
 				this._getMux().send({
 					url: aUrl,
 					responseType: options.responseType,
@@ -65,7 +65,7 @@
 						resolve(aEvt.response);
 					}
 				});
-			});
+			}.bind(this));
 		},
 
 		abort: function () {

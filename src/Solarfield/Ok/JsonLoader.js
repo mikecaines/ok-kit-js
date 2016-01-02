@@ -44,7 +44,7 @@
 				successValue: null
 			}, aOptions);
 
-			return JsonLoader.super.prototype.load(aUrl, options).then(responseText => {
+			return JsonLoader.super.prototype.load(aUrl, options).then(function (responseText) {
 				var responseJson, json, error;
 
 				try {responseJson = JSON.parse(responseText);} catch (ex) {}
@@ -87,7 +87,7 @@
 				else {
 					return json;
 				}
-			});
+			}.bind(this));
 		}
 	});
 

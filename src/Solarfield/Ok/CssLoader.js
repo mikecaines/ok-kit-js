@@ -77,7 +77,7 @@
 				});
 			}
 
-			return new Promise((resolve, reject) => {
+			return new Promise(function (resolve, reject) {
 				var el;
 
 				el = document.createElement('link');
@@ -86,7 +86,7 @@
 				el.setAttribute('rel', 'stylesheet');
 				el.setAttribute('type', 'text/css');
 
-				el.addEventListener('load', () => {
+				el.addEventListener('load', function () {
 					var error;
 
 					if ((error = this._testLoaded(options))) {
@@ -101,14 +101,14 @@
 							url: aUrl
 						});
 					}
-				});
+				}.bind(this));
 
-				el.addEventListener('error', (ex) => {
+				el.addEventListener('error', function (ex) {
 					reject(ex);
 				});
 
 				this.insertElement(el, options);
-			});
+			}.bind(this));
 		},
 
 		/**
