@@ -1,6 +1,6 @@
 /**
  * {@link http://github.com/solarfield/ok-kit-js}
- * {@licence https://gnu.org/licenses/lgpl.html}
+ * {@license https://github.com/solarfield/ok-kit-js/blob/master/LICENSE}
  */
 
 "use strict";
