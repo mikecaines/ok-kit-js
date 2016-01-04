@@ -18,7 +18,7 @@
 	else {
 		factory(
 			Solarfield.Ok,
-			Solarfield.HttpLoader
+			Solarfield.Ok.HttpLoader
 		);
 	}
 })
