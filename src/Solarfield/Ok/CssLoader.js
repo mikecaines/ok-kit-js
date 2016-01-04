@@ -56,7 +56,7 @@
 		 * @protected
 		 */
 		insertElement: function (aElement, aOptions) {
-			document.head.appendChild(aElement);
+			document.head.insertBefore(aElement, document.head.firstChild);
 		},
 
 		/**
