@@ -34,13 +34,13 @@
 		 * Loads JSON from aUrl, and optionally performs post-load success checks.
 		 * @param {string} aUrl The url to load.
 		 * @param {object} [aOptions] Additional options.
-		 * @param {string} [aOptions.successKey] Dot-separated path which must exist in response json.
-		 * @param {string} [aOptions.successValue] Value at successKey must match this value.
+		 * @param {string} [aOptions.successPath] Dot-separated path which must exist in response json.
+		 * @param {string} [aOptions.successValue] Value at successPath must match this value.
 		 * @returns {Promise}
 		 */
 		load: function (aUrl, aOptions) {
 			var options = Ok.objectAssign({
-				successKey: null,
+				successPath: null,
 				successValue: null
 			}, aOptions);
 
@@ -51,20 +51,20 @@
 
 				if (responseJson !== undefined) {
 					if (options.successValue) {
-						if (Ok.objectGet(responseJson, options.successKey) == options.successValue) {
+						if (Ok.objectGet(responseJson, options.successPath) == options.successValue) {
 							json = responseJson;
 						}
 						else {
-							error = "successValue '" + options.successValue + "' at successKey '" + options.successKey + "' not found in response.";
+							error = "successValue '" + options.successValue + "' at successPath '" + options.successPath + "' not found in response.";
 						}
 					}
 
-					else if (options.successKey) {
-						if (Ok.objectHas(responseJson, options.successKey)) {
+					else if (options.successPath) {
+						if (Ok.objectHas(responseJson, options.successPath)) {
 							json = responseJson;
 						}
 						else {
-							error = "successKey '" + options.successKey + "' not found in response.";
+							error = "successPath '" + options.successPath + "' not found in response.";
 						}
 					}
 
