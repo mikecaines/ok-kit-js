@@ -64,7 +64,7 @@
 		 * @param {string} [aOptions.successSelector] A CSSRule with the specified selector must exist.
 		 * @returns {Promise}
 		 */
-		load: function (aUrl, aOptions) {
+		'import': function (aUrl, aOptions) {
 			var options = Ok.objectAssign({
 				successSelector: null
 			}, aOptions);
@@ -113,7 +113,7 @@
 		 * Removes any link element with a data-href attribute matching aUrl.
 		 * @param aUrl
 		 */
-		unload: function (aUrl) {
+		remove: function (aUrl) {
 			var el;
 
 			if ((el = document.querySelector('link[rel="stylesheet"][data-href="' + aUrl + '"]'))) {
