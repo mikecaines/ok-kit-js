@@ -68,7 +68,8 @@
 
 		this._lhm_currentInfo = {
 			onBegin: request.onBegin,
-			onEnd: request.onEnd
+			onEnd: request.onEnd,
+			aborted: false
 		};
 
 		xhr.open(request.method, request.url);
@@ -84,6 +85,7 @@
 
 	HttpMux.prototype.abort = function () {
 		if (this._lhm_currentXhr) {
+			this._lhm_currentInfo.aborted = true;
 			this._lhm_currentXhr.abort();
 		}
 	};
@@ -112,7 +114,8 @@
 			currentTarget: this,
 			xhr: xhr,
 			response: xhr.response,
-			responseType: xhr.responseType
+			responseType: xhr.responseType,
+			aborted: info.aborted
 		}, info, false);
 	};
 
