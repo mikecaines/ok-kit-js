@@ -111,6 +111,7 @@
 
 		/**
 		 * Removes any link element with a data-href attribute matching aUrl.
+		 * This effectively removes the stylesheet from the 'registry', and stops applying its rules to the document.
 		 * @param aUrl
 		 */
 		remove: function (aUrl) {
