@@ -35,6 +35,7 @@
 		this._lhm_listeners = {};
 
 		this._lhm_handleXhrLoadend = this._lhm_handleXhrLoadend.bind(this);
+		this._lhm_handleXhrTimeout = this._lhm_handleXhrTimeout.bind(this);
 
 		if (aRequestDefaults) {
 			this.setRequestDefaults(aRequestDefaults);
@@ -61,15 +62,18 @@
 		request = this._lhm_normalizeRequest(aRequest);
 
 		xhr = new XMLHttpRequest();
+		xhr.timeout = 1000;
 		xhr.responseType = request.responseType;
 		xhr.addEventListener('loadend', this._lhm_handleXhrLoadend);
+		xhr.addEventListener('timeout', this._lhm_handleXhrTimeout);
 
 		this._lhm_currentXhr = xhr;
 
 		this._lhm_currentInfo = {
 			onBegin: request.onBegin,
 			onEnd: request.onEnd,
-			aborted: false
+			aborted: false,
+			timedOut: false
 		};
 
 		xhr.open(request.method, request.url);
@@ -115,8 +119,13 @@
 			xhr: xhr,
 			response: xhr.response,
 			responseType: xhr.responseType,
-			aborted: info.aborted
+			aborted: info.aborted,
+			timedOut: info.timedOut
 		}, info, false);
+	};
+
+	HttpMux.prototype._lhm_handleXhrTimeout = function () {
+		this._lhm_currentInfo.timedOut = true;
 	};
 
 	HttpMux.prototype._lhm_normalizeRequest = function (aRequest) {
