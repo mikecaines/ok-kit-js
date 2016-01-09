@@ -29,28 +29,23 @@
 	 */
 	var CssLoader = Ok.extendObject(Object, {
 		/**
-		 * Tests any success conditions, once the CSS is inserted into the document.
-		 * @param aLoadOptions
+		 * Gets the element that links the stylesheet to the current document.
+		 * @param aUrl
+		 * @param aOptions
 		 * @returns {string|null} Null if successful, otherwise string error message.
 		 * @protected
 		 */
-		_testLoaded: function (aLoadOptions) {
-			var error;
-
-			if (aLoadOptions.successSelector) {
-				if (!Ok.findCssRule(new RegExp('(^|})\\s*' + Solarfield.Ok.escapeRegExp(aLoadOptions.successSelector) + '\\s*{'))) {
-					error = "successSelector '" + aLoadOptions.successSelector + "' not found.";
-				}
-			}
-
-			return error || null;
+		getElement: function (aUrl, aOptions) {
+			return document.querySelector(
+				'link[rel="stylesheet"][href="' + aUrl + '"], link[rel="stylesheet"][data-href="' + aUrl + '"]'
+			);
 		},
 
 		/**
 		 * Inserts the link element into the document.
 		 * Override if you want to modify the href attribute, or insert into a specific location in the dom, etc.
 		 * @param {HTMLElement} aElement
-		 * @param {object} aOptions Options used by load().
+		 * @param {object} aOptions Options used by import().
 		 * @protected
 		 */
 		insertElement: function (aElement, aOptions) {
@@ -58,66 +53,61 @@
 		},
 
 		/**
-		 * Loads the stylesheet at aUrl, and optionally performs post-load success checks.
+		 * Loads the stylesheet at aUrl.
 		 * @param {string} aUrl
 		 * @param {object} [aOptions] Additional options.
-		 * @param {string} [aOptions.successSelector] A CSSRule with the specified selector must exist.
-		 * @returns {Promise}
+		 * @returns {Promise<CssLoaderImportResolved>}
+		 *
+		 * @typedef {{
+		 *  element: HTMLElement
+		 * }} CssLoaderImportResolved
 		 */
 		'import': function (aUrl, aOptions) {
-			var options = Ok.objectAssign({
-				successSelector: null
-			}, aOptions);
+			var cssResult, el;
 
-			if (!this._testLoaded(options)) {
-				return Promise.resolve({
-					url: aUrl
+			if ((el = this.getElement(aUrl, aOptions))) {
+				cssResult = Promise.resolve({
+					element: el
 				});
 			}
 
-			return new Promise(function (resolve, reject) {
-				var el;
+			else {
+				cssResult = new Promise(function (resolve, reject) {
+					var el;
 
-				el = document.createElement('link');
-				el.setAttribute('data-href', aUrl);
-				el.setAttribute('href', aUrl);
-				el.setAttribute('rel', 'stylesheet');
-				el.setAttribute('type', 'text/css');
+					el = document.createElement('link');
+					el.setAttribute('data-href', aUrl);
+					el.setAttribute('href', aUrl);
+					el.setAttribute('rel', 'stylesheet');
+					el.setAttribute('type', 'text/css');
 
-				el.addEventListener('load', function () {
-					var error;
-
-					if ((error = this._testLoaded(options))) {
-						reject({
-							message: error,
-							element: el
-						});
-					}
-
-					else {
+					el.addEventListener('load', function (aEvt) {
 						resolve({
-							url: aUrl
+							element: aEvt.target
 						});
-					}
+					}.bind(this));
+
+					el.addEventListener('error', function (ex) {
+						reject(ex);
+					});
+
+					this.insertElement(el, aOptions);
 				}.bind(this));
+			}
 
-				el.addEventListener('error', function (ex) {
-					reject(ex);
-				});
-
-				this.insertElement(el, options);
-			}.bind(this));
+			return cssResult;
 		},
 
 		/**
 		 * Removes any link element with a data-href attribute matching aUrl.
 		 * This effectively removes the stylesheet from the 'registry', and stops applying its rules to the document.
 		 * @param aUrl
+		 * @param aOptions
 		 */
-		remove: function (aUrl) {
+		remove: function (aUrl, aOptions) {
 			var el;
 
-			if ((el = document.querySelector('link[rel="stylesheet"][data-href="' + aUrl + '"]'))) {
+			if ((el = this.getElement(aUrl, aOptions))) {
 				el.parentNode.removeChild(el);
 			}
 		}

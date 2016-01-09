@@ -25,12 +25,11 @@
 (function (Ok, HttpMux) {
 	"use strict";
 
-	//FUTURE: HttpMux queuing/pool/reuse to avoid many parallel requests, etc.
-	//FUTURE: automatic retries
-
 	/**
 	 * @class Solarfield.Ok.HttpLoader
 	 * Wrapper for HttpMux, which provides a Promise based API.
+	 * Note that the promise will still resolve in the case of an abort or timeout, but will have
+	 * a null value for the response.
 	 */
 	var HttpLoader = Ok.extendObject(Object, {
 		/**
@@ -38,7 +37,13 @@
 		 * @param {string} aUrl The url to load from.
 		 * @param {Object} [aOptions] Additional options.
 		 * @param {string} [aOptions.responseType] @see XMLHttpRequest.responseType
-		 * @returns {Promise}
+		 * @returns {Promise<HttpLoaderLoadResolved>}
+		 *
+		 * @typedef {{
+		 *  response: string|null,
+		 *  aborted: boolean,
+		 *  timedOut: boolean
+		 * }} HttpLoaderLoadResolved
 		 */
 		load: function (aUrl, aOptions) {
 			var options, promise, httpMux;
@@ -61,7 +66,8 @@
 
 						resolve({
 							response: aEvt.response,
-							aborted: aEvt.aborted
+							aborted: aEvt.aborted,
+							timedOut: aEvt.timedOut
 						});
 					}
 				});

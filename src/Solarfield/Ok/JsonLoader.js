@@ -1,3 +1,6 @@
+//TODO: get rid of success checks
+//end handler should validate json response structure, and handle catch (by morphing error into notification response)
+
 /**
  * {@link http://github.com/solarfield/ok-kit-js}
  * {@license https://github.com/solarfield/ok-kit-js/blob/master/LICENSE}
@@ -31,83 +34,42 @@
 	 */
 	var JsonLoader = Ok.extendObject(HttpLoader, {
 		/**
-		 * Loads JSON from aUrl, and optionally performs post-load success checks.
+		 * Loads JSON from aUrl.
 		 * @param {string} aUrl The url to load.
 		 * @param {object} [aOptions] Additional options.
-		 * @param {string} [aOptions.successPath] Dot-separated path which must exist in response json.
-		 * @param {string} [aOptions.successValue] Value at successPath must match this value.
-		 * @returns {Promise}
+		 * @returns {Promise<JsonLoaderLoadResolved>}
+		 * @throws Error if a response is received and it cannot be parsed as JSON.
+		 *
+		 * @typedef {{
+		 *  json: json|null,
+		 *  aborted: boolean,
+		 *  timedOut: boolean
+		 * }} JsonLoaderLoadResolved
 		 */
 		load: function (aUrl, aOptions) {
-			var options, jsonPromise, httpPromise;
+			var jsonPromise, httpPromise;
 
-			options = Ok.objectAssign({
-				successPath: null,
-				successValue: null
-			}, aOptions);
-
-			httpPromise = JsonLoader.super.prototype.load(aUrl, options);
+			httpPromise = JsonLoader.super.prototype.load(aUrl, aOptions);
 
 			jsonPromise = httpPromise.then(function (httpResult) {
-				var responseJson, json, error, jsonResult;
+				var jsonResult;
 
 				jsonPromise = null;
 
-				if (httpResult.aborted) {
+				if (httpResult.aborted || httpResult.timedOut) {
 					jsonResult = {
 						json: null,
-						aborted: true
+						aborted: httpResult.aborted,
+						timedOut: httpResult.timedOut
 					}
 				}
 
 				else {
-					try {
-						responseJson = JSON.parse(httpResult.response);
-					} catch (ex) {}
-
-					if (responseJson !== undefined) {
-						if (options.successValue) {
-							if (Ok.objectGet(responseJson, options.successPath) == options.successValue) {
-								json = responseJson;
-							}
-							else {
-								error = "successValue '" + options.successValue + "' at successPath '" + options.successPath + "' not found in response.";
-							}
-						}
-
-						else if (options.successPath) {
-							if (Ok.objectHas(responseJson, options.successPath)) {
-								json = responseJson;
-							}
-							else {
-								error = "successPath '" + options.successPath + "' not found in response.";
-							}
-						}
-
-						else {
-							json = responseJson;
-						}
-					}
-
-					else {
-						error = "Response could not be parsed as JSON.";
-					}
-
-					options = null;
-
-					if (error) {
-						jsonResult = Promise.reject({
-							message: error,
-							response: httpResult.response
-						});
-					}
-
-					else {
-						jsonResult = {
-							json: json,
-							aborted: httpResult.aborted
-						};
-					}
+					jsonResult = {
+						json: JSON.parse(httpResult.response),
+						aborted: false,
+						timedOut: false
+					};
 				}
 
 				return jsonResult;
