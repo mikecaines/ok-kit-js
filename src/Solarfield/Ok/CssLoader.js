@@ -8,8 +8,7 @@
 		define(
 			'solarfield/lightship-js/src/Solarfield/Ok/CssLoader',
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ok',
-				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpLoader'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ok'
 			],
 			factory
 		);
@@ -17,19 +16,18 @@
 
 	else {
 		factory(
-			Solarfield.Ok,
-			Solarfield.Ok.HttpLoader
+			Solarfield.Ok
 		);
 	}
 })
-(function (Ok, HttpLoader) {
+(function (Ok) {
 	"use strict";
 
 	/**
 	 * @class Solarfield.Ok.CssLoader
 	 * @extends Solarfield.Ok.HttpLoader
 	 */
-	var CssLoader = Ok.extendObject(HttpLoader, {
+	var CssLoader = Ok.extendObject(Object, {
 		/**
 		 * Tests any success conditions, once the CSS is inserted into the document.
 		 * @param aLoadOptions
