@@ -33,14 +33,6 @@
 	 * Wrapper for HttpMux, which provides a Promise based API.
 	 */
 	var HttpLoader = Ok.extendObject(Object, {
-		_getMux: function () {
-			if (!this._httpMux) {
-				this._httpMux = new HttpMux();
-			}
-
-			return this._httpMux;
-		},
-
 		/**
 		 * Loads data from aUrl.
 		 * @param {string} aUrl The url to load from.
@@ -49,35 +41,45 @@
 		 * @returns {Promise}
 		 */
 		load: function (aUrl, aOptions) {
-			var options;
-
-			this.abort();
+			var options, promise, httpMux;
 
 			options = Ok.objectAssign({
 				responseType: ''
 			}, aOptions);
 
-			return new Promise(function (resolve) {
-				this._getMux().send({
+			httpMux = new HttpMux();
+
+			promise = new Promise(function (resolve) {
+				httpMux.send({
 					url: aUrl,
 					responseType: options.responseType,
+
 					onEnd: function (aEvt) {
-						resolve(aEvt.response);
+						promise = null;
+						options = null;
+						httpMux = null;
+
+						resolve({
+							response: aEvt.response,
+							aborted: aEvt.aborted
+						});
 					}
 				});
 			}.bind(this));
-		},
 
-		abort: function () {
-			if (this._httpMux) {
-				this._httpMux.abort();
-			}
-		},
+			promise._SOHL_httpMux = httpMux;
+			promise.abort = HttpLoader._SOHL_abortPromise;
 
-		constructor: function () {
-			this._httpMux = null;
+			return promise;
 		}
 	});
+
+	HttpLoader._SOHL_abortPromise = function () {
+		if (this._SOHL_httpMux) {
+			this._SOHL_httpMux.abort();
+			delete this._SOHL_httpMux;
+		}
+	};
 
 	Ok.defineNamespace('Solarfield.Ok');
 	Solarfield.Ok.HttpLoader = HttpLoader;

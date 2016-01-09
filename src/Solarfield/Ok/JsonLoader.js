@@ -39,57 +39,95 @@
 		 * @returns {Promise}
 		 */
 		load: function (aUrl, aOptions) {
-			var options = Ok.objectAssign({
+			var options, jsonPromise, httpPromise;
+
+			options = Ok.objectAssign({
 				successPath: null,
 				successValue: null
 			}, aOptions);
 
-			return JsonLoader.super.prototype.load(aUrl, options).then(function (responseText) {
-				var responseJson, json, error;
+			httpPromise = JsonLoader.super.prototype.load(aUrl, options);
 
-				try {responseJson = JSON.parse(responseText);} catch (ex) {}
+			jsonPromise = httpPromise.then(function (httpResult) {
+				var responseJson, json, error, jsonResult;
 
-				if (responseJson !== undefined) {
-					if (options.successValue) {
-						if (Ok.objectGet(responseJson, options.successPath) == options.successValue) {
-							json = responseJson;
-						}
-						else {
-							error = "successValue '" + options.successValue + "' at successPath '" + options.successPath + "' not found in response.";
-						}
+				jsonPromise = null;
+
+				if (httpResult.aborted) {
+					jsonResult = {
+						json: null,
+						aborted: true
 					}
+				}
 
-					else if (options.successPath) {
-						if (Ok.objectHas(responseJson, options.successPath)) {
-							json = responseJson;
+				else {
+					try {
+						responseJson = JSON.parse(httpResult.response);
+					} catch (ex) {}
+
+					if (responseJson !== undefined) {
+						if (options.successValue) {
+							if (Ok.objectGet(responseJson, options.successPath) == options.successValue) {
+								json = responseJson;
+							}
+							else {
+								error = "successValue '" + options.successValue + "' at successPath '" + options.successPath + "' not found in response.";
+							}
 						}
+
+						else if (options.successPath) {
+							if (Ok.objectHas(responseJson, options.successPath)) {
+								json = responseJson;
+							}
+							else {
+								error = "successPath '" + options.successPath + "' not found in response.";
+							}
+						}
+
 						else {
-							error = "successPath '" + options.successPath + "' not found in response.";
+							json = responseJson;
 						}
 					}
 
 					else {
-						json = responseJson;
+						error = "Response could not be parsed as JSON.";
+					}
+
+					options = null;
+
+					if (error) {
+						jsonResult = Promise.reject({
+							message: error,
+							response: httpResult.response
+						});
+					}
+
+					else {
+						jsonResult = {
+							json: json,
+							aborted: httpResult.aborted
+						};
 					}
 				}
 
-				else {
-					error = "Response could not be parsed as JSON."
-				}
-
-				if (error) {
-					return Promise.reject({
-						message: error,
-						response: responseText
-					});
-				}
-
-				else {
-					return json;
-				}
+				return jsonResult;
 			}.bind(this));
+
+			jsonPromise._SOJL_httpPromise = httpPromise;
+			jsonPromise.abort = JsonLoader._SOJL_abortPromise;
+
+			httpPromise = null;
+
+			return jsonPromise;
 		}
 	});
+
+	JsonLoader._SOJL_abortPromise = function () {
+		if (this._SOJL_httpPromise) {
+			this._SOJL_httpPromise.abort();
+			delete this._SOJL_httpPromise;
+		}
+	};
 
 	Ok.defineNamespace('Solarfield.Ok');
 	Solarfield.Ok.JsonLoader = JsonLoader;
