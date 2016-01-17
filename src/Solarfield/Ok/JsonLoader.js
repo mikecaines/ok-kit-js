@@ -68,7 +68,7 @@
 
 			jsonPromise = null;
 
-			if (httpResult.aborted || httpResult.timedOut) {alert(0)
+			if (httpResult.aborted || httpResult.timedOut) {
 				jsonResult = {
 					json: null,
 					aborted: httpResult.aborted,
