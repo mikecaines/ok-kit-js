@@ -361,6 +361,7 @@
 			else {
 				if (aSubClass.hasOwnProperty('constructor')) {
 					subClass = aSubClass.constructor;
+					hasSubConstructor = true;
 				}
 
 				subMembers = aSubClass;
