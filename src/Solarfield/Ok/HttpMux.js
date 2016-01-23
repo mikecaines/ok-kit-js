@@ -112,6 +112,14 @@
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
 
+		//do an extra check for an implicit abort,
+		//which occurs when the page is reloaded while the request is still executing
+		if (!info.aborted && !info.timedOut) {
+			if (xhr.status === 0) {
+				info.aborted = true;
+			}
+		}
+
 		this._lhm_dispatchEvent({
 			type: 'end',
 			currentTarget: this,
