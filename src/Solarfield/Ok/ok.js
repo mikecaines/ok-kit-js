@@ -377,16 +377,22 @@
 			);
 		}
 
-		//copy 'static' methods of aSuperClass to aSubClass
-		for (p in aSuperClass) {
-			if ((typeof aSuperClass[p]) == 'function') {
-				subClass[p] = aSuperClass[p];
+		if (aSuperClass) {
+			//copy 'static' methods of aSuperClass to aSubClass
+			for (p in aSuperClass) {
+				if ((typeof aSuperClass[p]) == 'function') {
+					subClass[p] = aSuperClass[p];
+				}
 			}
+
+			subClass.prototype = Object.create(aSuperClass.prototype);
+			subClass.prototype.constructor = subClass;
+			subClass.super = aSuperClass;
 		}
 
-		subClass.prototype = Object.create(aSuperClass.prototype);
-		subClass.prototype.constructor = subClass;
-		subClass.super = aSuperClass;
+		else {
+			subClass.super = Object;
+		}
 
 		if (subMembers) {
 			for (p in subMembers) {
