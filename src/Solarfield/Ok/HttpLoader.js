@@ -60,29 +60,34 @@
 	HttpLoader.load = function (aUrl, aOptions) {
 		var options, promise, httpMux;
 
-		options = Ok.objectAssign({
-			responseType: ''
-		}, aOptions);
+		if ((typeof aUrl) == 'string') {
+			options = Ok.objectAssign({
+				url: aUrl
+			}, aOptions);
+		}
+
+		else {
+			options = aUrl;
+		}
+
+		delete options.onBegin;
 
 		httpMux = new HttpMux();
 
 		promise = new Promise(function (resolve) {
-			httpMux.send({
-				url: aUrl,
-				responseType: options.responseType,
+			options.onEnd = function (aEvt) {
+				promise = null;
+				options = null;
+				httpMux = null;
 
-				onEnd: function (aEvt) {
-					promise = null;
-					options = null;
-					httpMux = null;
+				resolve({
+					response: aEvt.response,
+					aborted: aEvt.aborted,
+					timedOut: aEvt.timedOut
+				});
+			};
 
-					resolve({
-						response: aEvt.response,
-						aborted: aEvt.aborted,
-						timedOut: aEvt.timedOut
-					});
-				}
-			});
+			httpMux.send(options);
 		}.bind(this));
 
 		promise._SOHL_httpMux = httpMux;
