@@ -373,7 +373,7 @@
 			Ok.extendObject._oeo_counter++;
 
 			subClass = new Function(
-				"this._oeo_superClass" + Ok.extendObject._oeo_counter + ".apply(this, arguments);"
+				aSuperClass ? "this._oeo_superClass" + Ok.extendObject._oeo_counter + ".apply(this, arguments);" : ''
 			);
 		}
 
