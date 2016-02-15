@@ -1,6 +1,3 @@
-//TODO: get rid of success checks
-//end handler should validate json response structure, and handle catch (by morphing error into notification response)
-
 /**
  * {@link http://github.com/solarfield/ok-kit-js}
  * {@license https://github.com/solarfield/ok-kit-js/blob/master/LICENSE}
