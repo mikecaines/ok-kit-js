@@ -45,8 +45,12 @@
 			});
 		},
 
-		constructor: function (aName) {
-			this._soc_name = aName != null ? aName.toString() : null;
+		constructor: function (aOptions) {
+			var options = Ok.objectAssign({
+				name: null
+			}, aOptions);
+
+			this._soc_name = options.name != null ? options.toString() : null;
 			this._soc_eventTarget = new EvtTarget();
 		}
 	});
