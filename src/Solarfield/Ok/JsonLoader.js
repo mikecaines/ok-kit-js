@@ -18,11 +18,12 @@
 	else {
 		factory(
 			Solarfield.Ok,
-			Solarfield.Ok.HttpLoader
+			Solarfield.Ok.HttpLoader,
+			true
 		);
 	}
 })
-(function (Ok, HttpLoader) {
+(function (Ok, HttpLoader, _createGlobals) {
 	"use strict";
 
 	/**
@@ -92,8 +93,10 @@
 		return jsonPromise;
 	};
 
-	Ok.defineNamespace('Solarfield.Ok');
-	Solarfield.Ok.JsonLoader = JsonLoader;
+	if (_createGlobals) {
+		Ok.defineNamespace('Solarfield.Ok');
+		Solarfield.Ok.JsonLoader = JsonLoader;
+	}
 
 	return JsonLoader;
 });

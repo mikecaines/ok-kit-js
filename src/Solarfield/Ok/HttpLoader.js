@@ -18,11 +18,12 @@
 	else {
 		factory(
 			Solarfield.Ok,
-			Solarfield.Ok.HttpMux
+			Solarfield.Ok.HttpMux,
+			true
 		);
 	}
 })
-(function (Ok, HttpMux) {
+(function (Ok, HttpMux, _createGlobals) {
 	"use strict";
 
 	/**
@@ -96,8 +97,10 @@
 		return promise;
 	};
 
-	Ok.defineNamespace('Solarfield.Ok');
-	Solarfield.Ok.HttpLoader = HttpLoader;
+	if (_createGlobals) {
+		Ok.defineNamespace('Solarfield.Ok');
+		Solarfield.Ok.HttpLoader = HttpLoader;
+	}
 
 	return HttpLoader;
 });

@@ -13,13 +13,13 @@
 	}
 
 	else {
-		factory();
+		factory(true);
 	}
 })
-(function () {
+(function (_createGlobals) {
 	"use strict";
 
-	var Ok = self.Solarfield && Solarfield.Ok ? Solarfield.Ok : {};
+	var Ok = _createGlobals && self.Solarfield && Solarfield.Ok ? Solarfield.Ok : {};
 
 	Ok.defineNamespace = function (aNamespace) {
 		if (!Ok.objectGet(self, aNamespace)) {
@@ -412,6 +412,10 @@
 		return JSON.parse(JSON.stringify(aObject));
 	};
 
-	Ok.defineNamespace('Solarfield.Ok');
-	return Solarfield.Ok = Ok;
+	if (_createGlobals) {
+		Ok.defineNamespace('Solarfield.Ok');
+		Solarfield.Ok = Ok;
+	}
+
+	return Ok;
 });

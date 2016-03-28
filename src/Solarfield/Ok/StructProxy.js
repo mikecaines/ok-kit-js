@@ -16,11 +16,12 @@
 
 	else {
 		factory(
-			Solarfield.Ok
+			Solarfield.Ok,
+			true
 		);
 	}
 })
-(function (Ok) {
+(function (Ok, _createGlobals) {
 	"use strict";
 
 	/** @class Solarfield.Ok.StructProxy */
@@ -105,6 +106,10 @@
 		}
 	});
 
-	Ok.defineNamespace('Solarfield.Ok');
-	return Solarfield.Ok.StructProxy = StructProxy;
+	if (_createGlobals) {
+		Ok.defineNamespace('Solarfield.Ok');
+		Solarfield.Ok.StructProxy = StructProxy;
+	}
+
+	return StructProxy;
 });

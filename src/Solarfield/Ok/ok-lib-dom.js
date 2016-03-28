@@ -16,11 +16,12 @@
 
 	else {
 		factory(
-			Solarfield.Ok
+			Solarfield.Ok,
+			true
 		);
 	}
 })
-(function (Ok) {
+(function (Ok, _createGlobals) {
 	"use strict";
 
 	Ok.DOM_NODE_ELEMENT = 1;
@@ -478,6 +479,10 @@
 		return this._compare(aNode1, aNode2, null, aNode1);
 	};
 
-	Ok.defineNamespace('Solarfield.Ok');
-	return Solarfield.Ok = Ok;
+	if (_createGlobals) {
+		Ok.defineNamespace('Solarfield.Ok');
+		Solarfield.Ok = Ok;
+	}
+
+	return Ok;
 });

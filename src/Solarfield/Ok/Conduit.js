@@ -18,11 +18,12 @@
 	else {
 		factory(
 			Solarfield.Ok,
-			Solarfield.Ok.EventTarget
+			Solarfield.Ok.EventTarget,
+			true
 		);
 	}
 })
-(function (Ok, EvtTarget) {
+(function (Ok, EvtTarget, _createGlobals) {
 	"use strict";
 
 	/**
@@ -55,8 +56,10 @@
 		}
 	});
 
-	Ok.defineNamespace('Solarfield.Ok');
-	Solarfield.Ok.Conduit = Conduit;
+	if (_createGlobals) {
+		Ok.defineNamespace('Solarfield.Ok');
+		Solarfield.Ok.Conduit = Conduit;
+	}
 
 	return Conduit;
 });

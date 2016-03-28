@@ -16,11 +16,12 @@
 
 	else {
 		factory(
-			Solarfield.Ok
+			Solarfield.Ok,
+			true
 		);
 	}
 })
-(function (Ok) {
+(function (Ok, _createGlobals) {
 	"use strict";
 
 	//do some tests
@@ -270,6 +271,10 @@
 		}
 	};
 
-	Ok.defineNamespace('Solarfield.Ok');
-	return Solarfield.Ok = Ok;
+	if (_createGlobals) {
+		Ok.defineNamespace('Solarfield.Ok');
+		Solarfield.Ok = Ok
+	}
+
+	return Ok;
 });
