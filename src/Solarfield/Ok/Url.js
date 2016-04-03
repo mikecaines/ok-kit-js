@@ -123,6 +123,20 @@
 			delete this._sou_parts.query[aName];
 		},
 
+		getPath: function () {
+			return this._sou_parts.path;
+		},
+		
+		getFileName: function () {
+			var matches;
+
+			if ((matches = this._sou_parts['path'].match(/([^/]+)$/))) {
+				return matches[1];
+			}
+			
+			return '';
+		},
+
 		toString: function () {
 			var paramName, values, i, v, paramCounter;
 			var str = '';
