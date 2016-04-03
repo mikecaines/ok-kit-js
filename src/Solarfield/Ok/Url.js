@@ -126,6 +126,10 @@
 		getPath: function () {
 			return this._sou_parts.path;
 		},
+
+		setPath: function (aPath) {
+			this._sou_parts.path = aPath != null ? aPath+'' : '';
+		},
 		
 		getFileName: function () {
 			var matches;
@@ -159,6 +163,12 @@
 			}
 
 			if (this._sou_parts.path != '') {
+				if (str != '') {
+					if (this._sou_parts.path.search(/^\//) == -1) {
+						str += '/';
+					}
+				}
+
 				str += this._sou_parts.path;
 			}
 
