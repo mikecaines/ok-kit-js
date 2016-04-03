@@ -130,6 +130,23 @@
 		setPath: function (aPath) {
 			this._sou_parts.path = aPath != null ? aPath+'' : '';
 		},
+
+		pushPath: function (aPath) {
+			var piece = aPath != null ? aPath+'' : '';
+
+			if (piece != '') {
+				if (this._sou_parts.path != '') {
+					if (piece.search(/^\//) == -1) {
+						if (this._sou_parts.path.search(/\/$/) == -1) {
+							this._sou_parts.path += '/';
+						}
+					}
+				}
+
+				this._sou_parts.path += piece;
+				this._sou_parts.path = this._sou_parts.path.replace(/\/{2,}/, '/');
+			}
+		},
 		
 		getFileName: function () {
 			var matches;
