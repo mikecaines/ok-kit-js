@@ -43,7 +43,7 @@
 	 */
 	CssLoader.getElement = function (aUrl, aOptions) {
 		return document.querySelector(
-			'link[rel="stylesheet"][href="' + aUrl + '"], link[rel="stylesheet"][data-href="' + aUrl + '"]'
+			'link[rel="stylesheet"][href="' + aUrl + '"], link[rel="stylesheet"][data-href="' + aUrl + '"]:not([data-state])'
 		);
 	};
 
@@ -69,35 +69,52 @@
 		 * }} CssLoaderImportResolved
 	 */
 	CssLoader.import = function (aUrl, aOptions) {
-		var cssResult, el;
+		var cssResult, linkEl, linkState;
 
-		if ((el = this.getElement(aUrl, aOptions))) {
+		linkEl = this.getElement(aUrl, aOptions);
+		linkState = linkEl ? linkEl.getAttribute('data-state') : 1;
+
+		if (linkState == null) {
 			cssResult = Promise.resolve({
-				element: el
+				element: linkEl
 			});
 		}
 
 		else {
 			cssResult = new Promise(function (resolve, reject) {
-				var el;
+				var el = linkEl;
 
-				el = document.createElement('link');
-				el.setAttribute('data-href', aUrl);
-				el.setAttribute('href', aUrl);
-				el.setAttribute('rel', 'stylesheet');
-				el.setAttribute('type', 'text/css');
+				var handleLoad = function (aEvt) {
+					this.removeEventListener('load', handleLoad);
+					this.removeEventListener('error', handleError);
 
-				el.addEventListener('load', function (aEvt) {
 					resolve({
 						element: aEvt.target
 					});
-				}.bind(this));
+				};
 
-				el.addEventListener('error', function (ex) {
+				var handleError = function (ex) {
+					this.removeEventListener('load', handleLoad);
+					this.removeEventListener('error', handleError);
+
 					reject(ex);
-				});
+				};
 
-				this.insertElement(el, aOptions);
+				if (!el) {
+					el = document.createElement('link');
+					el.setAttribute('data-href', aUrl);
+					el.setAttribute('href', aUrl);
+					el.setAttribute('rel', 'stylesheet');
+					el.setAttribute('type', 'text/css');
+					el.setAttribute('data-state', '1');
+				}
+
+				el.addEventListener('load', handleLoad);
+				el.addEventListener('error', handleError);
+
+				if (!linkEl) {
+					this.insertElement(el, aOptions);
+				}
 			}.bind(this));
 		}
 
