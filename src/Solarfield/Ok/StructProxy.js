@@ -8,7 +8,8 @@
 		define(
 			'solarfield/ok-kit-js/src/Solarfield/Ok/StructProxy',
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ok'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/StructUtils'
 			],
 			factory
 		);
@@ -16,16 +17,17 @@
 
 	else {
 		factory(
-			Solarfield.Ok,
+			Solarfield.Ok.ObjectUtils,
+			Solarfield.Ok.StructUtils,
 			true
 		);
 	}
 })
-(function (Ok, _createGlobals) {
+(function (ObjectUtils, StructUtils, _createGlobals) {
 	"use strict";
 
 	/** @class Solarfield.Ok.StructProxy */
-	var StructProxy = Ok.extendObject(null, {
+	var StructProxy = ObjectUtils.extend(null, {
 		constructor: function (aData) {
 			this._ohm_data = (aData != null && aData.constructor === Object) ? aData : {};
 		},
@@ -35,7 +37,7 @@
 		},
 
 		get: function (aPath) {
-			return Ok.objectGet(this._ohm_data, aPath);
+			return StructUtils.get(this._ohm_data, aPath);
 		},
 
 		getAsString: function (aPath) {
@@ -102,12 +104,12 @@
 		},
 
 		set: function (aPath, aValue) {
-			Ok.objectSet(this._ohm_data, aPath, aValue);
+			StructUtils.set(this._ohm_data, aPath, aValue);
 		}
 	});
 
 	if (_createGlobals) {
-		Ok.defineNamespace('Solarfield.Ok');
+		ObjectUtils.defineNamespace('Solarfield.Ok');
 		Solarfield.Ok.StructProxy = StructProxy;
 	}
 

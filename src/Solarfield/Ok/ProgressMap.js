@@ -1,7 +1,7 @@
 define(
 	'solarfield/ok-kit-js/src/Solarfield/Ok/ProgressMap',
 	[
-		'solarfield/ok-kit-js/src/Solarfield/Ok/ok',
+		'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
 		'solarfield/ok-kit-js/src/Solarfield/Ok/EventTarget'
 	],
 	/**
@@ -10,13 +10,13 @@ define(
 	 * @param {Solarfield.Ok.EventTarget} EventTarget
 	 * @returns {Solarfield.Ok.ProgressMap}
 	 */
-	function (Ok, EventTarget) {
+	function (ObjectUtils, EventTarget) {
 		"use strict";
 
 		/**
 		 * @class Solarfield.Ok.ProgressMap
 		 */
-		var ProgressMap = Ok.extendObject(null, {
+		var ProgressMap = ObjectUtils.extend(null, {
 			/**
 			 * @param aEvt
 			 * @protected

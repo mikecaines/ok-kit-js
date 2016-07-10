@@ -6,9 +6,11 @@
 (function (factory) {
 	if (typeof define === "function" && define.amd) {
 		define(
-			'solarfield/ok-kit-js/src/Solarfield/Ok/experimental/ok-lib-animation',
+			'solarfield/ok-kit-js/src/Solarfield/Ok/AnimUtils',
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ok'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/DomUtils',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/RegexUtils'
 			],
 			factory
 		);
@@ -16,17 +18,23 @@
 
 	else {
 		factory(
-			Solarfield.Ok,
+			Solarfield.Ok.ObjectUtils,
+			Solarfield.Ok.DomUtils,
+			Solarfield.Ok.RegexUtils,
 			true
 		);
 	}
 })
-(function (Ok, _createGlobals) {
+(function (ObjectUtils, DomUtils, RegexUtils, _createGlobals) {
 	"use strict";
 
-	//do some tests
+	var AnimUtils = function () {
+		throw new Error("Class is abstract.");
+	};
+
+	//do some one-time compatibility tests
 	(function () {
-		if (!Ok.compat) Ok.compat = {};
+		AnimUtils.compat = {};
 
 		var domAnimation = window.Modernizr && Modernizr.prefixed && Modernizr.prefixed('animation');
 
@@ -45,19 +53,19 @@
 		};
 
 		if (domAnimation in prefixes) {
-			Ok.compat.domAnimation = domAnimation;
-			Ok.compat.domAnimationName = domAnimation + 'Name';
-			Ok.compat.eventAnimationstart = prefixes[domAnimation].start;
-			Ok.compat.eventAnimationend = prefixes[domAnimation].end;
-			Ok.compat.cssKeyframes = prefixes[domAnimation].key;
+			AnimUtils.compat.domAnimation = domAnimation;
+			AnimUtils.compat.domAnimationName = domAnimation + 'Name';
+			AnimUtils.compat.eventAnimationstart = prefixes[domAnimation].start;
+			AnimUtils.compat.eventAnimationend = prefixes[domAnimation].end;
+			AnimUtils.compat.cssKeyframes = prefixes[domAnimation].key;
 		}
 
 		else {
-			Ok.compat.domAnimation = false;
-			Ok.compat.domAnimationName = false;
-			Ok.compat.eventAnimationstart = false;
-			Ok.compat.eventAnimationend = false;
-			Ok.compat.cssKeyframes = false;
+			AnimUtils.compat.domAnimation = false;
+			AnimUtils.compat.domAnimationName = false;
+			AnimUtils.compat.eventAnimationstart = false;
+			AnimUtils.compat.eventAnimationend = false;
+			AnimUtils.compat.cssKeyframes = false;
 		}
 	})();
 
@@ -66,12 +74,12 @@
 	 * @param aKeyframeName
 	 * @returns {CSSRule}
 	 */
-	Ok.getCssKeyframe = function (aAnimationName, aKeyframeName) {
-		var animation = Ok.findCssRule(new RegExp('(^|\\s)@' + Ok.escapeRegExp(Ok.compat.cssKeyframes) + '\\s+' + Ok.escapeRegExp(aAnimationName) + '\\s*\\{'));
-		return animation ? Ok.findCssRule(new RegExp('(^|\\s)' + aKeyframeName + '(\\s|$)'), animation.cssRules) : null;
+	AnimUtils.getCssKeyframe = function (aAnimationName, aKeyframeName) {
+		var animation = DomUtils.findCssRule(new RegExp('(^|\\s)@' + RegexUtils.escape(AnimUtils.compat.cssKeyframes) + '\\s+' + RegexUtils.escape(aAnimationName) + '\\s*\\{'));
+		return animation ? DomUtils.findCssRule(new RegExp('(^|\\s)' + aKeyframeName + '(\\s|$)'), animation.cssRules) : null;
 	};
 
-	Ok.serializeAnimation = function (aObject) {
+	AnimUtils.serializeAnimation = function (aObject) {
 		var str = '';
 
 		if (aObject.name) str += ' ' + aObject.name;
@@ -86,7 +94,7 @@
 		return str;
 	};
 
-	Ok.parseAnimation = function (aStr) {
+	AnimUtils.parseAnimation = function (aStr) {
 		if (aStr == null || aStr.trim() == '') {
 			return null;
 		}
@@ -105,27 +113,27 @@
 		}
 	};
 
-	Ok.setAnimation = function (aElement, aAnimation) {
-		var animation = aAnimation && aAnimation.length ? Ok.parseAnimation(aAnimation) : aAnimation;
+	AnimUtils.setAnimation = function (aElement, aAnimation) {
+		var animation = aAnimation && aAnimation.length ? AnimUtils.parseAnimation(aAnimation) : aAnimation;
 
-		if (Ok.compat.eventAnimationstart) {
+		if (AnimUtils.compat.eventAnimationstart) {
 			if (animation) {
-				if (Ok.hasAnimation(aElement, animation.name)) {
-					aElement.style[Ok.compat.domAnimation] = '';
+				if (AnimUtils.hasAnimation(aElement, animation.name)) {
+					aElement.style[AnimUtils.compat.domAnimation] = '';
 
-					Ok.deferAnimationCall(function () {
+					AnimUtils.deferAnimationCall(function () {
 						//FUTURE: use new Function() for perf
-						aElement.style[Ok.compat.domAnimation] = aAnimation.length ? aAnimation : Ok.serializeAnimation(aAnimation);
+						aElement.style[AnimUtils.compat.domAnimation] = aAnimation.length ? aAnimation : AnimUtils.serializeAnimation(aAnimation);
 					});
 				}
 
 				else {
-					aElement.style[Ok.compat.domAnimation] = aAnimation.length ? aAnimation : Ok.serializeAnimation(aAnimation);
+					aElement.style[AnimUtils.compat.domAnimation] = aAnimation.length ? aAnimation : AnimUtils.serializeAnimation(aAnimation);
 				}
 			}
 
 			else {
-				aElement.style[Ok.compat.domAnimation] = '';
+				aElement.style[AnimUtils.compat.domAnimation] = '';
 			}
 		}
 
@@ -166,16 +174,16 @@
 		}
 	};
 
-	Ok.hasAnimation = function (aElement, aAnimationName) {
-		return aElement.style[Ok.compat.domAnimation]
+	AnimUtils.hasAnimation = function (aElement, aAnimationName) {
+		return aElement.style[AnimUtils.compat.domAnimation]
 			.search(new RegExp('(^|(,\\s*))[^,]*' + aAnimationName + '[^,]*((\\s*,)|$)', 'g'), '') > -1;
 	};
 
-	Ok.deferAnimationCall = function (aCallback) {
+	AnimUtils.deferAnimationCall = function (aCallback) {
 		requestAnimationFrame(aCallback);
 	};
 
-	Ok.onAnimationStart = function (aElement, aAnimationName, aCallback, aData) {
+	AnimUtils.onAnimationStart = function (aElement, aAnimationName, aCallback, aData) {
 		return new Promise(function (resolve) {
 			aElement._Ok_oas = {
 				c: aCallback,
@@ -185,26 +193,26 @@
 			};
 
 
-			if (Ok.compat.eventAnimationstart) {
-				aElement.addEventListener(Ok.compat.eventAnimationstart, Ok.onAnimationStart._handleCssAnimationStart);
+			if (AnimUtils.compat.eventAnimationstart) {
+				aElement.addEventListener(AnimUtils.compat.eventAnimationstart, AnimUtils.onAnimationStart._handleCssAnimationStart);
 			}
 
 			else {
-				Ok.onAnimationStart._handleCssAnimationStart.call(aElement, {
+				AnimUtils.onAnimationStart._handleCssAnimationStart.call(aElement, {
 					currentTarget: aElement,
 					animationName: aAnimationName
 				});
 			}
 		});
 	};
-	Ok.onAnimationStart._handleCssAnimationStart = function (aEvt) {
+	AnimUtils.onAnimationStart._handleCssAnimationStart = function (aEvt) {
 		var item;
 
 		if (aEvt.currentTarget === aEvt.target) {
 			if (aEvt.currentTarget._Ok_oas.a == aEvt.animationName) {
 				item = aEvt.currentTarget._Ok_oas;
 				delete aEvt.currentTarget._Ok_oas;
-				aEvt.currentTarget.removeEventListener(Ok.compat.eventAnimationstart, Ok.onAnimationStart._handleCssAnimationStart);
+				aEvt.currentTarget.removeEventListener(AnimUtils.compat.eventAnimationstart, AnimUtils.onAnimationStart._handleCssAnimationStart);
 
 				if (item.c) {
 					item.c({
@@ -223,7 +231,7 @@
 		}
 	};
 
-	Ok.onAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
+	AnimUtils.onAnimationEnd = function (aElement, aAnimationName, aCallback, aData) {
 		return new Promise(function (resolve) {
 			aElement._Ok_oae = {
 				c: aCallback,
@@ -233,26 +241,26 @@
 			};
 
 
-			if (Ok.compat.eventAnimationend) {
-				aElement.addEventListener(Ok.compat.eventAnimationend, Ok.onAnimationEnd._handleCssAnimationEnd);
+			if (AnimUtils.compat.eventAnimationend) {
+				aElement.addEventListener(AnimUtils.compat.eventAnimationend, AnimUtils.onAnimationEnd._handleCssAnimationEnd);
 			}
 
 			else {
-				Ok.onAnimationEnd._handleCssAnimationEnd.call(aElement, {
+				AnimUtils.onAnimationEnd._handleCssAnimationEnd.call(aElement, {
 					currentTarget: aElement,
 					animationName: aAnimationName
 				});
 			}
 		});
 	};
-	Ok.onAnimationEnd._handleCssAnimationEnd = function (aEvt) {
+	AnimUtils.onAnimationEnd._handleCssAnimationEnd = function (aEvt) {
 		var item;
 
 		if (aEvt.currentTarget === aEvt.target) {
 			if (aEvt.currentTarget._Ok_oae.a == aEvt.animationName) {
 				item = aEvt.currentTarget._Ok_oae;
 				delete aEvt.currentTarget._Ok_oae;
-				aEvt.currentTarget.removeEventListener(Ok.compat.eventAnimationend, Ok.onAnimationEnd._handleCssAnimationEnd);
+				aEvt.currentTarget.removeEventListener(AnimUtils.compat.eventAnimationend, AnimUtils.onAnimationEnd._handleCssAnimationEnd);
 
 				if (item.c) {
 					item.c({
@@ -272,9 +280,9 @@
 	};
 
 	if (_createGlobals) {
-		Ok.defineNamespace('Solarfield.Ok');
-		Solarfield.Ok = Ok
+		ObjectUtils.defineNamespace('Solarfield.Ok');
+		Solarfield.Ok.AnimUtils = AnimUtils;
 	}
 
-	return Ok;
+	return AnimUtils;
 });

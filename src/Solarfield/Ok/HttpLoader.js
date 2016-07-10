@@ -8,7 +8,8 @@
 		define(
 			'solarfield/lightship-js/src/Solarfield/Ok/HttpLoader',
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ok',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/StructUtils',
 				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpMux'
 			],
 			factory
@@ -17,13 +18,14 @@
 
 	else {
 		factory(
-			Solarfield.Ok,
+			Solarfield.Ok.ObjectUtils,
+			Solarfield.Ok.StructUtils,
 			Solarfield.Ok.HttpMux,
 			true
 		);
 	}
 })
-(function (Ok, HttpMux, _createGlobals) {
+(function (ObjectUtils, StructUtils, HttpMux, _createGlobals) {
 	"use strict";
 
 	/**
@@ -32,7 +34,7 @@
 	 * Note that the promise will still resolve in the case of an abort or timeout, but will have
 	 * a null value for the response.
 	 */
-	var HttpLoader = Ok.extendObject(Object, {
+	var HttpLoader = ObjectUtils.extend(Object, {
 		constructor: function () {
 			throw "Class is abstract."
 		}
@@ -62,7 +64,7 @@
 		var options, promise, httpMux;
 
 		if ((typeof aUrl) == 'string') {
-			options = Ok.objectAssign({
+			options = StructUtils.assign({
 				url: aUrl
 			}, aOptions);
 		}
@@ -98,7 +100,7 @@
 	};
 
 	if (_createGlobals) {
-		Ok.defineNamespace('Solarfield.Ok');
+		ObjectUtils.defineNamespace('Solarfield.Ok');
 		Solarfield.Ok.HttpLoader = HttpLoader;
 	}
 

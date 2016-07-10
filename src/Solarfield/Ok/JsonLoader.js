@@ -8,7 +8,7 @@
 		define(
 			'solarfield/lightship-js/src/Solarfield/Ok/JsonLoader',
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ok',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
 				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpLoader'
 			],
 			factory
@@ -17,20 +17,20 @@
 
 	else {
 		factory(
-			Solarfield.Ok,
+			Solarfield.Ok.ObjectUtils,
 			Solarfield.Ok.HttpLoader,
 			true
 		);
 	}
 })
-(function (Ok, HttpLoader, _createGlobals) {
+(function (ObjectUtils, HttpLoader, _createGlobals) {
 	"use strict";
 
 	/**
 	 * @class Solarfield.Ok.JsonLoader
 	 * @extends Solarfield.Ok.HttpLoader
 	 */
-	var JsonLoader = Ok.extendObject(HttpLoader, {
+	var JsonLoader = ObjectUtils.extend(HttpLoader, {
 		constructor: function () {
 			throw "Class is abstract.";
 		}
@@ -94,7 +94,7 @@
 	};
 
 	if (_createGlobals) {
-		Ok.defineNamespace('Solarfield.Ok');
+		ObjectUtils.defineNamespace('Solarfield.Ok');
 		Solarfield.Ok.JsonLoader = JsonLoader;
 	}
 

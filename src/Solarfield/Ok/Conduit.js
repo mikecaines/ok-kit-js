@@ -8,7 +8,8 @@
 		define(
 			'solarfield/lightship-js/src/Solarfield/Ok/Conduit',
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ok',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/StructUtils',
 				'solarfield/ok-kit-js/src/Solarfield/Ok/EventTarget'
 			],
 			factory
@@ -17,19 +18,20 @@
 
 	else {
 		factory(
-			Solarfield.Ok,
+			Solarfield.Ok.ObjectUtils,
+			Solarfield.Ok.StructUtils,
 			Solarfield.Ok.EventTarget,
 			true
 		);
 	}
 })
-(function (Ok, EvtTarget, _createGlobals) {
+(function (ObjectUtils, StructUtils, EvtTarget, _createGlobals) {
 	"use strict";
 
 	/**
 	 * @class Solarfield.Ok.Conduit
 	 */
-	var Conduit = Ok.extendObject(null, {
+	var Conduit = ObjectUtils.extend(null, {
 		addEventListener: function (aType, aListener) {
 			this._soc_eventTarget.addEventListener(aType, aListener);
 		},
@@ -47,7 +49,7 @@
 		},
 
 		constructor: function (aOptions) {
-			var options = Ok.objectAssign({
+			var options = StructUtils.assign({
 				name: null
 			}, aOptions);
 
@@ -57,7 +59,7 @@
 	});
 
 	if (_createGlobals) {
-		Ok.defineNamespace('Solarfield.Ok');
+		ObjectUtils.defineNamespace('Solarfield.Ok');
 		Solarfield.Ok.Conduit = Conduit;
 	}
 

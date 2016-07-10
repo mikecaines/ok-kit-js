@@ -3,7 +3,7 @@
 		define(
 			'solarfield/ok-kit-js/src/Solarfield/Ok/EventTarget',
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ok'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils'
 			],
 			factory
 		);
@@ -11,18 +11,18 @@
 
 	else {
 		factory(
-			Solarfield.Ok,
+			Solarfield.Ok.ObjectUtils,
 			true
 		);
 	}
 })
-(function (Ok, _createGlobals) {
+(function (ObjectUtils, _createGlobals) {
 	"use strict";
 
 	/**
 	 * @class Solarfield.Ok.EventTarget
 	 */
-	var EventTarget = Ok.extendObject(Object, {
+	var EventTarget = ObjectUtils.extend(Object, {
 		constructor : function () {
 			this._bet_listeners = {}
 		},
@@ -65,7 +65,7 @@
 	});
 
 	if (_createGlobals) {
-		Ok.defineNamespace('Solarfield.Ok');
+		ObjectUtils.defineNamespace('Solarfield.Ok');
 		Solarfield.Ok.EventTarget = EventTarget;
 	}
 

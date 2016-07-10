@@ -8,7 +8,7 @@
 		define(
 			'solarfield/lightship-js/src/Solarfield/Ok/Url',
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ok'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils'
 			],
 			factory
 		);
@@ -16,18 +16,18 @@
 
 	else {
 		factory(
-			Solarfield.Ok,
+			Solarfield.Ok.ObjectUtils,
 			true
 		);
 	}
 })
-(function (Ok, _createGlobals) {
+(function (ObjectUtils, _createGlobals) {
 	"use strict";
 
 	/**
 	 * @class Url
 	 */
-	var Url = Ok.extendObject(null, {
+	var Url = ObjectUtils.extend(null, {
 		getHost: function () {
 			return this._sou_parts.host;
 		},
@@ -284,7 +284,7 @@
 	};
 
 	if (_createGlobals) {
-		Ok.defineNamespace('Solarfield.Ok');
+		ObjectUtils.defineNamespace('Solarfield.Ok');
 		Solarfield.Ok.Url = Url;
 	}
 

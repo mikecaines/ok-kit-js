@@ -8,7 +8,7 @@
 		define(
 			'solarfield/lightship-js/src/Solarfield/Ok/CssLoader',
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ok'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils'
 			],
 			factory
 		);
@@ -16,19 +16,19 @@
 
 	else {
 		factory(
-			Solarfield.Ok,
+			Solarfield.Ok.ObjectUtils,
 			true
 		);
 	}
 })
-(function (Ok, _createGlobals) {
+(function (ObjectUtils, _createGlobals) {
 	"use strict";
 
 	/**
 	 * @class Solarfield.Ok.CssLoader
 	 * @extends Solarfield.Ok.HttpLoader
 	 */
-	var CssLoader = Ok.extendObject(Object, {
+	var CssLoader = ObjectUtils.extend(Object, {
 		constructor: function () {
 			throw "Method is abstract.";
 		}
@@ -136,7 +136,7 @@
 	};
 
 	if (_createGlobals) {
-		Ok.defineNamespace('Solarfield.Ok');
+		ObjectUtils.defineNamespace('Solarfield.Ok');
 		Solarfield.Ok.CssLoader = CssLoader;
 	}
 
