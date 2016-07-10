@@ -85,6 +85,7 @@
 				var el = linkEl;
 
 				var handleLoad = function (aEvt) {
+					this.removeAttribute('data-state');
 					this.removeEventListener('load', handleLoad);
 					this.removeEventListener('error', handleError);
 
@@ -94,6 +95,7 @@
 				};
 
 				var handleError = function (ex) {
+					this.parentNode.removeChild(this);
 					this.removeEventListener('load', handleLoad);
 					this.removeEventListener('error', handleError);
 
