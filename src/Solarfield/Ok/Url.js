@@ -189,16 +189,8 @@
 				str += this._sou_parts.path;
 			}
 
-			paramCounter = 0;
-			for (paramName in this._sou_parts.query) {
-				values = this._sou_parts.query[paramName];
-				for (i = 0; i < values.length; i++) {
-					v = values[i];
-					str += paramCounter == 0 ? '?' : '&';
-					str += paramName + '=' + v;
-					paramCounter++;
-				}
-			}
+			v = this.constructor.serializeQuery(this._sou_parts.query);
+			if (v != '') str += '?' + v;
 
 			if (this._sou_parts.fragment != '') {
 				str += '#' + this._sou_parts.fragment;
