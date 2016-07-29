@@ -43,7 +43,7 @@
 	 */
 	CssLoader.getElement = function (aUrl, aOptions) {
 		return document.querySelector(
-			'link[rel="stylesheet"][href="' + aUrl + '"], link[rel="stylesheet"][data-href="' + aUrl + '"]:not([data-state])'
+			'link[rel="stylesheet"][href="' + aUrl + '"]'
 		);
 	};
 
@@ -104,7 +104,6 @@
 
 				if (!el) {
 					el = document.createElement('link');
-					el.setAttribute('data-href', aUrl);
 					el.setAttribute('href', aUrl);
 					el.setAttribute('rel', 'stylesheet');
 					el.setAttribute('type', 'text/css');
@@ -124,7 +123,7 @@
 	};
 
 	/**
-	 * Removes any link element with a data-href attribute matching aUrl.
+	 * Removes any link element with an href attribute matching aUrl.
 	 * This effectively removes the stylesheet from the 'registry', and stops applying its rules to the document.
 	 * @param aUrl
 	 * @param aOptions
