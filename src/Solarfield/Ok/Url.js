@@ -231,6 +231,9 @@
 		}
 	});
 
+	/**
+	 * @static
+	 */
 	Url.parseQuery = function (aQuery) {
 		var parsedQuery, pairs, query, pair, pairParts, paramName, paramValue, i;
 
@@ -259,6 +262,9 @@
 		return parsedQuery;
 	};
 
+	/**
+	 * @static
+	 */
 	Url.serializeQuery = function (aQuery) {
 		var str, name, values, i;
 
