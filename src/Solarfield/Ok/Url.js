@@ -132,22 +132,25 @@
 		},
 
 		pushPath: function (aPath) {
-			var piece = aPath != null ? aPath+'' : '';
-
-			if (piece != '') {
-				if (this._sou_parts.path != '') {
-					if (piece.search(/^\//) == -1) {
-						if (this._sou_parts.path.search(/\/$/) == -1) {
-							this._sou_parts.path += '/';
-						}
-					}
-				}
-
-				this._sou_parts.path += piece;
-				this._sou_parts.path = this._sou_parts.path.replace(/\/{2,}/, '/');
-			}
+			this._sou_parts.path += aPath;
 		},
-		
+
+		pushDir: function (aDir) {
+			if (this._sou_parts.path.search(/\/$/) < 0) {
+				this._sou_parts.path += '/';
+			}
+
+			this._sou_parts.path += encodeURIComponent(aDir) + '/';
+		},
+
+		setFileName: function (aDir) {
+			if (this._sou_parts.path.search(/\/$/) < 0) {
+				this._sou_parts.path += '/';
+			}
+
+			this._sou_parts.path += encodeURIComponent(aDir);
+		},
+
 		getFileName: function () {
 			var matches;
 
