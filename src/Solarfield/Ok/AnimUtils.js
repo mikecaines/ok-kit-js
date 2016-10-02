@@ -83,9 +83,23 @@
 		var str = '';
 
 		if (aObject.name) str += ' ' + aObject.name;
-		if (aObject.duration) str += ' ' + aObject.duration;
+
+		if (aObject.duration) {
+			str += ' ' + aObject.duration;
+
+			//if no unit is specified. default to ms
+			if ((''+aObject.duration).search(/^[0-9.]+$/) > -1) str += 'ms';
+		}
+
 		if (aObject.timingFunction) str += ' ' + aObject.timingFunction;
-		if (aObject.delay) str += ' ' + aObject.delay;
+
+		if (aObject.delay) {
+			str += ' ' + aObject.delay;
+
+			//if no unit is specified. default to ms
+			if ((''+aObject.delay).search(/^[0-9.]+$/) > -1) str += 'ms';
+		}
+
 		if (aObject.iterationCount) str += ' ' + aObject.iterationCount;
 		if (aObject.direction) str += ' ' + aObject.direction;
 		if (aObject.fillMode) str += ' ' + aObject.fillMode;
