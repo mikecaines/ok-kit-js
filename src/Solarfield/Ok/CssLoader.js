@@ -63,7 +63,10 @@
 			};
 
 			var handleError = function () {
-				this.parentNode.removeChild(this);
+				if (this.parentNode) {
+					this.parentNode.removeChild(this);
+				}
+
 				this.removeEventListener('load', handleLoad);
 				this.removeEventListener('error', handleError);
 
