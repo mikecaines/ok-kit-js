@@ -35,6 +35,81 @@
 	});
 
 	/**
+	 * Imports the stylesheet at aUrl.
+	 * @param {string} aUrl
+	 * @param {object} aOptions
+	 * @returns {Promise}
+	 * @private
+	 */
+	CssLoader._importUrl = function (aUrl, aOptions) {
+		var linkEl, linkState;
+
+		linkEl = this.getElement(aUrl, aOptions);
+		linkState = linkEl ? linkEl.getAttribute('data-state') : 1;
+
+		if (linkState == null) {
+			return Promise.resolve();
+		}
+
+		return new Promise(function (resolve, reject) {
+			var el = linkEl;
+
+			var handleLoad = function () {
+				this.removeAttribute('data-state');
+				this.removeEventListener('load', handleLoad);
+				this.removeEventListener('error', handleError);
+
+				resolve();
+			};
+
+			var handleError = function () {
+				this.parentNode.removeChild(this);
+				this.removeEventListener('load', handleLoad);
+				this.removeEventListener('error', handleError);
+
+				reject(new Error("Failed to load '" + aUrl + "'."));
+			};
+
+			if (!el) {
+				el = document.createElement('link');
+				el.setAttribute('href', aUrl);
+				el.setAttribute('rel', 'stylesheet');
+				el.setAttribute('type', 'text/css');
+				el.setAttribute('data-state', '1');
+			}
+
+			el.addEventListener('load', handleLoad);
+			el.addEventListener('error', handleError);
+
+			if (!linkEl) {
+				this.insertElement(el, aOptions);
+			}
+		}.bind(this));
+	};
+
+	/**
+	 * Imports the stylesheet identified by aModuleId.
+	 * @param {string} aModuleId
+	 * @param {object} aOptions
+	 * @returns {Promise}
+	 * @private
+	 */
+	CssLoader._importModule = function (aModuleId, aOptions) {
+		var el = document.createElement('div');
+		el.dataset.cssModuleId = aModuleId;
+		document.body.appendChild(el);
+
+		var style = window.getComputedStyle(el);
+		document.body.removeChild(el);
+
+		if (style.display == 'none') {
+			return Promise.resolve();
+		}
+
+		return this._importUrl(System.normalizeSync(aModuleId).replace(/(\.css)?\.js$/, '.css'), aOptions);
+	};
+
+	/**
 	 * Gets the element that links the stylesheet to the current document.
 	 * @param aUrl
 	 * @param aOptions
@@ -59,67 +134,30 @@
 	};
 
 	/**
-	 * Loads the stylesheet at aUrl.
-	 * @param {string} aUrl
+	 * Loads the stylesheet identified by aUrl.
+	 * @param {string} aUrl A URL ending in .css, or a "CSS module ID".
+	 *   CSS Module ID's follow the same naming and normalization rules as defined by systemjs.
+	 *   e.g. Module ID 'somepackage/somefolder/style'
+	 *     may normalize to 'https://somedomain/packages/somepackage/somefolder/style.css'
+	 *   The stylesheet itself must also contain a rule in the form of:
+	 *    [data-css-module-id="somepackage/somefolder/style"] {display:none}
+	 *   Using a module ID has the advantage that the module's CSS *rules* can be detected, independently from how they
+	 *   were loaded (stylesheet import, bundle stylesheet import, etc.)
 	 * @param {object} [aOptions] Additional options.
-	 * @returns {Promise<CssLoaderImportResolved>}
-	 *
-	 * @typedef {{
-		 *  element: HTMLElement
-		 * }} CssLoaderImportResolved
+	 * @returns {Promise}
 	 */
 	CssLoader.import = function (aUrl, aOptions) {
-		var cssResult, linkEl, linkState;
+		return new Promise(function (resolve) {
+			//if aUrl is a URL ending in .css
+			if (aUrl.search(/\.css$/) > -1) {
+				resolve(this._importUrl(aUrl, aOptions));
+			}
 
-		linkEl = this.getElement(aUrl, aOptions);
-		linkState = linkEl ? linkEl.getAttribute('data-state') : 1;
-
-		if (linkState == null) {
-			cssResult = Promise.resolve({
-				element: linkEl
-			});
-		}
-
-		else {
-			cssResult = new Promise(function (resolve, reject) {
-				var el = linkEl;
-
-				var handleLoad = function (aEvt) {
-					this.removeAttribute('data-state');
-					this.removeEventListener('load', handleLoad);
-					this.removeEventListener('error', handleError);
-
-					resolve({
-						element: aEvt.target
-					});
-				};
-
-				var handleError = function (ex) {
-					this.parentNode.removeChild(this);
-					this.removeEventListener('load', handleLoad);
-					this.removeEventListener('error', handleError);
-
-					reject(ex);
-				};
-
-				if (!el) {
-					el = document.createElement('link');
-					el.setAttribute('href', aUrl);
-					el.setAttribute('rel', 'stylesheet');
-					el.setAttribute('type', 'text/css');
-					el.setAttribute('data-state', '1');
-				}
-
-				el.addEventListener('load', handleLoad);
-				el.addEventListener('error', handleError);
-
-				if (!linkEl) {
-					this.insertElement(el, aOptions);
-				}
-			}.bind(this));
-		}
-
-		return cssResult;
+			//else consider aUrl a module id
+			else {
+				resolve(this._importModule(aUrl, aOptions));
+			}
+		}.bind(this));
 	};
 
 	/**
