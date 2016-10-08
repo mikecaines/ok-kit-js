@@ -141,7 +141,7 @@
 	};
 
 	HttpMux.prototype._lhm_normalizeRequest = function (aRequest) {
-		var request, k;
+		var request, k, url, query, i;
 
 		request = {
 			url: '',
@@ -171,6 +171,29 @@
 				(request.data == null || (typeof request.data) == 'string' || request.data.constructor == Object)
 				? 'get' : 'post'
 			;
+		}
+
+		//if the method is 'get', and we have data
+		if (request.method == 'get' && request.data) {
+			//attempt to convert the data to query parameters, and append them to the request url
+
+			if (!(
+				(typeof request.data) == 'string'
+				|| request.data.constructor == Object
+			)) throw new Error(
+				"Could not convert request data to URL query string, for HTTP GET request."
+				+ " Type must be string or Object."
+			);
+
+			url = new Url(request.url);
+			query = Url.parseQuery(request.data);
+
+			for (i in query) {
+				url.setQueryParam(i, query[i], false);
+			}
+
+			request.url = url.toString();
+			request.data = null;
 		}
 
 		return request;
