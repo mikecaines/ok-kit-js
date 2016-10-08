@@ -9,7 +9,8 @@
 			'solarfield/lightship-js/src/Solarfield/Ok/HttpMux',
 			[
 				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
-				'solarfield/ok-kit-js/src/Solarfield/Ok/StringUtils'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/StringUtils',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/Url'
 			],
 			factory
 		);
@@ -19,11 +20,12 @@
 		factory(
 			Solarfield.Ok.ObjectUtils,
 			Solarfield.Ok.StringUtils,
+			Solarfield.Ok.Url,
 			true
 		);
 	}
 })
-(function (ObjectUtils, StringUtils, _createGlobals) {
+(function (ObjectUtils, StringUtils, Url, _createGlobals) {
 	"use strict";
 
 	/**
@@ -143,7 +145,7 @@
 
 		request = {
 			url: '',
-			method: 'post',
+			method: null,
 			data: null,
 			responseType: '',
 			onBegin: null,
@@ -160,6 +162,15 @@
 			for (k in aRequest) {
 				request[k] = aRequest[k];
 			}
+		}
+
+		//if the request doesn't specify a method
+		if (request.method == null) {
+			//if the request data is null/undefined, string, or Object, default the method to 'get', otherwise 'post'.
+			request.method =
+				(request.data == null || (typeof request.data) == 'string' || request.data.constructor == Object)
+				? 'get' : 'post'
+			;
 		}
 
 		return request;
