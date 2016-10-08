@@ -196,6 +196,65 @@
 		}
 	};
 
+	/**
+	 * Serializes named descendants of aElement to a query string.
+	 * aElement does not need to a form element, as any descendant with a name attribute will be included.
+	 * Names and values are encoded using encodeURIComponent().
+	 * @param aElement
+	 * @returns {string}
+	 */
+	DomUtils.serializeForm = function (aElement) {
+		var i, query, els, el, j, items, len, nodeName, inputType;
+
+		query = [];
+
+		els = aElement.querySelectorAll('[name]');
+		for (i = 0; i < els.length; i++) {
+			el = els[i];
+
+			if (!el.disabled) {
+				nodeName = el.nodeName;
+
+				if (nodeName == 'SELECT') {
+					if (el.multiple) {
+						for (j = 0, items = el.options, len = items.length; j < len; j++) {
+							if (items[j].selected) {
+								query.push([el.name, items[j].value]);
+							}
+						}
+					}
+
+					else {
+						query.push([el.name, el.value]);
+					}
+				}
+
+				if (nodeName == 'INPUT') {
+					inputType = el.type;
+
+					if (inputType == 'checkbox' || inputType == 'radio') {
+						if (el.checked) {
+							query.push([el.name, el.value]);
+						}
+					}
+
+					else if (inputType != 'button' && inputType != 'submit') {
+						query.push([el.name, el.value]);
+					}
+				}
+
+				else if (nodeName == 'TEXTAREA') {
+					query.push([el.name, el.value]);
+				}
+			}
+		}
+
+		return query.map(function (el) {
+			return encodeURIComponent(el[0]) + '=' + encodeURIComponent(el[1])
+		})
+		.join('&');
+	};
+
 	if (_createGlobals) {
 		ObjectUtils.defineNamespace('Solarfield.Ok');
 		Solarfield.Ok.DomUtils = DomUtils;
