@@ -235,12 +235,19 @@
 	});
 
 	/**
+	 * Parses a value into an object containing key-value pairs.
+	 * @param {null|string|Object} aQuery
+	 * @returns {Object}
 	 * @static
 	 */
 	Url.parseQuery = function (aQuery) {
-		var parsedQuery, pairs, query, pair, pairParts, paramName, paramValue, i;
+		var parsedQuery, pairs, query, pair, pairParts, paramName, paramValue, i, values;
 
-		if (aQuery != null && aQuery != '') {
+		if (aQuery == null || aQuery == '') {
+			parsedQuery = {};
+		}
+
+		else if ((typeof aQuery) == 'string') {
 			pairs = aQuery.split('&');
 			query = {};
 
@@ -258,8 +265,24 @@
 			parsedQuery = query;
 		}
 
-		else {
+		else if (aQuery.constructor == Object) {
 			parsedQuery = {};
+
+			Object.keys(aQuery).forEach(function (key) {
+				if ((key in parsedQuery) == false) {
+					parsedQuery[key] = [];
+				}
+
+				values = (aQuery[key] != null && aQuery.constructor == Array) ? aQuery[key] : [aQuery[key]];
+
+				values.forEach(function (value) {
+					parsedQuery[key].push('' + value);
+				})
+			});
+		}
+
+		else {
+			throw new Error("aQuery must be a null, string, or Object.");
 		}
 
 		return parsedQuery;
