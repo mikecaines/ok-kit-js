@@ -162,7 +162,7 @@
 		},
 
 		toString: function () {
-			var paramName, values, i, v, paramCounter;
+			var v;
 			var str = '';
 
 			if (this._sou_parts.host != '') {
