@@ -211,7 +211,7 @@
 				host : '',
 				port : '',
 				path : '',
-				query : '',
+				query : {},
 				fragment : ''
 			};
 
@@ -226,10 +226,8 @@
 				if (matches[3] != null) this._sou_parts.host = matches[3];
 				if (matches[4] != null) this._sou_parts.port = matches[4];
 				if (matches[5] != null) this._sou_parts.path = matches[5];
-				if (matches[6] != null) this._sou_parts.query = matches[6];
+				if (matches[6] != null) this._sou_parts.query = this.constructor.parseQuery(matches[6]);
 				if (matches[7] != null) this._sou_parts.fragment = matches[7];
-
-				this._sou_parts.query = this.constructor.parseQuery(this._sou_parts.query);
 			}
 		}
 	});
