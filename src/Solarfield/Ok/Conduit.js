@@ -53,7 +53,7 @@
 				name: null
 			}, aOptions);
 
-			this._soc_name = options.name != null ? options.toString() : null;
+			this._soc_name = options.name != null ? ''+options.name : null;
 			this._soc_eventTarget = new EvtTarget();
 		}
 	});
