@@ -3,6 +3,14 @@
  * {@license https://github.com/solarfield/ok-kit-js/blob/master/LICENSE}
  */
 
+/**
+ * @typedef {{
+ *  response: string|null,
+ *  aborted: boolean,
+ *  timedOut: boolean
+ * }} HttpLoaderLoadResolved
+ */
+
 (function (factory) {
 	if (typeof define === "function" && define.amd) {
 		define(
@@ -35,11 +43,18 @@
 	 * a null value for the response.
 	 */
 	var HttpLoader = ObjectUtils.extend(Object, {
+		/**
+		 * @constructor
+		 */
 		constructor: function () {
 			throw "Class is abstract."
 		}
 	});
 
+	/**
+	 * @static
+	 * @private
+	 */
 	HttpLoader._SOHL_abortPromise = function () {
 		if (this._SOHL_httpMux) {
 			this._SOHL_httpMux.abort();
@@ -53,12 +68,7 @@
 	 * @param {Object} [aOptions] Additional options.
 	 * @param {string} [aOptions.responseType] @see XMLHttpRequest.responseType
 	 * @returns {Promise<HttpLoaderLoadResolved>}
-	 *
-	 * @typedef {{
-		 *  response: string|null,
-		 *  aborted: boolean,
-		 *  timedOut: boolean
-		 * }} HttpLoaderLoadResolved
+	 * @static
 	 */
 	HttpLoader.load = function (aUrl, aOptions) {
 		var options, promise, httpMux;
