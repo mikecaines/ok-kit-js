@@ -81,6 +81,7 @@
 
 		xhr.open(request.method, request.url);
 		xhr.responseType = request.responseType;
+		xhr.timeout = request.timeout;
 
 		this._lhm_dispatchEvent({
 			type: 'begin',
@@ -148,6 +149,7 @@
 			method: null,
 			data: null,
 			responseType: '',
+			timeout: 0,
 			onBegin: null,
 			onEnd: null
 		};
