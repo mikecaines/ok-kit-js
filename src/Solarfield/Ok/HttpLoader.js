@@ -63,15 +63,13 @@
 	};
 
 	/**
-	 * Loads data from aUrl.
-	 * @param {string} aUrl The url to load from.
-	 * @param {Object} [aOptions] Additional options.
-	 * @param {string} [aOptions.responseType] @see XMLHttpRequest.responseType
-	 * @returns {Promise<HttpLoaderLoadResolved>}
-	 * @static
+	 * Normalizes the various argument forms that can be passed to ::load(), into a single object.
+	 * @protected
+	 * @param aUrl
+	 * @param aOptions
 	 */
-	HttpLoader.load = function (aUrl, aOptions) {
-		var options, promise, httpMux;
+	HttpLoader.normalizeLoadArgs = function (aUrl, aOptions) {
+		var options;
 
 		if ((typeof aUrl) == 'string') {
 			options = StructUtils.assign({
@@ -82,6 +80,22 @@
 		else {
 			options = aUrl;
 		}
+
+		return options;
+	};
+
+	/**
+	 * Loads data from aUrl.
+	 * @param {string} aUrl The url to load from.
+	 * @param {Object} [aOptions] Additional options.
+	 * @param {string} [aOptions.responseType] @see XMLHttpRequest.responseType
+	 * @returns {Promise<HttpLoaderLoadResolved>}
+	 * @static
+	 */
+	HttpLoader.load = function (aUrl, aOptions) {
+		var options, promise, httpMux;
+
+		options = this.normalizeLoadArgs(aUrl, aOptions);
 
 		delete options.onBegin;
 
@@ -94,9 +108,11 @@
 				httpMux = null;
 
 				resolve({
+					responseType: aEvt.responseType,
 					response: aEvt.response,
 					aborted: aEvt.aborted,
-					timedOut: aEvt.timedOut
+					timedOut: aEvt.timedOut,
+					error: aEvt.error
 				});
 			};
 
