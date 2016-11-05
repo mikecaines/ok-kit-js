@@ -152,6 +152,8 @@
 			type: 'end',
 			currentTarget: this,
 			xhr: xhr,
+			status: xhr.status,
+			statusText: xhr.statusText,
 			response: info.response,
 			responseType: xhr.responseType,
 			aborted: info.aborted,

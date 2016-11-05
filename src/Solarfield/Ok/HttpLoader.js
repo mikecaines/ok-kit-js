@@ -5,9 +5,13 @@
 
 /**
  * @typedef {{
- *  response: string|null,
+ *  status: int,
+ *  statusText: string,
+ *  response: *,
+ *  responseType: string|null
  *  aborted: boolean,
- *  timedOut: boolean
+ *  timedOut: boolean,
+ *  error: Error|null
  * }} HttpLoaderLoadResolved
  */
 
@@ -108,6 +112,8 @@
 				httpMux = null;
 
 				resolve({
+					status: aEvt.status,
+					statusText: aEvt.statusText,
 					responseType: aEvt.responseType,
 					response: aEvt.response,
 					aborted: aEvt.aborted,

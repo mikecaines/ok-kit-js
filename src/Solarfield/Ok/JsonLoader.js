@@ -5,9 +5,13 @@
 
 /**
  * @typedef {{
+ *  status: int,
+ *  statusText: string,
  *  response: json|null,
+ *  responseType: string|null
  *  aborted: boolean,
- *  timedOut: boolean
+ *  timedOut: boolean,
+ *  error: Error|null
  * }} JsonLoaderLoadResolved
  */
 
