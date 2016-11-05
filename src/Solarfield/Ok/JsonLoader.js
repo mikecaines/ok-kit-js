@@ -3,6 +3,14 @@
  * {@license https://github.com/solarfield/ok-kit-js/blob/master/LICENSE}
  */
 
+/**
+ * @typedef {{
+ *  response: json|null,
+ *  aborted: boolean,
+ *  timedOut: boolean
+ * }} JsonLoaderLoadResolved
+ */
+
 (function (factory) {
 	if (typeof define === "function" && define.amd) {
 		define(
@@ -49,12 +57,6 @@
 	 * @param {object} [aOptions] Additional options.
 	 * @returns {Promise<JsonLoaderLoadResolved>}
 	 * @throws Error if a response is received and it cannot be parsed as JSON.
-	 *
-	 * @typedef {{
-		 *  json: json|null,
-		 *  aborted: boolean,
-		 *  timedOut: boolean
-		 * }} JsonLoaderLoadResolved
 	 */
 	JsonLoader.load = function (aUrl, aOptions) {
 		var jsonPromise, httpPromise;
@@ -62,27 +64,17 @@
 		httpPromise = JsonLoader.super.load(aUrl, aOptions);
 
 		jsonPromise = httpPromise.then(function (httpResult) {
-			var jsonResult;
-
 			jsonPromise = null;
 
 			if (httpResult.aborted || httpResult.timedOut) {
-				jsonResult = {
-					json: null,
-					aborted: httpResult.aborted,
-					timedOut: httpResult.timedOut
-				}
+				httpResult.response = null;
 			}
 
 			else {
-				jsonResult = {
-					json: JSON.parse(httpResult.response),
-					aborted: false,
-					timedOut: false
-				};
+				httpResult.response = JSON.parse(httpResult.response);
 			}
 
-			return jsonResult;
+			return httpResult;
 		}.bind(this));
 
 		jsonPromise._SOJL_httpPromise = httpPromise;
