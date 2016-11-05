@@ -135,6 +135,7 @@
 				}
 				catch (e) {
 					info.error = e;
+					info.response = null;
 				}
 			}
 
