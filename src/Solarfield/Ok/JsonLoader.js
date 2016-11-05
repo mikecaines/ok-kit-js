@@ -38,51 +38,22 @@
 	 * @class Solarfield.Ok.JsonLoader
 	 * @extends Solarfield.Ok.HttpLoader
 	 */
-	var JsonLoader = ObjectUtils.extend(HttpLoader, {
-		constructor: function () {
-			throw "Class is abstract.";
-		}
-	});
-
-	JsonLoader._SOJL_abortPromise = function () {
-		if (this._SOJL_httpPromise) {
-			this._SOJL_httpPromise.abort();
-			delete this._SOJL_httpPromise;
-		}
-	};
+	var JsonLoader = ObjectUtils.extend(HttpLoader);
 
 	/**
 	 * Loads JSON from aUrl.
 	 * @param {string} aUrl The url to load.
 	 * @param {object} [aOptions] Additional options.
 	 * @returns {Promise<JsonLoaderLoadResolved>}
-	 * @throws Error if a response is received and it cannot be parsed as JSON.
 	 */
 	JsonLoader.load = function (aUrl, aOptions) {
-		var jsonPromise, httpPromise;
+		var options = this.normalizeLoadArgs(aUrl, aOptions);
 
-		httpPromise = JsonLoader.super.load(aUrl, aOptions);
+		options.parseFunction = function (aXhr) {
+			return JSON.parse(aXhr.response);
+		};
 
-		jsonPromise = httpPromise.then(function (httpResult) {
-			jsonPromise = null;
-
-			if (httpResult.aborted || httpResult.timedOut) {
-				httpResult.response = null;
-			}
-
-			else {
-				httpResult.response = JSON.parse(httpResult.response);
-			}
-
-			return httpResult;
-		}.bind(this));
-
-		jsonPromise._SOJL_httpPromise = httpPromise;
-		jsonPromise.abort = JsonLoader._SOJL_abortPromise;
-
-		httpPromise = null;
-
-		return jsonPromise;
+		return JsonLoader.super.load(options);
 	};
 
 	if (_createGlobals) {
