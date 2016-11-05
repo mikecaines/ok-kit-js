@@ -67,7 +67,6 @@
 		request = this._lhm_normalizeRequest(aRequest);
 
 		xhr = new XMLHttpRequest();
-		xhr.responseType = request.responseType;
 		xhr.addEventListener('loadend', this._lhm_handleXhrLoadend);
 		xhr.addEventListener('timeout', this._lhm_handleXhrTimeout);
 
@@ -81,6 +80,7 @@
 		};
 
 		xhr.open(request.method, request.url);
+		xhr.responseType = request.responseType;
 
 		this._lhm_dispatchEvent({
 			type: 'begin',
