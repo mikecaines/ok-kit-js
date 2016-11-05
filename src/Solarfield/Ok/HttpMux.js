@@ -75,8 +75,10 @@
 		this._lhm_currentInfo = {
 			onBegin: request.onBegin,
 			onEnd: request.onEnd,
+			parseFunction: request.parseFunction,
 			aborted: false,
-			timedOut: false
+			timedOut: false,
+			error: null
 		};
 
 		xhr.open(request.method, request.url);
@@ -126,14 +128,34 @@
 			}
 		}
 
+		if (!info.aborted && !info.timedOut) {
+			if (info.parseFunction) {
+				try {
+					info.response = info.parseFunction(xhr);
+				}
+				catch (e) {
+					info.error = e;
+				}
+			}
+
+			else {
+				info.response = xhr.response;
+			}
+		}
+
+		else {
+			info.response = null;
+		}
+
 		this._lhm_dispatchEvent({
 			type: 'end',
 			currentTarget: this,
 			xhr: xhr,
-			response: xhr.response,
+			response: info.response,
 			responseType: xhr.responseType,
 			aborted: info.aborted,
-			timedOut: info.timedOut
+			timedOut: info.timedOut,
+			error: info.error
 		}, info, false);
 	};
 
@@ -150,6 +172,7 @@
 			data: null,
 			responseType: '',
 			timeout: 0,
+			parseFunction: null,
 			onBegin: null,
 			onEnd: null
 		};
