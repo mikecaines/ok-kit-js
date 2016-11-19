@@ -105,6 +105,10 @@
 
 		set: function (aPath, aValue) {
 			StructUtils.set(this._ohm_data, aPath, aValue);
+		},
+
+		mergeInto: function (aValue) {
+			StructUtils.mergeInto(this._ohm_data, aValue);
 		}
 	});
 
