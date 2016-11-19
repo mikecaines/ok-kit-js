@@ -124,6 +124,41 @@
 		return merged;
 	};
 
+	StructUtils.mergeInto = function (aObject1, aObject2) {
+		var v1, v2, k;
+
+		v1 = StructUtils.isVector(aObject1);
+		v2 = StructUtils.isVector(aObject2);
+
+		if ((v1 && !v2) || (!v1 && v2)) {
+			throw "Cannot merge vector and non-vector.";
+		}
+
+		//if aObject2 is a vector, replace contents of aObject1 with contents of aObject2
+		if (v2) {
+			aObject1.splice(0);
+			for (k in aObject2) {
+				aObject1[k] = aObject2[k];
+			}
+		}
+
+		for (k in aObject2) {
+			if (
+				(k in aObject1)
+				&& aObject1[k] != null
+				&& (aObject1[k] instanceof Object)
+				&& aObject2[k] != null
+				&& (aObject2[k] instanceof Object)
+			) {
+				aObject1[k] = StructUtils.merge(aObject1[k], aObject2[k]);
+			}
+
+			else {
+				aObject1[k] = aObject2[k];
+			}
+		}
+	};
+
 	/**
 	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
 	 * @type {Function}
