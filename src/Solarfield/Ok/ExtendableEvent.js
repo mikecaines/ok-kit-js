@@ -13,14 +13,8 @@ define(
 		 */
 		return ObjectUtils.extend(null, {
 			waitUntil: function (aPromise) {
-				this.waitQueue.push(
-					aPromise
-					.catch(function (e) {
-						//rethrow the exception in global scope, without breaking the call stack or event listener queue.
-						//They can be caught using window.onerror, similar to an exception thrown by a <button>.onclick handler
-						setTimeout(function(){throw e}, 0);
-					})
-				);
+				this.waitQueue.push(aPromise);
+				return aPromise;
 			},
 
 			constructor: function (aOptions, aWaitQueue) {
