@@ -88,6 +88,31 @@
 		node[steps[i]] = aValue;
 	};
 
+	StructUtils.pushSet = function (aObject, aPath, aValue, aSeparator) {
+		var separator = aSeparator || '.';
+		var steps = (aPath+'').split(separator);
+		var node, i;
+
+		if (!(aObject != null && typeof aObject == 'object')) {
+			throw "aObject must be an Object.";
+		}
+
+		node = aObject;
+		for (i = 0; i < steps.length - 1; i++) {
+			if (!(node[steps[i]] != null && typeof node[steps[i]] == 'object' && steps[i] in node)) {
+				node[steps[i]] = {};
+			}
+
+			node = node[steps[i]];
+		}
+
+		if (!(node[steps[i]] && node[steps[i]] instanceof Array)) {
+			node[steps[i]] = [];
+		}
+
+		node[steps[i]].push(aValue);
+	};
+
 	StructUtils.merge = function (aObject1, aObject2) {
 		var v1, v2, merged, k, arr;
 
