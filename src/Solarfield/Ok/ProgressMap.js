@@ -6,7 +6,7 @@ define(
 	],
 	/**
 	 *
-	 * @param {Solarfield.Ok} Ok
+	 * @param {Solarfield.Ok.ObjectUtils} ObjectUtils
 	 * @param {Solarfield.Ok.EventTarget} EventTarget
 	 * @returns {Solarfield.Ok.ProgressMap}
 	 */

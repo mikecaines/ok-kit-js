@@ -106,7 +106,7 @@
 
 	/**
 	 * @param {RegExp} aRegExp
-	 * @param {CssRule=} aRuleList
+	 * @param {CSSRule[]=} aRuleList
 	 * @returns {*}
 	 */
 	DomUtils.findCssRule = function (aRegExp, aRuleList) {
