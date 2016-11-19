@@ -170,7 +170,7 @@
 			for (j = 0; j < values.length; j++) {
 				if (aElement.options[i].value === values[j]) {
 					matched = true;
-					selected.splice(j, 1);
+					selected.splice(selected.indexOf(values[j]), 1);
 					break;
 				}
 			}
