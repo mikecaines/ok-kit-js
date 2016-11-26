@@ -85,6 +85,12 @@
 		xhr.responseType = request.responseType;
 		xhr.timeout = request.timeout;
 
+		Object.keys(request.headers).forEach(function (k) {
+			(request.headers[k] instanceof Array ? request.headers[k] : [request.headers[k]]).forEach(function (v) {
+				xhr.setRequestHeader(k, v);
+			});
+		});
+
 		this._lhm_dispatchEvent({
 			type: 'begin',
 			currentTarget: this,
@@ -172,6 +178,7 @@
 		request = {
 			url: '',
 			method: null,
+			headers: {},
 			data: null,
 			responseType: '',
 			timeout: 0,
@@ -222,6 +229,20 @@
 
 			request.url = url.toString();
 			request.data = null;
+		}
+
+		if (request.method == 'post' && (typeof request.data) == 'string') {
+			let contentTypeSet = false;
+			for (let k in Object.keys(request.headers)) {
+				if (k.toLowerCase() == 'content-type') {
+					contentTypeSet = true;
+					break;
+				}
+			}
+
+			if (!contentTypeSet) {
+				request.headers['content-type'] = 'application/x-www-form-urlencoded';
+			}
 		}
 
 		return request;
