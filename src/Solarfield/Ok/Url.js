@@ -271,7 +271,7 @@
 					parsedQuery[key] = [];
 				}
 
-				values = (aQuery[key] != null && aQuery.constructor == Array) ? aQuery[key] : [aQuery[key]];
+				values = (aQuery[key] != null && aQuery[key].constructor == Array) ? aQuery[key] : [aQuery[key]];
 
 				values.forEach(function (value) {
 					parsedQuery[key].push('' + value);
