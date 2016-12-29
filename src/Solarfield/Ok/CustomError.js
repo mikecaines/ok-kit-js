@@ -25,7 +25,7 @@
 	"use strict";
 
 	/**
-	 * @class Solarfield.Ok.CustomError
+	 * @class CustomError
 	 * @extends Error
 	 */
 	var CustomError = ObjectUtils.extend(Error, {
