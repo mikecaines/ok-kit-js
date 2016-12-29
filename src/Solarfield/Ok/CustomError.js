@@ -6,7 +6,7 @@
 (function (factory) {
 	if (typeof define === "function" && define.amd) {
 		define(
-			'solarfield/lightship-js/src/Solarfield/Ok/CustomError',
+			'solarfield/ok-kit-js/src/Solarfield/Ok/CustomError',
 			[
 				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils'
 			],
