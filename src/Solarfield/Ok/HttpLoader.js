@@ -51,7 +51,7 @@
 	 * Different response types (JSON, etc.) are handled by subclasses, however you can leverage the parseFunction
 	 * request option to handle any type of response.
 	 */
-	var HttpLoader = ObjectUtils.extend(Object, {
+	const HttpLoader = ObjectUtils.extend(Object, {
 		/**
 		 * @constructor
 		 */
@@ -78,7 +78,7 @@
 	 * @param aOptions
 	 */
 	HttpLoader.normalizeLoadArgs = function (aUrl, aOptions) {
-		var options;
+		let options;
 
 		if ((typeof aUrl) == 'string') {
 			options = StructUtils.assign({
@@ -105,20 +105,15 @@
 	 * @public
 	 */
 	HttpLoader.load = function (aUrl, aOptions) {
-		var options, promise, httpMux;
+		let httpMux = new HttpMux();
 
-		options = this.normalizeLoadArgs(aUrl, aOptions);
-
-		delete options.onBegin;
-
-		httpMux = new HttpMux();
-
-		promise = new Promise(function (resolve, reject) {
+		let promise = new Promise(function (resolve, reject) {
+			let options = this.normalizeLoadArgs(aUrl, aOptions);
+			delete options.onBegin;
+			
 			options.onEnd = function (aEvt) {
 				promise = null;
-				options = null;
-				httpMux = null;
-
+				
 				const result = {
 					status: aEvt.status,
 					statusText: aEvt.statusText,
@@ -142,10 +137,13 @@
 			};
 
 			httpMux.send(options);
+			options = null;
 		}.bind(this));
 
 		promise._SOHL_httpMux = httpMux;
 		promise.abort = HttpLoader._SOHL_abortPromise;
+		
+		httpMux = null;
 
 		return promise;
 	};
