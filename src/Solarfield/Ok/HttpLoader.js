@@ -43,10 +43,13 @@
 	"use strict";
 
 	/**
-	 * @class Solarfield.Ok.HttpLoader
+	 * @class HttpLoader
+	 * @abstract
 	 * Wrapper for HttpMux, which provides a Promise based API.
-	 * Note that the promise will still resolve in the case of an abort or timeout, but will have
-	 * a null value for the response.
+	 * Works similar to the Fetch API.
+	 * Requests are abortable.
+	 * Different response types (JSON, etc.) are handled by subclasses, however you can leverage the parseFunction
+	 * request option to handle any type of response.
 	 */
 	var HttpLoader = ObjectUtils.extend(Object, {
 		/**
@@ -92,11 +95,14 @@
 
 	/**
 	 * Loads data from aUrl.
+	 * Rejects if the request/args are invalid, or if the request is aborted, times out, or a response/parse error
+	 * occurs. Receiving a non-HTTP-200 status code will not reject.
+	 * Rejects with an Error or HttpLoaderError, the latter providing additional details.
 	 * @param {string} aUrl The url to load from.
-	 * @param {Object} [aOptions] Additional options.
-	 * @param {string} [aOptions.responseType] @see XMLHttpRequest.responseType
-	 * @returns {Promise.<HttpLoaderLoadResolved, Error>}
+	 * @param {Object} [aOptions] Additional options. @see HttpMux#send
+	 * @returns {Promise.<HttpLoaderLoadResolved, Error|HttpLoaderError>} Promise with an abort() method.
 	 * @static
+	 * @public
 	 */
 	HttpLoader.load = function (aUrl, aOptions) {
 		var options, promise, httpMux;
@@ -146,7 +152,7 @@
 
 	if (_createGlobals) {
 		ObjectUtils.defineNamespace('Solarfield.Ok');
-		Solarfield.Ok.HttpLoader = HttpLoader;
+		Solarfield['Ok']['HttpLoader'] = HttpLoader;
 	}
 
 	return HttpLoader;
