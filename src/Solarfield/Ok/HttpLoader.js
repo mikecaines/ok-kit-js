@@ -22,7 +22,8 @@
 			[
 				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
 				'solarfield/ok-kit-js/src/Solarfield/Ok/StructUtils',
-				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpMux'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpMux',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpLoaderError'
 			],
 			factory
 		);
@@ -33,11 +34,12 @@
 			Solarfield.Ok.ObjectUtils,
 			Solarfield.Ok.StructUtils,
 			Solarfield.Ok.HttpMux,
+			Solarfield.Ok.HttpLoaderError,
 			true
 		);
 	}
 })
-(function (ObjectUtils, StructUtils, HttpMux, _createGlobals) {
+(function (ObjectUtils, StructUtils, HttpMux, HttpLoaderError, _createGlobals) {
 	"use strict";
 
 	/**
@@ -93,7 +95,7 @@
 	 * @param {string} aUrl The url to load from.
 	 * @param {Object} [aOptions] Additional options.
 	 * @param {string} [aOptions.responseType] @see XMLHttpRequest.responseType
-	 * @returns {Promise<HttpLoaderLoadResolved>}
+	 * @returns {Promise.<HttpLoaderLoadResolved, Error>}
 	 * @static
 	 */
 	HttpLoader.load = function (aUrl, aOptions) {
@@ -105,13 +107,13 @@
 
 		httpMux = new HttpMux();
 
-		promise = new Promise(function (resolve) {
+		promise = new Promise(function (resolve, reject) {
 			options.onEnd = function (aEvt) {
 				promise = null;
 				options = null;
 				httpMux = null;
 
-				resolve({
+				const result = {
 					status: aEvt.status,
 					statusText: aEvt.statusText,
 					responseType: aEvt.responseType,
@@ -119,7 +121,18 @@
 					aborted: aEvt.aborted,
 					timedOut: aEvt.timedOut,
 					error: aEvt.error
-				});
+				};
+				
+				if (!aEvt.error && !aEvt.aborted && !aEvt.timedOut) {
+					resolve(result);
+				}
+				
+				else {
+					reject(new HttpLoaderError(
+						result.error ? result.error.message : "Loading failed.",
+						0, null, result
+					));
+				}
 			};
 
 			httpMux.send(options);
