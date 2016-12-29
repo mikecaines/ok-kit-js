@@ -39,7 +39,9 @@
 		this._lhm_requestDefaults = null;
 		this._lhm_listeners = {};
 
-		this._lhm_handleXhrLoadend = this._lhm_handleXhrLoadend.bind(this);
+		this._lhm_handleXhrLoad = this._lhm_handleXhrLoad.bind(this);
+		this._lhm_handleXhrError = this._lhm_handleXhrError.bind(this);
+		this._lhm_handleXhrAbort = this._lhm_handleXhrAbort.bind(this);
 		this._lhm_handleXhrTimeout = this._lhm_handleXhrTimeout.bind(this);
 
 		if (aRequestDefaults) {
@@ -67,7 +69,9 @@
 		request = this._lhm_normalizeRequest(aRequest);
 
 		xhr = new XMLHttpRequest();
-		xhr.addEventListener('loadend', this._lhm_handleXhrLoadend);
+		xhr.addEventListener('load', this._lhm_handleXhrLoad);
+		xhr.addEventListener('error', this._lhm_handleXhrError);
+		xhr.addEventListener('abort', this._lhm_handleXhrAbort);
 		xhr.addEventListener('timeout', this._lhm_handleXhrTimeout);
 
 		this._lhm_currentXhr = xhr;
@@ -76,6 +80,7 @@
 			onBegin: request.onBegin,
 			onEnd: request.onEnd,
 			parseFunction: request.parseFunction,
+			response: null,
 			aborted: false,
 			timedOut: false,
 			error: null
@@ -119,57 +124,74 @@
 		this._lhm_listeners[aType].push(aListener);
 	};
 
-	HttpMux.prototype._lhm_handleXhrLoadend = function (aEvt) {
+	HttpMux.prototype._lhm_handleXhrLoad = function () {
 		var xhr = this._lhm_currentXhr;
 		var info = this._lhm_currentInfo;
 
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
 
-		//do an extra check for an implicit abort,
-		//which occurs when the page is reloaded while the request is still executing
-		if (!info.aborted && !info.timedOut) {
-			if (xhr.status === 0) {
-				info.aborted = true;
+		if (info.parseFunction) {
+			try {
+				info.response = info.parseFunction(xhr);
+			}
+			catch (e) {
+				info.error = e;
 			}
 		}
-
-		if (!info.aborted && !info.timedOut) {
-			if (info.parseFunction) {
-				try {
-					info.response = info.parseFunction(xhr);
-				}
-				catch (e) {
-					info.error = e;
-					info.response = null;
-				}
-			}
-
-			else {
-				info.response = xhr.response;
-			}
-		}
-
-		else {
-			info.response = null;
-		}
-
-		this._lhm_dispatchEvent({
-			type: 'end',
-			currentTarget: this,
-			xhr: xhr,
-			status: xhr.status,
-			statusText: xhr.statusText,
-			response: info.response,
-			responseType: xhr.responseType,
-			aborted: info.aborted,
-			timedOut: info.timedOut,
-			error: info.error
-		}, info, false);
+		
+		this._lhm_dispatchEndEvent(info, xhr);
+	};
+	
+	HttpMux.prototype._lhm_handleXhrError = function () {
+		var xhr = this._lhm_currentXhr;
+		var info = this._lhm_currentInfo;
+		
+		this._lhm_currentXhr = null;
+		this._lhm_currentInfo = null;
+		
+		info.error = new Error("A transport level error occurred.");
+		
+		this._lhm_dispatchEndEvent(info, xhr);
+	};
+	
+	HttpMux.prototype._lhm_handleXhrAbort = function () {
+		var xhr = this._lhm_currentXhr;
+		var info = this._lhm_currentInfo;
+		
+		this._lhm_currentXhr = null;
+		this._lhm_currentInfo = null;
+		
+		info.aborted = true;
+		
+		this._lhm_dispatchEndEvent(info, xhr);
 	};
 
 	HttpMux.prototype._lhm_handleXhrTimeout = function () {
-		this._lhm_currentInfo.timedOut = true;
+		var xhr = this._lhm_currentXhr;
+		var info = this._lhm_currentInfo;
+		
+		this._lhm_currentXhr = null;
+		this._lhm_currentInfo = null;
+		
+		info.timedOut = true;
+		
+		this._lhm_dispatchEndEvent(info, xhr);
+	};
+	
+	HttpMux.prototype._lhm_dispatchEndEvent = function (aInfo, aXhr) {
+		this._lhm_dispatchEvent({
+			type: 'end',
+			currentTarget: this,
+			xhr: aXhr,
+			status: aXhr.status,
+			statusText: aXhr.statusText,
+			response: aInfo.response,
+			responseType: aXhr.responseType,
+			aborted: aInfo.aborted,
+			timedOut: aInfo.timedOut,
+			error: aInfo.error
+		}, aInfo, false);
 	};
 
 	HttpMux.prototype._lhm_normalizeRequest = function (aRequest) {
