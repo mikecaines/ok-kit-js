@@ -33,7 +33,7 @@
 	 * Utility wrapper for XMLHttpRequest, which ensures only one request is ever executed. Aborting of any currently
 	 * executing requests is handled automatically, and all begin/end events are fired in the correct order.
 	 */
-	var HttpMux = function (aRequestDefaults) {
+	const HttpMux = function (aRequestDefaults) {
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
 		this._lhm_requestDefaults = null;
@@ -60,15 +60,13 @@
 	 * }} aRequest
 	 */
 	HttpMux.prototype.send = function (aRequest) {
-		var xhr, request;
-
 		if (this._lhm_currentXhr) {
 			this._lhm_currentXhr.abort();
 		}
 
-		request = this._lhm_normalizeRequest(aRequest);
+		const request = this._lhm_normalizeRequest(aRequest);
 
-		xhr = new XMLHttpRequest();
+		const xhr = new XMLHttpRequest();
 		xhr.addEventListener('load', this._lhm_handleXhrLoad);
 		xhr.addEventListener('error', this._lhm_handleXhrError);
 		xhr.addEventListener('abort', this._lhm_handleXhrAbort);
@@ -125,8 +123,8 @@
 	};
 
 	HttpMux.prototype._lhm_handleXhrLoad = function () {
-		var xhr = this._lhm_currentXhr;
-		var info = this._lhm_currentInfo;
+		const xhr = this._lhm_currentXhr;
+		const info = this._lhm_currentInfo;
 
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
@@ -144,8 +142,8 @@
 	};
 	
 	HttpMux.prototype._lhm_handleXhrError = function () {
-		var xhr = this._lhm_currentXhr;
-		var info = this._lhm_currentInfo;
+		const xhr = this._lhm_currentXhr;
+		const info = this._lhm_currentInfo;
 		
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
@@ -156,8 +154,8 @@
 	};
 	
 	HttpMux.prototype._lhm_handleXhrAbort = function () {
-		var xhr = this._lhm_currentXhr;
-		var info = this._lhm_currentInfo;
+		const xhr = this._lhm_currentXhr;
+		const info = this._lhm_currentInfo;
 		
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
@@ -168,8 +166,8 @@
 	};
 
 	HttpMux.prototype._lhm_handleXhrTimeout = function () {
-		var xhr = this._lhm_currentXhr;
-		var info = this._lhm_currentInfo;
+		const xhr = this._lhm_currentXhr;
+		const info = this._lhm_currentInfo;
 		
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
@@ -195,9 +193,7 @@
 	};
 
 	HttpMux.prototype._lhm_normalizeRequest = function (aRequest) {
-		var request, k, url, query, i;
-
-		request = {
+		const request = {
 			url: '',
 			method: null,
 			headers: {},
@@ -210,13 +206,13 @@
 		};
 
 		if (this._lhm_requestDefaults) {
-			for (k in this._lhm_requestDefaults) {
+			for (let k in this._lhm_requestDefaults) {
 				request[k] = this._lhm_requestDefaults[k];
 			}
 		}
 
 		if (aRequest) {
-			for (k in aRequest) {
+			for (let k in aRequest) {
 				request[k] = aRequest[k];
 			}
 		}
@@ -242,11 +238,11 @@
 				+ " Type must be string or Object."
 			);
 
-			url = new Url(request.url);
-			query = Url.parseQuery(request.data);
+			let url = new Url(request.url);
+			let query = Url.parseQuery(request.data);
 
-			for (i in query) {
-				url.setQueryParam(i, query[i], false);
+			for (let k in query) {
+				url.setQueryParam(k, query[k], false);
 			}
 
 			request.url = url.toString();
@@ -271,27 +267,25 @@
 	};
 
 	HttpMux.prototype._lhm_dispatchEvent = function (aEvent, aInfo, aOrder) {
-		var listeners, i, k;
-
 		//queue persistent listeners
-		listeners = (aEvent.type in this._lhm_listeners) ? this._lhm_listeners[aEvent.type].concat([]) : [];
+		const listeners = (aEvent.type in this._lhm_listeners) ? this._lhm_listeners[aEvent.type].concat([]) : [];
 
 		//queue one-time listener
-		k = 'on' + StringUtils.upperCaseFirst(StringUtils.dashToCamel(aEvent.type));
+		let k = 'on' + StringUtils.upperCaseFirst(StringUtils.dashToCamel(aEvent.type));
 		if (k in aInfo) {
 			if (aInfo[k]) {
 				listeners[aOrder ? 'push' : 'unshift'](aInfo[k]);
 			}
 		}
 
-		for (i = 0; i < listeners.length; i++) {
+		for (let i = 0; i < listeners.length; i++) {
 			listeners[i].call(this, aEvent);
 		}
 	};
 
 	if (_createGlobals) {
 		ObjectUtils.defineNamespace('Solarfield.Ok');
-		Solarfield.Ok.HttpMux = HttpMux;
+		Solarfield['Ok']['HttpMux'] = HttpMux;
 	}
 
 	return HttpMux;
