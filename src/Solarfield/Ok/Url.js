@@ -294,7 +294,7 @@
 
 		str = '';
 		for (name in aQuery) {
-			values = aQuery[name].constructor === Array ? aQuery[name] : [aQuery[name]];
+			values = (aQuery[name] != null && aQuery[name].constructor === Array) ? aQuery[name] : [aQuery[name]];
 
 			for (i = 0; i < values.length; i++) {
 				if (str != '') str += '&';
