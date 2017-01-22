@@ -110,6 +110,22 @@
 				this._bet_listeners[aEventType].push(aListener);
 			}
 		},
+		
+		/**
+		 * @param {string} aEventType
+		 * @param {function} aListener
+		 */
+		removeEventListener: function (aEventType, aListener) {
+			const index = this.addedEventListener(aEventType, aListener);
+			
+			if (index !== null) {
+				this._bet_listeners[aEventType].splice(index, 1);
+				
+				if (this._bet_listeners[aEventType].length == 0) {
+					delete this._bet_listeners[aEventType];
+				}
+			}
+		},
 
 		/**
 		 * Dispatches an event to any registered listeners.
