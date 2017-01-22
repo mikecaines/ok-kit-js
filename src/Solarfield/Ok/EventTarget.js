@@ -22,7 +22,7 @@
 	/**
 	 * @class Solarfield.Ok.EventTarget
 	 */
-	var EventTarget = ObjectUtils.extend(Object, {
+	const EventTarget = ObjectUtils.extend(Object, {
 		/**
 		 * The arguments of this method are structured this way, in order to avoid using closures or bind(). The intent is
 		 * to save memory if dispatchExtendableEvent() is never called, since it may not be used often in some
@@ -78,7 +78,7 @@
 		 * @private
 		 */
 		_bet_dispatchExtendableEventWait: function (aPromises) {
-			var error;
+			let error;
 
 			return Promise.all(aPromises.map(function (promise) {
 				return promise.catch(function (e) {
@@ -126,17 +126,16 @@
 		 *  dispatched to any further listeners.
 		 */
 		dispatchEvent: function (aThisContext, aEvent, aOptions) {
-			var i;
-			var breakOnError = aOptions && ('breakOnError' in aOptions) ? aOptions.breakOnError : false;
+			const breakOnError = aOptions && ('breakOnError' in aOptions) ? aOptions.breakOnError : false;
 
-			var listeners =
+			const listeners =
 				aOptions && aOptions.listener
 					? [aOptions.listener]
 					: this._bet_listeners[aEvent.type]
 						? this._bet_listeners[aEvent.type]
 						: [];
 
-			for (i = 0; i < listeners.length; i++) {
+			for (let i = 0; i < listeners.length; i++) {
 				try {
 					listeners[i].call(aThisContext, aEvent);
 				}
@@ -195,10 +194,8 @@
 		},
 
 		addedEventListener: function (aEventType, aListener) {
-			var i;
-
 			if (this._bet_listeners[aEventType]) {
-				for (i = 0; i < this._bet_listeners[aEventType].length; i++) {
+				for (let i = 0; i < this._bet_listeners[aEventType].length; i++) {
 					if (this._bet_listeners[aEventType][i] === aListener) return i;
 				}
 			}
@@ -213,7 +210,7 @@
 
 	if (_createGlobals) {
 		ObjectUtils.defineNamespace('Solarfield.Ok');
-		Solarfield.Ok.EventTarget = EventTarget;
+		Solarfield.Ok['EventTarget'] = EventTarget;
 	}
 
 	return EventTarget;
