@@ -61,7 +61,12 @@
 		},
 
 		getQueryParamsAll: function () {
-			return this._sou_parts.query;
+			const params = {};
+			for (let name in this._sou_parts.query) {
+				params[name] = this._sou_parts.query[name].slice();
+			}
+			
+			return params;
 		},
 
 		getQueryParams: function () {
@@ -75,7 +80,7 @@
 
 		getQueryParamAll: function (aName) {
 			if (aName in this._sou_parts.query) {
-				return this._sou_parts.query[aName];
+				return this._sou_parts.query[aName].slice();
 			}
 
 			return [];
