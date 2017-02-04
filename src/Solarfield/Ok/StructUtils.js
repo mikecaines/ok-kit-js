@@ -111,6 +111,20 @@
 
 		node[steps[i]].push(aValue);
 	};
+	
+	StructUtils.delegate = function (aArray, aPrimaryKey) {
+		const map = {};
+		
+		for (let i = 0, len = aArray.length; i < len; i++) {
+			if (aArray[i][aPrimaryKey] in map) throw new Error(
+				"Duplicate value found for primary key: '" + aArray[i][aPrimaryKey] + "'."
+			);
+			
+			map[aArray[i][aPrimaryKey]] = aArray[i];
+		}
+		
+		return map;
+	};
 
 	StructUtils.merge = function (aObject1, aObject2) {
 		const v1 = StructUtils.isVector(aObject1);
