@@ -178,6 +178,37 @@
 			}
 		}
 	};
+	
+	/**
+	 * Converts a deep structure into a shallow one.
+	 * Descendant collections are expanded, and top level keys are concatenated.
+	 * @param {Object|Array} aObject An object structure.
+	 * @param {string} [aSeparator=.] Separator used when concatenating keys.
+	 * @returns {Object}
+	 */
+	StructUtils.flatten = function (aObject, aSeparator) {
+		const separator = aSeparator || '.';
+		const arr = {};
+		
+		for (let k in aObject) {
+			const v = aObject[k];
+			
+			//if scalar
+			if (!(v && (v instanceof Array || v.constructor === Object))) {
+				arr[k] = v;
+			}
+			
+			else {
+				const arrarr = this.flatten(v, separator);
+				
+				for (let kk in arrarr) {
+					arr[k + separator + kk] = arrarr[kk];
+				}
+			}
+		}
+		
+		return arr;
+	};
 
 	/**
 	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
