@@ -114,7 +114,7 @@
 	 * Gets the element that links the stylesheet to the current document.
 	 * @param aUrl
 	 * @param aOptions
-	 * @returns {string|null} Null if successful, otherwise string error message.
+	 * @returns {HTMLElement|null} Null if successful, otherwise string error message.
 	 * @protected
 	 */
 	CssLoader.getElement = function (aUrl, aOptions) {
