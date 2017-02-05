@@ -28,7 +28,7 @@
 	 * @class Solarfield.Ok.CssLoader
 	 * @extends Solarfield.Ok.HttpLoader
 	 */
-	var CssLoader = ObjectUtils.extend(Object, {
+	const CssLoader = ObjectUtils.extend(Object, {
 		constructor: function () {
 			throw "Method is abstract.";
 		}
@@ -42,19 +42,17 @@
 	 * @private
 	 */
 	CssLoader._importUrl = function (aUrl, aOptions) {
-		var linkEl, linkState;
-
-		linkEl = this.getElement(aUrl, aOptions);
-		linkState = linkEl ? linkEl.getAttribute('data-state') : 1;
+		const linkEl = this.getElement(aUrl, aOptions);
+		const linkState = linkEl ? linkEl.getAttribute('data-state') : 1;
 
 		if (linkState == null) {
 			return Promise.resolve();
 		}
 
 		return new Promise(function (resolve, reject) {
-			var el = linkEl;
+			let el = linkEl;
 
-			var handleLoad = function () {
+			const handleLoad = function () {
 				this.removeAttribute('data-state');
 				this.removeEventListener('load', handleLoad);
 				this.removeEventListener('error', handleError);
@@ -62,7 +60,7 @@
 				resolve();
 			};
 
-			var handleError = function () {
+			const handleError = function () {
 				if (this.parentNode) {
 					this.parentNode.removeChild(this);
 				}
@@ -98,11 +96,11 @@
 	 * @private
 	 */
 	CssLoader._importModule = function (aModuleId, aOptions) {
-		var el = document.createElement('div');
+		let el = document.createElement('div');
 		el.dataset.cssModuleId = aModuleId;
 		document.body.appendChild(el);
 
-		var style = window.getComputedStyle(el);
+		let style = window.getComputedStyle(el);
 		document.body.removeChild(el);
 
 		if (style.display == 'none') {
@@ -170,7 +168,7 @@
 	 * @param aOptions
 	 */
 	CssLoader.remove = function (aUrl, aOptions) {
-		var el;
+		let el;
 
 		if ((el = this.getElement(aUrl, aOptions))) {
 			el.parentNode.removeChild(el);
@@ -179,7 +177,7 @@
 
 	if (_createGlobals) {
 		ObjectUtils.defineNamespace('Solarfield.Ok');
-		Solarfield.Ok.CssLoader = CssLoader;
+		Solarfield.Ok['CssLoader'] = CssLoader;
 	}
 
 	return CssLoader;
