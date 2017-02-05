@@ -100,10 +100,10 @@
 		el.dataset.cssModuleId = aModuleId;
 		document.body.appendChild(el);
 
-		let style = window.getComputedStyle(el);
+		let style = window.getComputedStyle(el).display;
 		document.body.removeChild(el);
 
-		if (style.display == 'none') {
+		if (style == 'none') {
 			return Promise.resolve();
 		}
 
