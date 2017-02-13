@@ -1,5 +1,4 @@
 define(
-	'solarfield/ok-kit-js/src/Solarfield/Ok/ExtendableEvent',
 	[
 		'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
 	],

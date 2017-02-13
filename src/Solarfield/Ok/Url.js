@@ -6,7 +6,6 @@
 (function (factory) {
 	if (typeof define === "function" && define.amd) {
 		define(
-			'solarfield/ok-kit-js/src/Solarfield/Ok/Url',
 			[
 				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils'
 			],

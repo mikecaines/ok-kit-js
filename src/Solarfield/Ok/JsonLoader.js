@@ -18,7 +18,6 @@
 (function (factory) {
 	if (typeof define === "function" && define.amd) {
 		define(
-			'solarfield/ok-kit-js/src/Solarfield/Ok/JsonLoader',
 			[
 				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
 				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpLoader'
