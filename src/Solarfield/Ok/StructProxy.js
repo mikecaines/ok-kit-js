@@ -107,7 +107,7 @@
 		},
 
 		pushSet: function (aPath, aValue) {
-			StructUtils.pushSet(aPath, aValue);
+			StructUtils.pushSet(this._ohm_data, aPath, aValue);
 		},
 
 		mergeInto: function (aValue) {
