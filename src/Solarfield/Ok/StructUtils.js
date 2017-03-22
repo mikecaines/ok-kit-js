@@ -26,18 +26,19 @@
 	/**
 	 * @class StructUtils
 	 */
-	const StructUtils = function () {
+	var StructUtils = function () {
 		throw new Error("Class is abstract.");
 	};
 
 	StructUtils.scout = function (aObject, aPath, aSeparator) {
-		const separator = aSeparator || '.';
-		const steps = (aPath+'').split(separator);
+		var separator = aSeparator || '.';
+		var steps = (aPath+'').split(separator);
+		var i;
 
-		let result = [false, null];
+		var result = [false, null];
 
-		let node = aObject;
-		for (let i = 0; i < steps.length; i++) {
+		var node = aObject;
+		for (i = 0; i < steps.length; i++) {
 			if (node != null && typeof node == 'object' && steps[i] in node) {
 				if (i == steps.length - 1) {
 					result = [true, node[steps[i]]];
@@ -66,15 +67,15 @@
 	};
 
 	StructUtils.set = function (aObject, aPath, aValue, aSeparator) {
-		const separator = aSeparator || '.';
-		const steps = (aPath+'').split(separator);
+		var separator = aSeparator || '.';
+		var steps = (aPath+'').split(separator);
 
 		if (!(aObject != null && typeof aObject == 'object')) {
 			throw "aObject must be an Object.";
 		}
 
-		let node = aObject;
-		let i;
+		var node = aObject;
+		var i;
 		for (i = 0; i < steps.length - 1; i++) {
 			if (!(node[steps[i]] != null && typeof node[steps[i]] == 'object' && steps[i] in node)) {
 				node[steps[i]] = {};
@@ -87,15 +88,15 @@
 	};
 
 	StructUtils.pushSet = function (aObject, aPath, aValue, aSeparator) {
-		const separator = aSeparator || '.';
-		const steps = (aPath+'').split(separator);
+		var separator = aSeparator || '.';
+		var steps = (aPath+'').split(separator);
 
 		if (!(aObject != null && typeof aObject == 'object')) {
 			throw "aObject must be an Object.";
 		}
 
-		let node = aObject;
-		let i;
+		var node = aObject;
+		var i;
 		for (i = 0; i < steps.length - 1; i++) {
 			if (!(node[steps[i]] != null && typeof node[steps[i]] == 'object' && steps[i] in node)) {
 				node[steps[i]] = {};
@@ -112,9 +113,10 @@
 	};
 	
 	StructUtils.delegate = function (aArray, aPrimaryKey) {
-		const map = {};
+		var map = {};
+		var i, len;
 		
-		for (let i = 0, len = aArray.length; i < len; i++) {
+		for (i = 0, len = aArray.length; i < len; i++) {
 			if (aArray[i][aPrimaryKey] in map) throw new Error(
 				"Duplicate value found for primary key: '" + aArray[i][aPrimaryKey] + "'."
 			);
@@ -126,21 +128,23 @@
 	};
 
 	StructUtils.merge = function (aObject1, aObject2) {
-		const v1 = StructUtils.isVector(aObject1);
-		const v2 = StructUtils.isVector(aObject2);
+		var k;
+		
+		var v1 = StructUtils.isVector(aObject1);
+		var v2 = StructUtils.isVector(aObject2);
 
 		if ((v1 && !v2) || (!v1 && v2)) {
 			throw "Cannot merge vector and non-vector.";
 		}
 
-		const merged = v1 ? [] : {};
+		var merged = v1 ? [] : {};
 
-		const arr = v2 ? aObject2 : aObject1;
-		for (let k in arr) {
+		var arr = v2 ? aObject2 : aObject1;
+		for (k in arr) {
 			merged[k] = arr[k];
 		}
 
-		for (let k in aObject2) {
+		for (k in aObject2) {
 			if (
 				(k in merged)
 				&& merged[k] != null
@@ -160,8 +164,10 @@
 	};
 
 	StructUtils.mergeInto = function (aObject1, aObject2) {
-		const v1 = StructUtils.isVector(aObject1);
-		const v2 = StructUtils.isVector(aObject2);
+		var k;
+		
+		var v1 = StructUtils.isVector(aObject1);
+		var v2 = StructUtils.isVector(aObject2);
 
 		if ((v1 && !v2) || (!v1 && v2)) {
 			throw "Cannot merge vector and non-vector.";
@@ -170,12 +176,12 @@
 		//if aObject2 is a vector, replace contents of aObject1 with contents of aObject2
 		if (v2) {
 			aObject1.splice(0);
-			for (let k in aObject2) {
+			for (k in aObject2) {
 				aObject1[k] = aObject2[k];
 			}
 		}
 
-		for (let k in aObject2) {
+		for (k in aObject2) {
 			if (
 				(k in aObject1)
 				&& aObject1[k] != null
@@ -200,11 +206,12 @@
 	 * @returns {Object}
 	 */
 	StructUtils.flatten = function (aObject, aSeparator) {
-		const separator = aSeparator || '.';
-		const arr = {};
+		var separator = aSeparator || '.';
+		var arr = {};
+		var k, v, arrarr, kk;
 		
-		for (let k in aObject) {
-			const v = aObject[k];
+		for (k in aObject) {
+			v = aObject[k];
 			
 			//if scalar
 			if (!(v && (v instanceof Array || v.constructor === Object))) {
@@ -212,9 +219,9 @@
 			}
 			
 			else {
-				const arrarr = this.flatten(v, separator);
+				arrarr = this.flatten(v, separator);
 				
-				for (let kk in arrarr) {
+				for (kk in arrarr) {
 					arr[k + separator + kk] = arrarr[kk];
 				}
 			}
@@ -228,8 +235,10 @@
 	 * @type {Function}
 	 */
 	StructUtils.assign = Object.assign || function (aObject1, aObjectN) {
-		for (let i = 1; i < arguments.length; i++) {
-			for (let k in arguments[i]) {
+		var i, k;
+		
+		for (i = 1; i < arguments.length; i++) {
+			for (k in arguments[i]) {
 				aObject1[k] = arguments[i][k];
 			}
 		}
@@ -238,10 +247,11 @@
 	};
 
 	StructUtils.search = function (aObject, aPath, aValue, aStrict) {
-		const strict = aStrict != null ? aStrict : false;
+		var strict = aStrict != null ? aStrict : false;
+		var k, value;
 
-		for (let k in aObject) {
-			const value = StructUtils.get(aObject[k], aPath);
+		for (k in aObject) {
+			value = StructUtils.get(aObject[k], aPath);
 
 			if ((strict == false && value == aValue) || (strict == true && value === aValue)) {
 				return k;
@@ -252,13 +262,14 @@
 	};
 
 	StructUtils.find = function (aObject, aPath, aValue, aStrict) {
-		const k = StructUtils.search(aObject, aPath, aValue, aStrict);
+		var k = StructUtils.search(aObject, aPath, aValue, aStrict);
 		return (k !== null) ? aObject[k] : null;
 	};
 
 	StructUtils.isVector = function (aObj) {
-		let i = 0;
-		for (let k in aObj) {
+		var i = 0;
+		var k;
+		for (k in aObj) {
 			if (k != i) return false;
 			i++;
 		}

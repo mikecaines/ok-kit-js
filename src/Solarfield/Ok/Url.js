@@ -26,7 +26,7 @@
 	/**
 	 * @class Url
 	 */
-	const Url = ObjectUtils.extend(null, {
+	var Url = ObjectUtils.extend(null, {
 		getHost: function () {
 			return this._sou_parts.host;
 		},
@@ -60,8 +60,9 @@
 		},
 
 		getQueryParamsAll: function () {
-			const params = {};
-			for (let name in this._sou_parts.query) {
+			var params = {};
+			var name;
+			for (name in this._sou_parts.query) {
 				params[name] = this._sou_parts.query[name].slice();
 			}
 			
@@ -69,8 +70,9 @@
 		},
 
 		getQueryParams: function () {
-			const params = {};
-			for (let name in this._sou_parts.query) {
+			var params = {};
+			var name;
+			for (name in this._sou_parts.query) {
 				params[name] = this._sou_parts.query[name][0];
 			}
 
@@ -94,12 +96,12 @@
 		},
 
 		setQueryParam: function (aName, aValue, aReplace) {
-			const replace = arguments.length >= 3 ? aReplace : true;
-
-			const values = aValue != null && aValue.constructor == Array ? aValue : [aValue];
-
+			var replace = arguments.length >= 3 ? aReplace : true;
+			var values = aValue != null && aValue.constructor == Array ? aValue : [aValue];
+			var i;
+			
 			//normalize all values to string type
-			for (let i = 0; i < values.length; i++) {
+			for (i = 0; i < values.length; i++) {
 				if (typeof values[i] != 'string') {
 					values[i] = values[i] != null ? values[i]+'' : '';
 				}
@@ -153,7 +155,7 @@
 		},
 
 		getFileName: function () {
-			const matches = this._sou_parts['path'].match(/([^/]+)$/);
+			var matches = this._sou_parts['path'].match(/([^/]+)$/);
 			if (matches) {
 				return matches[1];
 			}
@@ -162,8 +164,8 @@
 		},
 
 		toString: function () {
-			let v;
-			let str = '';
+			var v;
+			var str = '';
 
 			if (this._sou_parts.host != '') {
 				if (this._sou_parts.scheme != '') {
@@ -214,7 +216,7 @@
 			};
 
 			if (aString != null && aString != '') {
-				const matches = (aString+'').match(/^(?:([^:\/]+):)?(\/\/)?([^\/:]*)?(?::(\d*))?([^?#]*)(?:\?([^#]*))?(?:#(.*))?$/);
+				var matches = (aString+'').match(/^(?:([^:\/]+):)?(\/\/)?([^\/:]*)?(?::(\d*))?([^?#]*)(?:\?([^#]*))?(?:#(.*))?$/);
 				if (matches == null || matches.length != 8) {
 					throw "Could not parse string as URL: '" + aString + "'.";
 				}
@@ -237,21 +239,21 @@
 	 * @static
 	 */
 	Url.parseQuery = function (aQuery) {
-		let parsedQuery;
+		var parsedQuery, pairs, query, pair, pairParts, paramName, paramValue, i;
 
 		if (aQuery == null || aQuery == '') {
 			parsedQuery = {};
 		}
 
 		else if ((typeof aQuery) == 'string') {
-			const pairs = aQuery.split('&');
-			const query = {};
+			pairs = aQuery.split('&');
+			query = {};
 
-			for (let i = 0; i < pairs.length; i++) {
-				const pair = pairs[i];
-				const pairParts = pair.split('=');
-				const paramName = decodeURIComponent(pairParts[0]);
-				const paramValue = pairParts.length > 1 ? decodeURIComponent(pairParts[1]) : '';
+			for (i = 0; i < pairs.length; i++) {
+				pair = pairs[i];
+				pairParts = pair.split('=');
+				paramName = decodeURIComponent(pairParts[0]);
+				paramValue = pairParts.length > 1 ? decodeURIComponent(pairParts[1]) : '';
 				
 				if ((paramName in query) == false) {
 					query[paramName] = [];
@@ -271,7 +273,7 @@
 					parsedQuery[key] = [];
 				}
 
-				const values = (aQuery[key] != null && aQuery[key].constructor == Array) ? aQuery[key] : [aQuery[key]];
+				var values = (aQuery[key] != null && aQuery[key].constructor == Array) ? aQuery[key] : [aQuery[key]];
 
 				values.forEach(function (value) {
 					parsedQuery[key].push('' + value);
@@ -290,11 +292,12 @@
 	 * @static
 	 */
 	Url.serializeQuery = function (aQuery) {
-		let str = '';
-		for (let name in aQuery) {
-			const values = (aQuery[name] != null && aQuery[name].constructor === Array) ? aQuery[name] : [aQuery[name]];
+		var str = '';
+		var name, values, i;
+		for (name in aQuery) {
+			values = (aQuery[name] != null && aQuery[name].constructor === Array) ? aQuery[name] : [aQuery[name]];
 
-			for (let i = 0; i < values.length; i++) {
+			for (i = 0; i < values.length; i++) {
 				if (str != '') str += '&';
 				str += encodeURIComponent(name) + '=' + encodeURIComponent(values[i]);
 			}

@@ -16,7 +16,7 @@ define(
 		 *
 		 * @property {HttpLoaderLoadResolved} response - Response info.
 		 */
-		let HttpLoaderError = ObjectUtils.extend(CustomError, {
+		var HttpLoaderError = ObjectUtils.extend(CustomError, {
 			/**
 			 * @param {string} aMessage
 			 * @param {int=0} aCode

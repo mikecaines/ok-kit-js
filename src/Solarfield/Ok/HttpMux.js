@@ -32,7 +32,7 @@
 	 * Utility wrapper for XMLHttpRequest, which ensures only one request is ever executed. Aborting of any currently
 	 * executing requests is handled automatically, and all begin/end events are fired in the correct order.
 	 */
-	const HttpMux = function (aRequestDefaults) {
+	var HttpMux = function (aRequestDefaults) {
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
 		this._lhm_requestDefaults = null;
@@ -63,9 +63,9 @@
 			this._lhm_currentXhr.abort();
 		}
 
-		const request = this._lhm_normalizeRequest(aRequest);
+		var request = this._lhm_normalizeRequest(aRequest);
 
-		const xhr = new XMLHttpRequest();
+		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('load', this._lhm_handleXhrLoad);
 		xhr.addEventListener('error', this._lhm_handleXhrError);
 		xhr.addEventListener('abort', this._lhm_handleXhrAbort);
@@ -122,8 +122,8 @@
 	};
 
 	HttpMux.prototype._lhm_handleXhrLoad = function () {
-		const xhr = this._lhm_currentXhr;
-		const info = this._lhm_currentInfo;
+		var xhr = this._lhm_currentXhr;
+		var info = this._lhm_currentInfo;
 
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
@@ -141,8 +141,8 @@
 	};
 	
 	HttpMux.prototype._lhm_handleXhrError = function () {
-		const xhr = this._lhm_currentXhr;
-		const info = this._lhm_currentInfo;
+		var xhr = this._lhm_currentXhr;
+		var info = this._lhm_currentInfo;
 		
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
@@ -153,8 +153,8 @@
 	};
 	
 	HttpMux.prototype._lhm_handleXhrAbort = function () {
-		const xhr = this._lhm_currentXhr;
-		const info = this._lhm_currentInfo;
+		var xhr = this._lhm_currentXhr;
+		var info = this._lhm_currentInfo;
 		
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
@@ -165,8 +165,8 @@
 	};
 
 	HttpMux.prototype._lhm_handleXhrTimeout = function () {
-		const xhr = this._lhm_currentXhr;
-		const info = this._lhm_currentInfo;
+		var xhr = this._lhm_currentXhr;
+		var info = this._lhm_currentInfo;
 		
 		this._lhm_currentXhr = null;
 		this._lhm_currentInfo = null;
@@ -192,7 +192,7 @@
 	};
 
 	HttpMux.prototype._lhm_normalizeRequest = function (aRequest) {
-		const request = {
+		var request = {
 			url: '',
 			method: null,
 			headers: {},
@@ -203,15 +203,17 @@
 			onBegin: null,
 			onEnd: null
 		};
+		
+		var k;
 
 		if (this._lhm_requestDefaults) {
-			for (let k in this._lhm_requestDefaults) {
+			for (k in this._lhm_requestDefaults) {
 				request[k] = this._lhm_requestDefaults[k];
 			}
 		}
 
 		if (aRequest) {
-			for (let k in aRequest) {
+			for (k in aRequest) {
 				request[k] = aRequest[k];
 			}
 		}
@@ -237,10 +239,10 @@
 				+ " Type must be string or Object."
 			);
 
-			let url = new Url(request.url);
-			let query = Url.parseQuery(request.data);
+			var url = new Url(request.url);
+			var query = Url.parseQuery(request.data);
 
-			for (let k in query) {
+			for (k in query) {
 				url.setQueryParam(k, query[k], false);
 			}
 
@@ -249,8 +251,8 @@
 		}
 
 		if (request.method == 'post' && (typeof request.data) == 'string') {
-			let contentTypeSet = false;
-			for (let k in Object.keys(request.headers)) {
+			var contentTypeSet = false;
+			for (k in Object.keys(request.headers)) {
 				if (k.toLowerCase() == 'content-type') {
 					contentTypeSet = true;
 					break;
@@ -266,18 +268,20 @@
 	};
 
 	HttpMux.prototype._lhm_dispatchEvent = function (aEvent, aInfo, aOrder) {
+		var i;
+		
 		//queue persistent listeners
-		const listeners = (aEvent.type in this._lhm_listeners) ? this._lhm_listeners[aEvent.type].concat([]) : [];
+		var listeners = (aEvent.type in this._lhm_listeners) ? this._lhm_listeners[aEvent.type].concat([]) : [];
 
 		//queue one-time listener
-		let k = 'on' + StringUtils.upperCaseFirst(StringUtils.dashToCamel(aEvent.type));
+		var k = 'on' + StringUtils.upperCaseFirst(StringUtils.dashToCamel(aEvent.type));
 		if (k in aInfo) {
 			if (aInfo[k]) {
 				listeners[aOrder ? 'push' : 'unshift'](aInfo[k]);
 			}
 		}
 
-		for (let i = 0; i < listeners.length; i++) {
+		for (i = 0; i < listeners.length; i++) {
 			listeners[i].call(this, aEvent);
 		}
 	};
