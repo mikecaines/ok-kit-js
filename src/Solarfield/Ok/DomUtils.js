@@ -58,7 +58,7 @@
 	 */
 	DomUtils.findCssRules = function (aRegExp, aRuleList) {
 		function searchRules(aCssRules, aRegExp) {
-			var j;
+			var j, cssText;
 			var matchedRules = [];
 
 			for (j = 0; j < aCssRules.length; j++) {
@@ -66,8 +66,11 @@
 					matchedRules = matchedRules.concat(searchRules(aCssRules[j].cssRules, aRegExp));
 				}
 
-				if (aCssRules[j].cssText) {
-					if (aCssRules[j].cssText.search(aRegExp) > -1) {
+				//use a try block here, because 'permission denied' errors can arise with external stylesheets
+				try {if (aCssRules[j].cssText) cssText = aCssRules[j].cssText} catch (e) {cssText = null}
+				
+				if (cssText) {
+					if (cssText.search(aRegExp) > -1) {
 						matchedRules.push(aCssRules[j]);
 					}
 				}
