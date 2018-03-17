@@ -132,8 +132,6 @@
 					if (a.opts.priority > b.opts.priority) return 1;
 					return 0;
 				});
-				
-				console.log(this._bet_listeners)
 			}
 		},
 		
