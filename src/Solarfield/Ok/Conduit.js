@@ -38,8 +38,16 @@
 	 * @class Solarfield.Ok.Conduit
 	 */
 	var Conduit = ObjectUtils.extend(null, {
-		addEventListener: function (aType, aListener) {
-			this._soc_eventTarget.addEventListener(aType, aListener);
+		/**
+		 * @param {string} aType - The type of event. Types include: data.
+		 * @param {Function} aListener - The callback.
+		 * @param {{}} aOptions - Configuration options.
+		 *  @param {int} aOptions.priority - Dispatch order priority.
+		 *    Listeners with lower priorities will be called first.
+		 *    Default is 0.
+		 */
+		addEventListener: function (aType, aListener, aOptions) {
+			this._soc_eventTarget.addEventListener(aType, aListener, aOptions);
 		},
 
 		getName: function () {
