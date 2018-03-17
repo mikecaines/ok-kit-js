@@ -2,7 +2,8 @@
 	if (typeof define === "function" && define.amd) {
 		define(
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/StructUtils',
 			],
 			factory
 		);
@@ -11,11 +12,12 @@
 	else {
 		factory(
 			Solarfield.Ok.ObjectUtils,
+			Solarfield.Ok.StructUtils,
 			true
 		);
 	}
 })
-(function (ObjectUtils, _createGlobals) {
+(function (ObjectUtils, StructUtils, _createGlobals) {
 	"use strict";
 
 	/**
@@ -32,7 +34,7 @@
 			if (aHandlers.length > 0) {
 				try {
 					//call the current event listener
-					aHandlers.shift().call(aThisContext, aEvent);
+					aHandlers.shift().func.call(aThisContext, aEvent);
 				}
 				catch (e) {
 					if (aBreakOnError) {
@@ -99,14 +101,39 @@
 			 */
 			this._bet_listeners = {};
 		},
-
-		addEventListener: function (aEventType, aListener) {
+		
+		/**
+		 *
+		 * @param {string} aEventType Event type to listen for.
+		 * @param {Function} aListener Callback function.
+		 * @param {{}} aOptions - Configuration options.
+		 * @param {int=} aOptions.priority Listeners registered with lower priorities will be called first.
+		 *  Default priority is 0.
+		 */
+		addEventListener: function (aEventType, aListener, aOptions) {
+			var options;
+			
 			if (!this.addedEventListener(aEventType, aListener)) {
 				if (!this._bet_listeners[aEventType]) {
 					this._bet_listeners[aEventType] = [];
 				}
 
-				this._bet_listeners[aEventType].push(aListener);
+				options = StructUtils.assign({
+					priority: 0,
+				}, aOptions);
+				
+				this._bet_listeners[aEventType].push({
+					func: aListener,
+					opts: options,
+				});
+				
+				this._bet_listeners[aEventType].sort(function (a, b) {
+					if (a.opts.priority < b.opts.priority) return -1;
+					if (a.opts.priority > b.opts.priority) return 1;
+					return 0;
+				});
+				
+				console.log(this._bet_listeners)
 			}
 		},
 		
@@ -146,14 +173,14 @@
 
 			var listeners =
 				aOptions && aOptions.listener
-					? [aOptions.listener]
+					? [{func: aOptions.listener}]
 					: this._bet_listeners[aEvent.type]
 						? this._bet_listeners[aEvent.type]
 						: [];
 
 			for (i = 0; i < listeners.length; i++) {
 				try {
-					listeners[i].call(aThisContext, aEvent);
+					listeners[i].func.call(aThisContext, aEvent);
 				}
 				catch (e) {
 					setTimeout(function () {throw e}, 0);
@@ -195,7 +222,7 @@
 					aManager.getExtendableEvent(),
 
 					aOptions && aOptions.listener
-						? [aOptions.listener]
+						? [{func: aOptions.listener}]
 						:	this._bet_listeners[aManager.getExtendableEvent().type]
 							? this._bet_listeners[aManager.getExtendableEvent().type].concat()
 							: [],
@@ -214,7 +241,7 @@
 			
 			if (this._bet_listeners[aEventType]) {
 				for (i = 0; i < this._bet_listeners[aEventType].length; i++) {
-					if (this._bet_listeners[aEventType][i] === aListener) return i;
+					if (this._bet_listeners[aEventType][i].func === aListener) return i;
 				}
 			}
 
