@@ -3,18 +3,6 @@
  * {@license https://github.com/solarfield/ok-kit-js/blob/master/LICENSE}
  */
 
-/**
- * @typedef {{
- *  status: int,
- *  statusText: string,
- *  response: json|null,
- *  responseType: string|null
- *  aborted: boolean,
- *  timedOut: boolean,
- *  error: Error|null
- * }} JsonLoaderLoadResolved
- */
-
 (function (factory) {
 	if (typeof define === "function" && define.amd) {
 		define(
@@ -39,15 +27,15 @@
 
 	/**
 	 * @class Solarfield.Ok.JsonLoader
+	 * @abstract
 	 * @extends Solarfield.Ok.HttpLoader
+	 * @property {Solarfield.Ok.HttpLoader} super
 	 */
 	var JsonLoader = ObjectUtils.extend(HttpLoader);
 
 	/**
 	 * Loads JSON from aUrl.
-	 * @param {string} aUrl The url to load.
-	 * @param {object} [aOptions] Additional options.
-	 * @returns {Promise<JsonLoaderLoadResolved>}
+	 * @inheritDoc
 	 */
 	JsonLoader.load = function (aUrl, aOptions) {
 		var options = this.normalizeLoadArgs(aUrl, aOptions);

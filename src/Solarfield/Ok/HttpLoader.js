@@ -3,18 +3,6 @@
  * {@license https://github.com/solarfield/ok-kit-js/blob/master/LICENSE}
  */
 
-/**
- * @typedef {{
- *  status: int,
- *  statusText: string,
- *  response: *,
- *  responseType: string|null
- *  aborted: boolean,
- *  timedOut: boolean,
- *  error: Error|null
- * }} HttpLoaderLoadResolved
- */
-
 (function (factory) {
 	if (typeof define === "function" && define.amd) {
 		define(
@@ -22,7 +10,8 @@
 				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
 				'solarfield/ok-kit-js/src/Solarfield/Ok/StructUtils',
 				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpMux',
-				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpLoaderError'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpLoaderError',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/HttpLoaderResult',
 			],
 			factory
 		);
@@ -34,11 +23,12 @@
 			Solarfield.Ok.StructUtils,
 			Solarfield.Ok.HttpMux,
 			Solarfield.Ok.HttpLoaderError,
+			Solarfield.Ok.HttpLoaderResult,
 			true
 		);
 	}
 })
-(function (ObjectUtils, StructUtils, HttpMux, HttpLoaderError, _createGlobals) {
+(function (ObjectUtils, StructUtils, HttpMux, HttpLoaderError, HttpLoaderResult, _createGlobals) {
 	"use strict";
 
 	/**
@@ -99,7 +89,7 @@
 	 * Rejects with an Error or HttpLoaderError, the latter providing additional details.
 	 * @param {string} aUrl The url to load from.
 	 * @param {Object} [aOptions] Additional options. @see HttpMux#send
-	 * @returns {Promise.<HttpLoaderLoadResolved, Error|HttpLoaderError>} Promise with an abort() method.
+	 * @returns {Promise.<HttpLoaderResult, Error|HttpLoaderError>} Promise with an abort() method.
 	 * @static
 	 * @public
 	 */
@@ -113,15 +103,15 @@
 			options.onEnd = function (aEvt) {
 				promise = null;
 				
-				var result = {
-					status: aEvt.status,
-					statusText: aEvt.statusText,
-					responseType: aEvt.responseType,
-					response: aEvt.response,
-					aborted: aEvt.aborted,
-					timedOut: aEvt.timedOut,
-					error: aEvt.error
-				};
+				var result = new HttpLoaderResult(
+					aEvt.status,
+					aEvt.statusText,
+					aEvt.responseType,
+					aEvt.response,
+					aEvt.aborted,
+					aEvt.timedOut,
+					aEvt.error
+				);
 				
 				if (!aEvt.error && !aEvt.aborted && !aEvt.timedOut) {
 					resolve(result);

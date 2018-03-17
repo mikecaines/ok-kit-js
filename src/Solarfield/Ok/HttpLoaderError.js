@@ -13,15 +13,13 @@ define(
 		 * @class HttpLoaderError
 		 * @extends CustomError
 		 * @see HttpLoader#load
-		 *
-		 * @property {HttpLoaderLoadResolved} response - Response info.
 		 */
 		var HttpLoaderError = ObjectUtils.extend(CustomError, {
 			/**
 			 * @param {string} aMessage
 			 * @param {int=0} aCode
 			 * @param {Error=} aPrevious
-			 * @param {HttpLoaderLoadResolved} aResult
+			 * @param {HttpLoaderResult} aResult
 			 * @constructor
 			 *
 			 * @property {HttpLoaderErrorDetails} httpLoaderDetails - Details about the
@@ -41,6 +39,6 @@ define(
 
 /**
  * @typedef {{}} HttpLoaderErrorDetails - Additional info about the error.
- * @property {HttpLoaderLoadResolved} result - Any data returned by HttpLoader#load.
+ * @property {HttpLoaderResult} result - Any data returned by HttpLoader#load.
  */
  
