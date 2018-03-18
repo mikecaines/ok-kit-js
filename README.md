@@ -19,6 +19,8 @@ Javascript utility classes, functions, etc., including:
 
 * **JsonLoader**: A Promise based API for making HTTP requests, and handling JSON format responses.
 
+* **Logger**: A lightweight logger which supports all RFC 5424 levels, and forwards to the browser console.
+
 * **MathUtils**: Utilities for random number generation, etc.
 
 * **ObjectUtils**: Utilities for extending classes, cloning objects, etc.
