@@ -76,8 +76,12 @@
 
 	/**
 	 * Automates class-like inheritance, for browsers that do not support the native 'class' statement.
+	 *
 	 * Classes created via this function, can be extended by native classes, and vice-versa.
-	 * The constructor of the created class, will have a 'super' property, mimicking the native 'super' statement.
+	 *
+	 * The constructor of the created class, will be given a 'super' property, mimicking the native 'super' statement.
+	 * e.g. you can call it like YourChildClassConstructor.super.call(this, ...), or use it to access
+	 * the parent prototype like YourChildClassConstructor.super.prototype.someParentMethod.call(this, ...).
 	 *
 	 * @param {Function} aParentConstructor - The constructor function of the parent/super class.
 	 *
