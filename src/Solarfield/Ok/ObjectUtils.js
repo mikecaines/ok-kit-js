@@ -75,67 +75,78 @@
 	})();
 
 	/**
-	 * Provides inheritance.
-	 * @param {Function} aSuperClass
-	 * @param {Function|Object=} aSubClass Optional subclass constructor.
-	 * @returns {Function} A reference to the subclass constructor.
+	 * Automates class-like inheritance, for browsers that do not support the native 'class' statement.
+	 * Classes created via this function, can be extended by native classes, and vice-versa.
+	 * The constructor of the created class, will have a 'super' property, mimicking the native 'super' statement.
+	 *
+	 * @param {Function} aParentConstructor - The constructor function of the parent/super class.
+	 *
+	 * @param {Function|Object=} aChild - The child/sub class definition.
+	 *  If this is a function, it is considered the constructor of the child class.
+	 *  If this is an object, it is considered a collection of properties to be assigned to the child class's prototype.
+	 *  The object may contain an optional 'constructor' property, which will be considered the constructor of the child
+	 *  class.
+	 *
+	 * @returns {Function} The constructor function of the new child class.
 	 */
-	ObjectUtils.extend = function (aSuperClass, aSubClass) {
-		var p, subClass, subMembers, hasSubConstructor;
+	ObjectUtils.extend = function (aParentConstructor, aChild) {
+		var p, childConstructor, childProperties, hasChildConstructor;
 
-		if (aSubClass) {
-			if ((typeof aSubClass) == 'function') {
-				subClass = aSubClass;
-				hasSubConstructor = true;
+		if (aChild) {
+			if ((typeof aChild) == 'function') {
+				childConstructor = aChild;
+				hasChildConstructor = true;
 			}
 
 			else {
-				if (aSubClass.hasOwnProperty('constructor')) {
-					subClass = aSubClass.constructor;
-					hasSubConstructor = true;
+				if (aChild.hasOwnProperty('constructor')) {
+					childConstructor = aChild.constructor;
+					hasChildConstructor = true;
 				}
 
-				subMembers = aSubClass;
-				delete subMembers.constructor;
+				childProperties = aChild;
+				delete childProperties.constructor;
 			}
 		}
 
-		if (!subClass) {
+		if (!childConstructor) {
+			//create an implied constructor, which just calls the parent
+			
 			ObjectUtils.extend._oeo_counter++;
 
-			subClass = new Function(
-				aSuperClass ? "this._oeo_superClass" + ObjectUtils.extend._oeo_counter + ".apply(this, arguments);" : ''
+			childConstructor = new Function(
+				aParentConstructor ? "this._oeo_superClass" + ObjectUtils.extend._oeo_counter + ".apply(this, arguments);" : ''
 			);
 		}
 
-		if (aSuperClass) {
-			//copy 'static' methods of aSuperClass to aSubClass
-			for (p in aSuperClass) {
-				if ((typeof aSuperClass[p]) == 'function') {
-					subClass[p] = aSuperClass[p];
+		if (aParentConstructor) {
+			//copy 'static' methods of aParentConstructor to aChild
+			for (p in aParentConstructor) {
+				if ((typeof aParentConstructor[p]) == 'function') {
+					childConstructor[p] = aParentConstructor[p];
 				}
 			}
 
-			subClass.prototype = Object.create(aSuperClass.prototype);
-			subClass.prototype.constructor = subClass;
-			subClass.super = aSuperClass;
+			childConstructor.prototype = Object.create(aParentConstructor.prototype);
+			childConstructor.prototype.constructor = childConstructor;
+			childConstructor.super = aParentConstructor;
 		}
 
 		else {
-			subClass.super = Object;
+			childConstructor.super = Object;
 		}
 
-		if (subMembers) {
-			for (p in subMembers) {
-				subClass.prototype[p] = subMembers[p];
+		if (childProperties) {
+			for (p in childProperties) {
+				childConstructor.prototype[p] = childProperties[p];
 			}
 		}
 
-		if (!hasSubConstructor) {
-			subClass.prototype['_oeo_superClass' + ObjectUtils.extend._oeo_counter] = aSuperClass;
+		if (!hasChildConstructor) {
+			childConstructor.prototype['_oeo_superClass' + ObjectUtils.extend._oeo_counter] = aParentConstructor;
 		}
 
-		return subClass;
+		return childConstructor;
 	};
 	ObjectUtils.extend._oeo_counter = -1;
 
