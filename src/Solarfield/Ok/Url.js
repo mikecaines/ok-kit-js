@@ -146,12 +146,14 @@
 			this._sou_parts.path += encodeURIComponent(aDir) + '/';
 		},
 
-		setFileName: function (aDir) {
+		setFileName: function (aFileName) {
+			this._sou_parts.path = this._sou_parts.path.replace(/\/[^\/]+$/, '/');
+			
 			if (this._sou_parts.path.search(/\/$/) < 0) {
 				this._sou_parts.path += '/';
 			}
 
-			this._sou_parts.path += encodeURIComponent(aDir);
+			this._sou_parts.path += encodeURIComponent(aFileName);
 		},
 
 		getFileName: function () {
