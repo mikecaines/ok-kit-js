@@ -22,6 +22,7 @@ define(
 
 				this.type = aOptions.type;
 				this.target = aOptions.target;
+				this.detail = aOptions.detail !== undefined ? aOptions.detail : null;
 			}
 		});
 	}
