@@ -16,6 +16,10 @@ define(
 				return aPromise;
 			},
 
+			preventDefault: function () {
+				this.defaultPrevented = true;
+			},
+			
 			constructor: function (aOptions, aWaitQueue) {
 				/** @protected */
 				this.waitQueue = aWaitQueue;
@@ -23,6 +27,7 @@ define(
 				this.type = aOptions.type;
 				this.target = aOptions.target;
 				this.detail = aOptions.detail !== undefined ? aOptions.detail : null;
+				this.defaultPrevented = false;
 			}
 		});
 	}
