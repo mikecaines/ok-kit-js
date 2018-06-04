@@ -65,7 +65,7 @@
 			}
 
 			else {
-				aResolve();
+				aResolve(aEvent);
 			}
 		},
 
