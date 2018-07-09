@@ -162,6 +162,14 @@
 			
 			return '';
 		},
+		
+		getFragment: function () {
+			return this._sou_parts.fragment;
+		},
+		
+		setFragment: function (aFragment) {
+			this._sou_parts.fragment = (aFragment === null || aFragment === undefined) ? '' : aFragment;
+		},
 
 		toString: function () {
 			var v;
