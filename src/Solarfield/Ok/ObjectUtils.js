@@ -94,10 +94,10 @@
 	 * @returns {Function} The constructor function of the new child class.
 	 */
 	ObjectUtils.extend = function (aParentConstructor, aChild) {
-		var p, childConstructor, childProperties, hasChildConstructor;
+		var childConstructor, childProperties, hasChildConstructor;
 
 		if (aChild) {
-			if ((typeof aChild) == 'function') {
+			if ((typeof aChild) === 'function') {
 				childConstructor = aChild;
 				hasChildConstructor = true;
 			}
@@ -124,12 +124,21 @@
 		}
 
 		if (aParentConstructor) {
-			//copy 'static' methods of aParentConstructor to aChild
-			for (p in aParentConstructor) {
-				if ((typeof aParentConstructor[p]) == 'function') {
-					childConstructor[p] = aParentConstructor[p];
-				}
-			}
+			//copy 'static' properties of parent to child
+			Object.getOwnPropertyNames(aParentConstructor)
+				.filter(function (p) {
+					//remove properties inherent to Function
+					return !['length', 'name', 'prototype'].includes(p)
+				})
+				.forEach(function (p) {
+					if ((typeof aParentConstructor[p]) === 'function') {
+						Object.defineProperty(
+							childConstructor,
+							p,
+							Object.getOwnPropertyDescriptor(aParentConstructor, p)
+						);
+					}
+				});
 
 			childConstructor.prototype = Object.create(aParentConstructor.prototype);
 			childConstructor.prototype.constructor = childConstructor;
