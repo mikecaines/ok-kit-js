@@ -150,9 +150,13 @@
 		}
 
 		if (childProperties) {
-			for (p in childProperties) {
-				childConstructor.prototype[p] = childProperties[p];
-			}
+			Object.getOwnPropertyNames(childProperties).forEach(function (p) {
+				Object.defineProperty(
+					childConstructor.prototype,
+					p,
+					Object.getOwnPropertyDescriptor(childProperties, p)
+				);
+			});
 		}
 
 		if (!hasChildConstructor) {
