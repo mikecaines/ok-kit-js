@@ -113,7 +113,7 @@ define(
 			 * @param {string=} [aName=''] The name of the new logger.
 			 * @return {Logger}
 			 */
-			cloneWithName: function (aName) {
+			withName: function (aName) {
 				return new this.constructor({
 					name: aName,
 				});
