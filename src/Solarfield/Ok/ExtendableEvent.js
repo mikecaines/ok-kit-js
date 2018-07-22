@@ -41,7 +41,7 @@ define(
 
 				this.type = aEventInit.type;
 				this.target = aEventInit.target;
-				this.detail = aOptions.detail !== undefined ? aOptions.detail : null;
+				this.detail = aEventInit.detail !== undefined ? aEventInit.detail : null;
 				this.defaultPrevented = false;
 			}
 		});
