@@ -23,6 +23,10 @@ define(
 				this.waitQueue.push(aPromise);
 				return aPromise;
 			},
+
+			preventDefault: function () {
+				this.defaultPrevented = true;
+			},
 			
 			/**
 			 * @constructor
@@ -37,6 +41,8 @@ define(
 
 				this.type = aEventInit.type;
 				this.target = aEventInit.target;
+				this.detail = aOptions.detail !== undefined ? aOptions.detail : null;
+				this.defaultPrevented = false;
 			}
 		});
 		
