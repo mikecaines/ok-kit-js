@@ -7,7 +7,10 @@
 	if (typeof define === "function" && define.amd) {
 		define(
 			[
-				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils'
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ObjectUtils',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/EventTarget',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ExtendableEventManager',
+				'solarfield/ok-kit-js/src/Solarfield/Ok/ExtendableEvent',
 			],
 			factory
 		);
@@ -16,11 +19,14 @@
 	else {
 		factory(
 			Solarfield.Ok.ObjectUtils,
+			Solarfield.Ok.EventTarget,
+			Solarfield.Ok.ExtendableEventManager,
+			Solarfield.Ok.ExtendableEvent,
 			true
 		);
 	}
 })
-(function (ObjectUtils, _createGlobals) {
+(function (ObjectUtils, EventTarget, ExtendableEventManager, ExtendableEvent, _createGlobals) {
 	"use strict";
 
 	/**
@@ -32,6 +38,8 @@
 			throw "Method is abstract.";
 		}
 	});
+
+	CssLoader._eventTarget = new EventTarget();
 
 	/**
 	 * Imports the stylesheet at aUrl.
@@ -109,6 +117,19 @@
 		return this._importUrl(System.normalizeSync(aModuleId).replace(/(\.css)?\.js$/, '.css'), aOptions);
 	};
 
+	CssLoader._whenReadyToImport = function () {
+		var eventManager = new ExtendableEventManager(function (aWaitQueue) {
+			return new ExtendableEvent({
+				type: 'before-import',
+				target: this,
+			}, aWaitQueue);
+		}.bind(this));
+
+		return this._eventTarget.dispatchExtendableEvent(this, eventManager, {
+			breakOnError: true,
+		});
+	};
+
 	/**
 	 * Gets the element that links the stylesheet to the current document.
 	 * @param aUrl
@@ -147,17 +168,16 @@
 	 * @returns {Promise}
 	 */
 	CssLoader.import = function (aUrl, aOptions) {
-		return new Promise(function (resolve) {
-			//if aUrl is a URL ending in .css
-			if (aUrl.search(/\.css$/) > -1) {
-				resolve(this._importUrl(aUrl, aOptions));
-			}
+		return this._whenReadyToImport()
+			.then(function () {
+				//if aUrl is a URL ending in .css
+				if (aUrl.search(/\.css$/) > -1) {
+					return this._importUrl(aUrl, aOptions);
+				}
 
-			//else consider aUrl a module id
-			else {
-				resolve(this._importModule(aUrl, aOptions));
-			}
-		}.bind(this));
+				//else consider aUrl a module id
+				return this._importModule(aUrl, aOptions);
+			}.bind(this));
 	};
 
 	/**
@@ -172,6 +192,20 @@
 		if ((el = this.getElement(aUrl, aOptions))) {
 			el.parentNode.removeChild(el);
 		}
+	};
+
+	/**
+	 * @param {string} aType - The event type name.
+	 *  Types include: before-import.
+	 * @param aListener
+	 * @param aOptions
+	 */
+	CssLoader.addEventListener = function (aType, aListener, aOptions) {
+		this._eventTarget.addEventListener(aType, aListener);
+	};
+
+	CssLoader.removeEventListener = function (aType, aListener, aOptions) {
+		this._eventTarget.removeEventListener(aType, aListener);
 	};
 
 	if (_createGlobals) {
