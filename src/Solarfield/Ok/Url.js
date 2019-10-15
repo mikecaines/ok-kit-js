@@ -262,8 +262,8 @@
 			for (i = 0; i < pairs.length; i++) {
 				pair = pairs[i];
 				pairParts = pair.split('=');
-				paramName = decodeURIComponent(pairParts[0]);
-				paramValue = pairParts.length > 1 ? decodeURIComponent(pairParts[1]) : '';
+				paramName = decodeURIComponent((''+pairParts[0]).replace(/\+/g, ' '));
+				paramValue = pairParts.length > 1 ? decodeURIComponent((''+pairParts[1]).replace(/\+/g, ' ')) : '';
 				
 				if ((paramName in query) == false) {
 					query[paramName] = [];
