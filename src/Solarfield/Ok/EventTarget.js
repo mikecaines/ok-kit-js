@@ -247,7 +247,7 @@
 		},
 
 		hasEventListeners: function (aEventType) {
-			return this._bet_listeners[aEventType] && this._bet_listeners[aEventType].length > 0;
+			return (aEventType in this._bet_listeners) && this._bet_listeners[aEventType].length > 0;
 		}
 	});
 
