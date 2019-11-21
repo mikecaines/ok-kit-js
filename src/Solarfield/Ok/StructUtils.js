@@ -112,6 +112,40 @@
 		node[steps[i]].push(aValue);
 	};
 	
+	/**
+	 * @param {{}} aStruct
+	 * @param {string} aPath
+	 * @param {string} aSeparator
+	 * @param {boolean=true} aDeep If true, any empty ancestor structures will be removed also.
+	 */
+	StructUtils.remove = function (aStruct, aPath, aSeparator, aDeep) {
+		var separator = aSeparator || '.';
+		var deep = aDeep !== undefined ? true==aDeep : true;
+		var path, leaf, k;
+		
+		path = (aPath + '').split(separator);
+		leaf = path.pop();
+		
+		var subStruct = path.length === 0 ? aStruct : this.get(aStruct, path.join(separator));
+		
+		if (!(subStruct === null || subStruct === undefined)) {
+			if (subStruct.constructor === Array) {
+				k = parseInt(leaf);
+				if (!isNaN(k)) subStruct.splice(k, 1);
+				
+				if (deep && path.length > 0 && subStruct.length === 0) {
+					this.remove(aStruct, path.join(separator), separator, deep);
+				}
+			}
+			else if (subStruct.constructor === Object) {
+				delete subStruct['' + leaf];
+				if (deep && path.length > 0 && Object.getOwnPropertyNames(subStruct).length === 0) {
+					this.remove(aStruct, path.join(separator), separator, deep);
+				}
+			}
+		}
+	};
+	
 	StructUtils.delegate = function (aArray, aPrimaryKey) {
 		var map = {};
 		var i, len;
