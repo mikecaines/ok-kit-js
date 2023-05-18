@@ -23,7 +23,7 @@
 	/**
 	 * @class Solarfield.Ok.EventTarget
 	 */
-	var EventTarget = ObjectUtils.extend(Object, {
+	const EventTarget = ObjectUtils.extend(Object, {
 		/**
 		 * The arguments of this method are structured this way, in order to avoid using closures or bind(). The intent is
 		 * to save memory if dispatchExtendableEvent() is never called, since it may not be used often in some
@@ -111,14 +111,12 @@
 		 *  Default priority is 0.
 		 */
 		addEventListener: function (aEventType, aListener, aOptions) {
-			var options;
-			
 			if (!this.addedEventListener(aEventType, aListener)) {
 				if (!this._bet_listeners[aEventType]) {
 					this._bet_listeners[aEventType] = [];
 				}
 
-				options = StructUtils.assign({
+				const options = StructUtils.assign({
 					priority: 0,
 				}, aOptions);
 				
@@ -140,12 +138,12 @@
 		 * @param {function} aListener
 		 */
 		removeEventListener: function (aEventType, aListener) {
-			var index = this.addedEventListener(aEventType, aListener);
+			const index = this.addedEventListener(aEventType, aListener);
 			
 			if (index !== null) {
 				this._bet_listeners[aEventType].splice(index, 1);
 				
-				if (this._bet_listeners[aEventType].length == 0) {
+				if (this._bet_listeners[aEventType].length === 0) {
 					delete this._bet_listeners[aEventType];
 				}
 			}
@@ -166,19 +164,18 @@
 		 *  dispatched to any further listeners.
 		 */
 		dispatchEvent: function (aThisContext, aEvent, aOptions) {
-			var breakOnError = aOptions && ('breakOnError' in aOptions) ? aOptions.breakOnError : false;
-			var i;
+			const breakOnError = aOptions && ('breakOnError' in aOptions) ? aOptions.breakOnError : false;
 
-			var listeners =
+			const listeners =
 				aOptions && aOptions.listener
 					? [{func: aOptions.listener}]
 					: this._bet_listeners[aEvent.type]
 						? this._bet_listeners[aEvent.type]
 						: [];
 
-			for (i = 0; i < listeners.length; i++) {
+			for (const listener of listeners) {
 				try {
-					listeners[i].func.call(aThisContext, aEvent);
+					listener.func.call(aThisContext, aEvent);
 				}
 				catch (e) {
 					setTimeout(function () {throw e}, 0);
@@ -236,10 +233,8 @@
 		},
 
 		addedEventListener: function (aEventType, aListener) {
-			var i;
-			
 			if (this._bet_listeners[aEventType]) {
-				for (i = 0; i < this._bet_listeners[aEventType].length; i++) {
+				for (let i = 0; i < this._bet_listeners[aEventType].length; i++) {
 					if (this._bet_listeners[aEventType][i].func === aListener) return i;
 				}
 			}
