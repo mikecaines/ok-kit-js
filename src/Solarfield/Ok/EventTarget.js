@@ -30,7 +30,7 @@
 		 * EventTarget contexts.
 		 * @private
 		 */
-		_bet_dispatchExtendableEventStep: function (aSelf, aThisContext, aEvent, aHandlers, aWaitQueue, aResolve, aReject, aWait, aBreakOnError) {
+		_bet_dispatchExtendableEventStep: async function (aSelf, aThisContext, aEvent, aHandlers, aWaitQueue, aResolve, aReject, aWait, aBreakOnError) {
 			if (aHandlers.length > 0) {
 				try {
 					//call the current event listener
@@ -49,12 +49,13 @@
 				}
 
 				//remove any promises from the wait queue, and wait for them all to settle
-				aWait(aWaitQueue.splice(0))
-				.then(function () {
+				try {
+					await aWait(aWaitQueue.splice(0));
+
 					//queue the next event listener
 					setTimeout(aSelf, 0, aSelf, aThisContext, aEvent, aHandlers, aWaitQueue, aResolve, aReject, aWait, aBreakOnError);
-				})
-				.catch(function (e) {
+				}
+				catch (e) {
 					if (aBreakOnError) {
 						//break the dispatch chain
 						aReject(e);
@@ -63,7 +64,7 @@
 						//queue the next event listener
 						setTimeout(aSelf, 0, aSelf, aThisContext, aEvent, aHandlers, aWaitQueue, aResolve, aReject, aWait, aBreakOnError);
 					}
-				})
+				}
 			}
 
 			else {
@@ -78,21 +79,20 @@
 		 * @returns {Promise|Promise.<Error>}
 		 * @private
 		 */
-		_bet_dispatchExtendableEventWait: function (aPromises) {
-			var error;
+		_bet_dispatchExtendableEventWait: async function (aPromises) {
+			let error;
 
-			return Promise.all(aPromises.map(function (promise) {
-				return promise.catch(function (e) {
+			await Promise.all(
+				aPromises.map(promise => promise.catch(e => {
 					//rethrow the error into the global scope, without breaking the dispatch chain
 					setTimeout(function () {throw e}, 0);
 
 					//capture the first error, and consider it the error that broke the chain
 					if (!error) error = e;
-				});
-			}))
-			.then(function () {
-				return error ? Promise.reject(error) : Promise.resolve();
-			});
+				}))
+			);
+
+			if (error) throw error;
 		},
 
 		constructor : function () {
@@ -208,30 +208,31 @@
 		 * @param {boolean=false} aOptions.breakOnError If true, if an error occurs in a listener (or one of the promises added
 		 *  via waitUntil() rejects), the event will not be dispatched to any further listeners.
 		 *
-		 * @returns {Promise} Promise which resolves at the end of the event's lifetime.
+		 * @returns {ExtendableEvent} Promise which resolves to the ExtendableEvent produced by the ExtendableEventManager.
 		 *
 		 * @see https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent
 		 */
-		dispatchExtendableEvent: function (aThisContext, aManager, aOptions) {
-			return new Promise(function (resolve, reject) {
+		dispatchExtendableEvent: async function (aThisContext, aManager, aOptions) {
+			return new Promise((resolve, reject) => {
+				const event = aManager.getExtendableEvent();
+				const waitQueue = aManager.getWaitQueue();
+
+				let listeners = [];
+				if (aOptions && aOptions.listener) listeners.push({func: aOptions.listener});
+				else if (this._bet_listeners[event.type]) listeners.push(...this._bet_listeners[event.type]);
+
 				this._bet_dispatchExtendableEventStep(
 					this._bet_dispatchExtendableEventStep,
 					aThisContext,
-					aManager.getExtendableEvent(),
-
-					aOptions && aOptions.listener
-						? [{func: aOptions.listener}]
-						:	this._bet_listeners[aManager.getExtendableEvent().type]
-							? this._bet_listeners[aManager.getExtendableEvent().type].concat()
-							: [],
-
-					aManager.getWaitQueue(),
+					event,
+					listeners,
+					waitQueue,
 					resolve,
 					reject,
 					this._bet_dispatchExtendableEventWait,
 					aOptions && ('breakOnError' in aOptions) ? aOptions.breakOnError : false
 				);
-			}.bind(this));
+			});
 		},
 
 		addedEventListener: function (aEventType, aListener) {
