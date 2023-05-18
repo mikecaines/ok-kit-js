@@ -7,7 +7,7 @@ define(
 
 		/**
 		 * The internal object which is used when dispatching an ExtendableEvent via EventTarget.dispatchExtendableEvent().
-		 * It it used to provide the EventTarget dispatcher access to the ExtendableEvent's wait queue,
+		 * It is used to provide the EventTarget dispatcher access to the ExtendableEvent's wait queue,
 		 * but to also restrict the event listeners from accessing it.
 		 * @class Solarfield.Ok.ExtendableEventManager
 		 * @see Solarfield.Ok.EventTarget::dispatchExtendableEvent()
