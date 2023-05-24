@@ -182,6 +182,8 @@
 
 				if (breakOnError && error) throw error;
 			}
+
+			return event;
 		},
 
 		addedEventListener: function (aEventType, aListener) {
