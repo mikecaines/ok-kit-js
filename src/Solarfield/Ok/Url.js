@@ -177,12 +177,22 @@
 			var v;
 			var str = '';
 
-			if (this._sou_parts.host != '') {
+			var scheme = (this._sou_parts['scheme']||'').toLowerCase();
+			var isHttp = scheme === 'http' || scheme === 'https' || scheme === '';
+
+			if (isHttp) {
+				if (this._sou_parts.host != '') {
+					if (this._sou_parts.scheme != '') {
+						str += this._sou_parts.scheme + '://';
+					}
+					else {
+						str += this._sou_parts.slashes;
+					}
+				}
+			}
+			else {
 				if (this._sou_parts.scheme != '') {
 					str += this._sou_parts.scheme + '://';
-				}
-				else {
-					str += this._sou_parts.slashes;
 				}
 			}
 
@@ -197,7 +207,9 @@
 			if (this._sou_parts.path != '') {
 				if (str != '') {
 					if (this._sou_parts.path.search(/^\//) == -1) {
-						str += '/';
+						if (isHttp) {
+							str += '/';
+						}
 					}
 				}
 
