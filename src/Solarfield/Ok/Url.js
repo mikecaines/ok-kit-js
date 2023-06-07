@@ -192,7 +192,7 @@
 			}
 			else {
 				if (this._sou_parts.scheme != '') {
-					str += this._sou_parts.scheme + '://';
+					str += this._sou_parts.scheme + ':';
 				}
 			}
 
